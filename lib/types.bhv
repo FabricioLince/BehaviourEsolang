@@ -1,0 +1,29 @@
+  
+  (
+  isnumber = &(#a==a #a+1==a+1)
+  isbool = &[a==(1>0) a==(1<0)]
+  isstring = &(#a+1==#(a+1) a%""==0)
+  islist = &(#a+1==#(a+1) ~(a%""==0) ~(#a==a))
+  isnode = &(~(a+a) (""+a)%"N"==0)
+  isnil = &~(a==a)
+  type = &[
+    (!isnumber "number")
+    (!isbool "bool")
+    (!isstring "string")
+    (!islist "list")
+    (!isnode "node")
+    "nil"]
+    
+  testalltypes = &(
+    @@a
+    @@">"+type:a
+    @"number: "@@isnumber:a
+    @"bool: "@@isbool:a
+    @"string: "@@isstring:a
+    @"list: "@@islist:a
+    @"node: "@@isnode:a
+    @"nil: "@@isnil:a
+  )
+  
+  &a
+  )

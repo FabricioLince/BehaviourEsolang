@@ -1,0 +1,20 @@
+
+    ds = (r=""i=0!~(?a%i r+=a%i+a%i i+=1):r)
+    ds = (r=""i=0!~(c=a%i?c r+=c+c i+=1):r)
+    ds = (i=0!~(c=a%i?c@c+c i+=1))
+
+    ds:"Hello World!"
+;
+
+    l=(~?a%4[?a%100~?a%400])
+    l=([?a%100a=a/100]~?a%4)
+    l=~[(?a%25?a%4)?a%16]
+    
+    leap = l
+    
+    @@leap:1936
+    @@leap:1805
+    @@leap:1900
+    @@leap:2272
+    @@leap:2400
+    ;

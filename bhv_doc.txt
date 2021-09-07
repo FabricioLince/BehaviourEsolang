@@ -1,0 +1,43 @@
+
+// if only one positional argument it will be set to 'a'
+!behaviour:12
+!behaviour:a=12
+
+// if there's more than one positional argument they will populate the list 'a'
+!behaviour:1,2,3
+!behaviour:a={1 2 3}
+
+
+
+NUMBER + NUMBER = NUMBER # adds lhs and rhs
+STRING + _ = STRING # concats lhs and the string rep of rhs
+LIST + _ = LIST # appends rhs to lhs
+_ + _ = NIL # invalid 
+
+NUMBER - NUMBER = NUMBER # subtracts rhs from lhs
+STRING - NUMBER = STRING # remove the character in the rhs position from lhs
+STRING - STRING = STRING # remove the first occurrence of lhs from lhs
+LIST - NUMBER = LIST # remove the item in the rhs position from lhs
+_ - _ = NIL # invalid
+
+NUMBER * NUMBER = NUMBER # multiplies rhs and lhs
+STRING * NUMBER = STRING # repeats lhs rhs times iff rhs is >= 0
+_ * _ = NIL # invalid
+
+NUMBER / NUMBER = NUMBER # divides rhs by lhs
+_ / _ = NIL # invalid
+
+NUMBER % NUMBER = NUMBER # rhs modulo lhs, both are cast to integers
+STRING % NUMBER = STRING or NIL # gets the character in the rhs position from lhs
+LIST % NUMBER = _ # gets the item in the rhs position from lhs
+_ % _ = NIL # invalid
+
+
+assign :: var '=' expr
+expr :: comp
+comp :: addition ?(compop addition)
+addition :: multiplication *(addop multiplication)
+multiplication :: value *(mulop value)
+value :: [var string integer]
+
+() [] ! ? @ ~ &

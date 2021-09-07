@@ -1,0 +1,39 @@
+
+  
+  list = !"lib/list.bhv"
+  
+  rand = (
+    crand = rand
+    &(!crand)%[a 10]
+  )
+  numbers = list:sort:(n={} 15|#(n+=!rand:100) n)
+  
+  ;
+  
+  
+  expr :: comp
+  comp :: addition ?(compop addition)
+  compop :: ['>=' '>' '<=' '<' '==' '~=' '|']
+  addition :: multiplication *(['+' '-'] multiplication)
+  multiplication :: value *(['*' '/' '%'] value)
+  value :: [signedvalue list integer string cmd name]
+  signedvalue :: ['-' '~' '#'] value
+  list :: '{' *expr '}'
+  
+  cmd :: [print assign execute sequence select optional gettree repeat]
+  print :: '@' ?'@' expr
+  assign :: name ['=' '+=' '-=' '*=' '/=' '%='] expr
+  execute :: [execname execexpr]
+  execname :: ?'!' name args
+  execexpr :: '!' expr ?args
+  args :: ':' expr *(',' expr)
+  sequence :: '(' +expr ')'
+  sequence :: '[' +expr ']'
+  optional :: '?' expr
+  gettree :: '&' expr
+  repeat :: '\' expr
+  
+  main :: expr
+;
+
+
