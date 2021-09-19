@@ -1,3 +1,45 @@
+  
+  
+  
+  
+  
+  hanoi = (
+    move = &@@"move "+from+ " to "+to
+    hanoir = &[
+      (n<1)
+      (
+        hanoir:n=n-1, from=from, helper=to, to=helper
+        !move:from=from,to=to
+        hanoir:n=n-1, from=helper, helper=from, to=to
+      )
+    ]
+    &&!hanoir
+  )
+  
+  
+  hanoi:n=3,from="A", helper="B", to="C"
+  
+  ;
+  
+  
+  split = &(r={}\~(p=a%div r+=a/p a/=p+#div-#a)r+a)
+  
+  split:"Lince Lazuli was here",div=" "
+  
+  format = &(i=0 r="" \~(p=str%"_" r+=str/p+a%i i+=1 str/=p+1-#str) r)
+  
+  format:str="My name is _. I made _","Lince","bhv"
+  ;
+  
+  f = &(p=a%" -> " "@@(f:'"+ a/p + "')==" + a/(p-#a+4) )
+  
+  f:"0 -> 0"
+  f:"!!1 -> 1"
+  
+  ;
+  
+  
+  
 
   
   list = !"lib/list.bhv"

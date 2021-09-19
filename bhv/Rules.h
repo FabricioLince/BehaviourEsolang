@@ -159,7 +159,7 @@ void Bhv::constructRules() {
   Rule sequence = Sequence("sequence", {
     Discard(Pattern("(")),
     Checkpoint("expression expected on sequence"),
-    Multiple("exprs", expression),
+    Multiple("sequence", expression),
     Checkpoint(") expected"),
     Discard(Pattern(")")),
   });
@@ -183,6 +183,7 @@ void Bhv::constructRules() {
   
   Rule getTree = Sequence("getTree", {
     Discard(Symbol("&")),
+    Optional(Symbol("&")),
     Checkpoint("expression expected"),
     expression
   });

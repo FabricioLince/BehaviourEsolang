@@ -20,45 +20,53 @@ Variable input(Datatable* data);
 Variable showdata(Datatable* data);
 
 int main(int argc, char** argv) {
-	std::string fileName = "test.bhv";
-	if (argc > 1) {
-		fileName = argv[1];
-	}
   
-	Bhv bhv;
-	Stream *stream = new FileStream(fileName);
-	Parser::Node *node = bhv.extractTree(stream);
-	if (node) {
-    if (anyarg(argc, argv, "-tree"))
-      std::cout << node << "\n";
-		
-    Datatable data;
-    data.set("type", &type);
-    data.set("rand", Variable(&rand, data.makeChild())); 
-    data.set("read", Variable(&input, data.makeChild()));
-    data.set("data", &showdata);
-		
-    Evaluator evaluator;
-    clock_t start = clock();
-		Variable value = evaluator.evaluate(node, &data);
-    //std::cout << "Time taken: " << ((double)(clock() - start)/CLOCKS_PER_SEC) << "s\n";
+  Bhv bhv;
+  Datatable data;
+  std::vector<Node*> nodes; 
+  data.set("type", &type);
+  data.set("rand", Variable(&rand, data.makeChild())); 
+  data.set("read", Variable(&input, data.makeChild()));
+  data.set("data", &showdata);
+  
+  Evaluator evaluator;
+  
+  while (true) {
+  
+    std::string userString;
     
-    if (anyarg(argc, argv, "-result"))
-      std::cout << "\nresult = " << value << "\n";
+    std::cout << ">>";
     
-    if (anyarg(argc, argv, "-data"))
-      std::cout << "Data:\n" << data << "\n";
-		
+    getline(std::cin, userString);
+    
+    if (userString == "!quit") {
+      break;
+    }
+    else {
+      Stream *stream = new StringStream(userString);
+      Parser::Node *node = bhv.extractTree(stream);
+      if (node) {
+        if (anyarg(argc, argv, "-tree"))
+          std::cout << node << "\n";
+        
+        Variable value = evaluator.evaluate(node, &data);
+        
+        std::cout << "= " << value << "\n";
+        
+        nodes.push_back(node);
+        
+      } else {
+        std::cout << "Parsing failed\n";
+      }
+      delete stream;
+    }
+  }
+  std::cout << "Data:\n" << data << "\n";
+  for (Node* node : nodes) {
     delete node;
-    
-	} else {
-		std::cout << "Parsing failed\n";
-	}
-
-	delete stream;
+  }
 	return 0;
 }
-
 
 
 Variable type(Datatable* data) {
@@ -116,4 +124,5 @@ Variable showdata(Datatable* data) {
   std::cout << "Data:\n" << data->global() << "\n";
   return true;
 }
+
 

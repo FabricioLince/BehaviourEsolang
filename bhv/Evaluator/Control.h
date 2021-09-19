@@ -5,7 +5,7 @@
 
 
 Variable Evaluator::sequence(Node* node, Datatable* data) {
-  NodeList* children = &node->asTree()->subTree(0)->children;
+  NodeList* children = &node->asTree()->children;
   Datatable* childData = data->makeChild();
   if (children->size() == 1) {
     return evaluate(children->at(0), childData);

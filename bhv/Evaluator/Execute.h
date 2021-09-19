@@ -41,6 +41,9 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
   }
   if (bt.type == Variable::NODE) {
     Datatable* childData = bt.context;
+    if (childData == NULL) {
+      childData = data->makeChild();
+    }
     childData->context = data;
     
     if (special.type != Variable::NIL) {
@@ -142,7 +145,12 @@ Variable Evaluator::loadstring(Variable str, Datatable* data) {
   return false;
 }
 Variable Evaluator::getTree(Tree* tree, Datatable* data) {
-  return Variable(tree->children.at(0), data->makeChild());
+  //std::cout << tree << "\n";
+  Datatable* treeData = NULL;
+  if (tree->subTree(0)->children.size() > 0) {
+    treeData = data->makeChild();
+  }
+  return Variable(tree->children.at(1), treeData);
 }
 
 #endif

@@ -199,6 +199,23 @@ class Variable {
         }
         return r;
       }
+      if (type == STRING && other.type == NUMBER) {
+        Variable r = std::string("");
+        if (other.number > 0) {
+          for (int i = 0; i < other.number; ++i) {
+            if (i < string.size())
+              r.string += string.at(i);
+          }
+        }
+        else if(other.number < 0) {
+          for (int i = 0; i < -other.number; ++i) {
+            int j = (string.size()-1-i);
+            if (j >= 0)
+              r.string  = string.at(j) + r.string;
+          }
+        }
+        return r;
+      }
         
       return Variable();
     }
