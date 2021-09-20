@@ -1,0 +1,11 @@
+  
+  
+  &(
+    itens = [itens {}]
+    push = &&(itens+=a)
+    pop = &&(v=itens%0 itens-=0 v)
+    peek = &&(itens%0)
+    empty = &&(#itens == 0)
+    &&a
+  )
+  

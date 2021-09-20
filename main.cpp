@@ -5,6 +5,10 @@
 #include <time.h>
 #include <iostream>
 
+Bhv bhv;
+Evaluator evaluator;
+std::vector<Node*> nodesLoaded; 
+
 bool anyarg(int argc, char** argv, const char* arg) {
   for (int i = 0; i < argc; ++i) {
     if (strcmp(arg, argv[i]) == 0) {
@@ -18,6 +22,7 @@ Variable type(Datatable* data);
 Variable rand(Datatable* data);
 Variable input(Datatable* data);
 Variable showdata(Datatable* data);
+Variable loadfile(Datatable* data);
 
 int main(int argc, char** argv) {
 	std::string fileName = "test.bhv";
@@ -25,7 +30,6 @@ int main(int argc, char** argv) {
 		fileName = argv[1];
 	}
   
-	Bhv bhv;
 	Stream *stream = new FileStream(fileName);
 	Parser::Node *node = bhv.extractTree(stream);
 	if (node) {
@@ -37,8 +41,10 @@ int main(int argc, char** argv) {
     data.set("rand", Variable(&rand, data.makeChild())); 
     data.set("read", Variable(&input, data.makeChild()));
     data.set("data", &showdata);
+    data.set("load", &loadfile);
+    data.set("hasdata", &hasData);
+    data.set("checkdup", &checkDup);
 		
-    Evaluator evaluator;
     clock_t start = clock();
 		Variable value = evaluator.evaluate(node, &data);
     //std::cout << "Time taken: " << ((double)(clock() - start)/CLOCKS_PER_SEC) << "s\n";
@@ -56,6 +62,9 @@ int main(int argc, char** argv) {
 	}
 
 	delete stream;
+  for (Node* node : nodesLoaded) {
+    delete node;
+  }
 	return 0;
 }
 
@@ -115,5 +124,27 @@ Variable input(Datatable* data) {
 Variable showdata(Datatable* data) {
   std::cout << "Data:\n" << data->global() << "\n";
   return true;
+}
+
+Variable loadfile(Datatable* data){
+  Variable filename = data->getLocal("a");
+  if (filename.type == Variable::STRING) {
+    std::ifstream file;
+    file.open(filename.string.c_str());
+    if (file.is_open()) {
+      file.close();
+      Parser::Stream* stream = new Parser::FileStream(filename.string);
+      Node* node = bhv.extractTree(stream);
+      delete stream;
+      if (node) {
+        nodesLoaded.push_back(node);
+        return evaluator.evaluate(node, data);
+      }
+    }
+    else {
+      std::cerr << "couldn't open '" << filename.string << "'\n";
+    }
+  }
+  return Variable();
 }
 

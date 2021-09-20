@@ -41,8 +41,9 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
   }
   if (bt.type == Variable::NODE) {
     Datatable* childData = bt.context;
+    bool del = false;
     if (childData == NULL) {
-      childData = data->makeChild();
+      childData = data->makeOrphan();
     }
     childData->context = data;
     

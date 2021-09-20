@@ -6,14 +6,15 @@
 
 class Datatable {
     std::vector<Datatable*> children;
+    std::vector<Datatable*> orphans;
   public:
     std::map<std::string, Variable> memory;
     Datatable* parent = NULL;
-    Datatable* context = NULL;
+    Datatable* context = NULL; // execution context, for when a tree is executed
     
     /// set value on the first parent to have varname, if none saves locally
     void set(std::string varName, Variable value) {
-      Datatable* p = firstParentToHave(varName, this->context);
+      Datatable* p = firstParentToHave(varName);
       if (p) {
         p->setLocal(varName, value);
       }
@@ -24,6 +25,7 @@ class Datatable {
     
     /// set value locally for varName
     void setLocal(std::string varName, Variable value) {
+      //std::cout << varName << " being set on " << std::hex << static_cast<void*>(this) << std::dec << "\n";
       memory[varName] = value;
     }
     
@@ -50,16 +52,12 @@ class Datatable {
     }
     
     /// search in the ancestry which Datatable is the first to contain varName, from here to global
-    /// stops search if context is different and not null
-    Datatable* firstParentToHave(std::string varName, Datatable* context=NULL) {
-      if (context && this->context != context) {
-        return NULL;
-      }
+    Datatable* firstParentToHave(std::string varName) {
       if (has(varName)) {
         return this;
       }
       if (parent) {
-        return parent->firstParentToHave(varName, context);
+        return parent->firstParentToHave(varName);
       }
       return NULL;
     }
@@ -81,6 +79,13 @@ class Datatable {
       return child;
     }
     
+    /// creates new orphan Datatable (no parent), but its deleted by this
+    Datatable* makeOrphan() {
+      Datatable* orphan = new Datatable();
+      orphans.push_back(orphan);
+      return orphan;
+    }
+    
     /// number of parents in the ancestry (0 means global)
     int depth() {
       int d = 0;
@@ -100,7 +105,21 @@ class Datatable {
       for (Datatable* child  : children) {
         delete child;
       }
+      for (Datatable* orphan : orphans) {
+        delete orphan;
+      }
       children.clear();
+    }
+    
+    void printFamily() {
+      std::cout << std::hex;
+      Datatable* p = this;
+      while (p) {
+        std::cout << static_cast<void*>(p) << " << ";
+        p = p->parent;
+      }
+      
+      std::cout << std::dec << "\n";
     }
     
 };

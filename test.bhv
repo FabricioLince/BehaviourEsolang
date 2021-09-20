@@ -1,26 +1,73 @@
   
   
   
-  
-  
   hanoi = (
-    move = &@@"move "+from+ " to "+to
+    ms = &"move "+from+ " to "+to
+    move = &@@!ms
+    
     hanoir = &[
-      (n<1)
-      (
-        hanoir:n=n-1, from=from, helper=to, to=helper
-        !move:from=from,to=to
-        hanoir:n=n-1, from=helper, helper=from, to=to
-      )
+      (n<1 {})
+      
+      (hanoir:n=n-1, from=from, helper=to, to=helper)
+      * {!ms} *
+      (hanoir:n=n-1, from=helper, helper=from, to=to)
+      
     ]
     &&!hanoir
   )
   
   
-  hanoi:n=3,from="A", helper="B", to="C"
+  moves = hanoi:n=4,from="A", helper="B", to="C"
+  @@"needs "+#moves+" moves"
+  ;
+  
+  Queue = load:"lib/Queue.bhv"
+  
+  q = !Queue
+  
+  q:itens = {1 2 3}
+  
+  q:itens+=15
+  
+  q:push:12
+  q:push:1337
+  
+  q2 = !Queue
+  
+  q2:push:10
+  q2:push:20
+  q2:push:30
+  
+  @@q2:itens
+  
+  @@q:itens
+  
+  
+  \~(q:!peek @@q:!pop)
+  
+  @@q2:itens
+  @@q:itens
+  @@q:!peek
   
   ;
   
+  
+  
+  
+  load = (
+    cload = load
+    &&cload:"lib/"+a
+  )
+  
+  list = load:"list.bhv"
+  
+  rand = (
+    crand = rand
+    &&(!crand)%[a 10]
+  )
+  numbers = list:sort:(n={} 15|#(n+=!rand:100) n)
+  
+  ;
   
   split = &(r={}\~(p=a%div r+=a/p a/=p+#div-#a)r+a)
   

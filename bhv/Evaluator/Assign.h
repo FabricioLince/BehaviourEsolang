@@ -9,10 +9,13 @@ Variable Evaluator::assign(Node* node, Datatable* dataFrom, Datatable* dataTo) {
   //std::cout << tree << "\n";
   std::string varName = tree->getToken("name")->string;
   std::string symbol = tree->getToken(1)->string;
-  //std::cout << "assigning " << valueNode->name << "\n";
   
   Variable value = evaluate(tree->children.at(2), dataFrom);
-  //std::cout << "assigning " << varName << " = " << value << "\n";
+  //std::cout << "assigning " << varName << " " << symbol << " " << value << "\n";
+  //std::cout << std::hex << static_cast<void*>(dataFrom) << " -> " << static_cast<void*>(dataTo) << std::dec << "\n";
+  //std::cout << "From: "; dataFrom->printFamily();
+  //std::cout << "To: "; dataTo->printFamily();
+  
   
   if (symbol == "+=") {
     value = dataFrom->get(varName) + value;
