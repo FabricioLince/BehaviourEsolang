@@ -74,7 +74,32 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
       std::string symbol = top->getToken("symbol")->string;
       Variable other = evaluate(top->children.at(1), data);
       if (symbol == "*") {
-        if (value.type == Variable::LIST && other.type == Variable::NODE) {
+        if (value.type == Variable::NUMBER) {
+          switch (other.type) {
+            case Variable::NODE:
+            {
+              Variable::VarList l;
+              for (int i = 0; i < value.number; ++i) {
+                l.push_back(executeChildTree(other.node, data, i));
+              }
+              value = l;
+              break;
+            }
+            case Variable::CFUNC:
+            {
+              Variable::VarList l;
+              for (int i = 0; i < value.number; ++i) {
+                l.push_back(i);
+              }
+              value = applyCFuncOnList(l, other, data);
+              break;
+            }
+            default:
+              value = value * other;
+              break;
+          }
+        }
+        else if (value.type == Variable::LIST && other.type == Variable::NODE) {
           value = applyTreeOnList(value, other, data);
         }
         else if (value.type == Variable::STRING && other.type == Variable::NODE) {

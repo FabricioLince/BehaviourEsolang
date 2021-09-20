@@ -158,8 +158,11 @@ class Variable {
     }
 
     Variable operator*(const Variable& other) {
-      if (type == NUMBER && other.type == NUMBER)
-        return Variable(number * other.number);
+      if (type == NUMBER) {
+        if (other.type == NUMBER) {
+          return Variable(number * other.number);
+        }
+      }
       if (type == STRING && other.type == NUMBER) {
         std::string s = "";
         for (int i = 0; i < other.number; ++i) {

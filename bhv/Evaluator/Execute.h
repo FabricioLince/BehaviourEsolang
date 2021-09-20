@@ -145,6 +145,7 @@ Variable Evaluator::loadstring(Variable str, Datatable* data) {
   }
   return false;
 }
+
 Variable Evaluator::getTree(Tree* tree, Datatable* data) {
   //std::cout << tree << "\n";
   Datatable* treeData = NULL;
