@@ -1,12 +1,21 @@
   
   
-  n1 = 10*&a
   
-  n3 = 10*&a*2
-  n2 = 10*&a+1
+  Matrix = load:"lib/matrix.bhv"
+  
+  m = !Matrix
+  
+  m:rows = 5*&5*&(!rand)%10
+  
+  print:m
+  
+  print:m:get:x=0,y=0
+  
   ;
-  hanoi = (
+  
+  hanoi = !&(
     ms = &"move "+from+ " to "+to
+    ms = &""+from+"->"+to
     move = &@@!ms
     
     hanoir = &[
@@ -21,8 +30,9 @@
   )
   
   
-  moves = hanoi:n=4,from="A", helper="B", to="C"
+  moves = hanoi:n=3,from="A", helper="B", to="C"
   @@"needs "+#moves+" moves"
+  moves*&@@a
   ;
   
   Queue = load:"lib/Queue.bhv"

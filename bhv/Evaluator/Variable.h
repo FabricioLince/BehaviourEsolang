@@ -147,6 +147,9 @@ class Variable {
       if (type == LIST) {
         if (other.type == NUMBER) {
           int index = int(other.number);
+          if (index < 0) {
+            index = list.size() + index;
+          }
           if (index >= 0 && index < list.size()) {
             list.erase(list.begin()+index);
           }

@@ -23,6 +23,7 @@ Variable rand(Datatable* data);
 Variable input(Datatable* data);
 Variable showdata(Datatable* data);
 Variable loadfile(Datatable* data);
+Variable printvar(Datatable* data);
 
 int main(int argc, char** argv) {
 	std::string fileName = "test.bhv";
@@ -42,6 +43,7 @@ int main(int argc, char** argv) {
     data.set("read", Variable(&input, data.makeChild()));
     data.set("data", &showdata);
     data.set("load", &loadfile);
+    data.set("print", &printvar);
 		
     clock_t start = clock();
 		Variable value = evaluator.evaluate(node, &data);
@@ -144,5 +146,27 @@ Variable loadfile(Datatable* data){
     }
   }
   return Variable();
+}
+
+Variable printvar(Datatable* data) {
+  Variable arg = data->getLocal("a");
+  if (arg.type == Variable::NODE) {
+    if (arg.context) {
+      //std::cout << "arg's context: "; arg.context->printFamily();
+      //std::cout << "exec's context: "; data->printFamily();
+      Datatable* parent = arg.context->firstParentToHave("tostring");
+      if (parent) {
+        Variable printv = parent->getLocal("tostring");
+        if (printv.type == Variable::NODE) {
+          Datatable* d = arg.context;
+          if (printv.context) { d = printv.context; }
+          std::cout << evaluator.evaluate(printv.node, d).toString() << "\n";
+          return true;
+        }
+      }
+    }
+  }
+  std::cout << arg.toString() << "\n";
+  return true;
 }
 

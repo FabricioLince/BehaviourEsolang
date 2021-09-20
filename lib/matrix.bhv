@@ -1,0 +1,23 @@
+  
+  
+  &(
+    rows = {}
+    default = 0
+    insert = &[(i>=#a a--1+v) (i<=0 {v}*a-1) (a/i+v)*(a/-(#a-i-1))]
+    tostring = &&(s="" rows*&s+=""+a+"\n" s)
+    get = &&rows%y%x
+    eqlens = &&(
+      mlen = 0
+      mlen = (rows*&[(#a>mlen mlen=#a)mlen])%-1
+      rows *= &( \~(#a<mlen a+=default) a)
+    )
+    set = &&(
+      \~(#rows <= y rows+={})
+      row = rows%y
+      \~(#row <= x row+=default)
+      row = insert:row,i=x,v=a
+      rows = insert:rows,i=y,v=row
+      !eqlens
+    )
+    &&a
+  )

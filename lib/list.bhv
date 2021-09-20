@@ -7,6 +7,7 @@
     max = &reduce:f=&[(a>b a) b]
     min = &reduce:f=&[(a<b a) b]
     insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
+    split = &[(i<0 {{} a}) (i>#a {a {}}) {a/i a/-(#a-i)}]
     sort = &[
       (#a<2 a)
       (
