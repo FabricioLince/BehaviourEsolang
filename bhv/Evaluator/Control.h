@@ -13,7 +13,7 @@ Variable Evaluator::sequence(Node* node, Datatable* data) {
   Variable r;
   for (Node* child : *children) {
     r = evaluate(child, childData);
-    if (r.type != Variable::NUMBER && !r.toBool()) {
+    if (!r.toBool()) {
       return r;
     }
   }
@@ -24,7 +24,7 @@ Variable Evaluator::select(Node* node, Datatable* data) {
   Tree* tree = node->asTree();
   for (Node* child : tree->subTree(0)->children) {
     Variable r = evaluate(child, data);
-    if (r.type == Variable::NUMBER || r.toBool()) {
+    if (r.toBool()) {
       return r;
     }
   }

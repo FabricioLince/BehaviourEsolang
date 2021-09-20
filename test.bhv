@@ -1,5 +1,9 @@
   
   
+  {1}*8
+  
+  ;
+  
   
   hanoi = (
     ms = &"move "+from+ " to "+to
@@ -87,18 +91,6 @@
   
   
   
-
-  
-  list = !"lib/list.bhv"
-  
-  rand = (
-    crand = rand
-    &(!crand)%[a 10]
-  )
-  numbers = list:sort:(n={} 15|#(n+=!rand:100) n)
-  
-  ;
-  
   
   expr :: comp
   comp :: addition ?(compop addition)
@@ -119,7 +111,7 @@
   sequence :: '(' +expr ')'
   sequence :: '[' +expr ']'
   optional :: '?' expr
-  gettree :: '&' expr
+  gettree :: '&' ?'&' expr
   repeat :: '\' expr
   
   main :: expr

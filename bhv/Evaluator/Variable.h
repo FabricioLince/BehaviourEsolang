@@ -170,9 +170,18 @@ class Variable {
       if (type == BOOL && other.type == NUMBER && other.number == -1) {
         return !toBool();
       }
-      if (type == LIST && other.type == LIST) {
-        for (Variable v : other.list) {
-          list.push_back(v);
+      if (type == LIST) {
+        if (other.type == LIST) {
+          for (Variable v : other.list) {
+            list.push_back(v);
+          }
+        }
+        else if (other.type == NUMBER) {
+          VarList l;
+          for (int i = 0; i < other.number; ++i) {
+            l.insert(l.begin(), list.begin(), list.end());
+          }
+          return l;
         }
         return *this;
       }

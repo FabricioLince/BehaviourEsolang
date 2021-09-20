@@ -42,8 +42,6 @@ int main(int argc, char** argv) {
     data.set("read", Variable(&input, data.makeChild()));
     data.set("data", &showdata);
     data.set("load", &loadfile);
-    data.set("hasdata", &hasData);
-    data.set("checkdup", &checkDup);
 		
     clock_t start = clock();
 		Variable value = evaluator.evaluate(node, &data);
