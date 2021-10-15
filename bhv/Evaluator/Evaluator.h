@@ -46,7 +46,7 @@ class Evaluator {
     
     Variable executeChildTree(Node* tree, Datatable* data);
     Variable executeCFunc(Variable cfunc, Datatable* data);
-    Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable());
+    Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable(), Variable b = Variable());
     Variable justExecute(Variable nodeOrFunc, Datatable* data);
 
     Variable string(Node* node, Datatable* data) {

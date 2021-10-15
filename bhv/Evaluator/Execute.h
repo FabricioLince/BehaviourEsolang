@@ -32,12 +32,16 @@ void Evaluator::evaluateArgs(Tree* tree, Datatable* data, Datatable* childData) 
     for (int i = 0; i < args->children.size(); ++i) {
       evaluateArg(args->children.at(i), data, childData);
     }
+    
     Variable argList = childData->getLocal("_a");
-    if (argList.type == Variable::LIST && argList.list.size() == 1) {
-      childData->setLocal("a", argList.list.at(0));
+    if (argList.type == Variable::LIST) {
+      std::vector<std::string> names = std::vector<std::string>({"a", "b", "c", "d", "e"});
+      for (int i = 0; i < argList.list.size(); ++i) {
+        childData->setLocal(names.at(i), argList.list.at(i));
+      }
     }
-    else if (argList.type != Variable::NIL) {
-      childData->setLocal("a", argList);
+    if (argList.type != Variable::NIL) {
+      childData->setLocal("al", argList);
     }
     childData->removeLocal("_a");
   }
@@ -84,18 +88,20 @@ Variable Evaluator::executeCFunc(Variable cfunc, Datatable* data) {
   Variable result = (*cfunc.cfunc)(data);
   return result;
 }
-Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable arg) {
+Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable arg, Variable b) {
   Datatable* childData = nodeOrFunc.context;
   if (childData == NULL) {
     std::cout << "No context detected for " << nodeOrFunc.toString() << "\n";
     childData = data->makeOrphan();
-    if (arg.type != Variable::NIL) {
-      childData->setLocal("a", arg);
-    }
   }
-  else if (arg.type != Variable::NIL) {
+  
+  if (arg.type != Variable::NIL) {
     childData->setLocal("a", arg);
   }
+  if (b.type != Variable::NIL) {
+    childData->setLocal("b", b);
+  }
+  
   childData->context = data;
   
   return justExecute(nodeOrFunc, childData);

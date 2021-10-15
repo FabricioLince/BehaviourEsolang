@@ -1,30 +1,46 @@
+
   
+  
+  s = "1+(3*5)+((5)-1+1)"
+  count = 0
+  max = 0
+  s*&&[
+    ~?(count>max max=count)
+    (a == "(" count+=1)
+    (a == ")" count-=1)
+    ""
+  ]
+  [
+    (count == 0 @@"Max depth = "+max)
+    @@"invalid string"
+  ]
+  $
+
   
   list = load:"lib/list.bhv"
   
+  max = &[(a>b a) b]
+  min = &[(a<b a) b]
+  
+  
   gcd = &(
-    n1 = a%0
-    n2 = a%1
-    list:max:((1 + !min) * &[(!a n1%a==0 n2%a==0 a) 0])
+    n1 = a; n2 = b
+    ((1 + !min) * &[(!a n1%a==0 n2%a==0 a) 0]) > max
   )
-  
-  v = gcd:36,48
-  
-  
-  
   
   ispair = &a%2==0
   notpair = ~ispair
   
   find = &a<f
-  any = &!a<f
+  any = &~~(a<f)
   all = &~(a<~f)
   
-  count = &((a*f) > &#(a%0) + #(a%1))
+  count = &((a*f) > &#a+#b)
   
   pred = &(@@"Calling on "+a+" = "+(!f) !f)
-  numbers = {1 3 5 6 7 1 5 3 2 9}
+  numbers = {1 3 5 6 7 9 5 3 2 1}
   count:numbers,f=~ispair
+  
   
   
   $

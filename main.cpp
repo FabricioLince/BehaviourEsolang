@@ -97,7 +97,7 @@ Variable rand(Datatable* data) {
   if (!data->has("seed")) {
     srand(time(NULL));
     data->setLocal("seed", (int)time(NULL));
-    std::cout << "setting seed " << data->get("seed").number << "\n";
+    //std::cout << "setting seed " << data->get("seed").number << "\n";
   }
   return rand();
 }

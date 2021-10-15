@@ -133,7 +133,7 @@ Variable Evaluator::comparation(Node* node, Datatable* data) {
         }
         Variable r = value.list.at(0);
         for (int i = 1; i < value.list.size(); ++i) {
-          r = executeAny(other, data, Variable::VarList({r, value.list.at(i)}));
+          r = executeAny(other, data, r, value.list.at(i));
         }
         return r;
       }
