@@ -25,6 +25,23 @@ Variable showdata(Datatable* data);
 Variable loadfile(Datatable* data);
 Variable printvar(Datatable* data);
 
+struct SafeNode {
+  Node* node = NULL;
+  std::string error;
+};
+
+SafeNode extractNodeSafe(Stream* stream) {
+  SafeNode sn;
+  try {
+    Parser::Node *node = bhv.extractTree(stream);
+    sn.node = node;
+  }
+  catch (Parser::ParsingError e) {
+    sn.error = e.what();
+  }
+  return sn;
+}
+
 int main(int argc, char** argv) {
   
   std::cout << "Behaviour Runtime environment v0.1.9\n\n" ;
@@ -50,8 +67,9 @@ int main(int argc, char** argv) {
     }
     else {
       Stream *stream = new StringStream(userString);
-      Parser::Node *node = bhv.extractTree(stream);
-      if (node) {
+      SafeNode sn = extractNodeSafe(stream);
+      if (sn.node) {
+        Node* node = sn.node;
         if (anyarg(argc, argv, "-tree"))
           std::cout << node << "\n";
         
@@ -62,7 +80,9 @@ int main(int argc, char** argv) {
         nodesLoaded.push_back(node);
         
       } else {
-        std::cout << "Parsing failed\n";
+        std::cerr << "Parsing failed\n";
+        std::cerr << sn.error << "\n";
+        
       }
       delete stream;
     }

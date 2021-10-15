@@ -94,7 +94,11 @@ void Bhv::constructRules() {
     )
   });
 
-  Rule expression = comparation;
+  Rule expression = Sequence("expression", {
+    comparation,
+    Discard(Optional(Symbol(";")))
+  });
+  
 
   
   Rule list = Sequence("list", {

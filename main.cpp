@@ -24,12 +24,14 @@ Variable input(Datatable* data);
 Variable showdata(Datatable* data);
 Variable loadfile(Datatable* data);
 Variable printvar(Datatable* data);
+Variable printData(Datatable* data);
 
 int main(int argc, char** argv) {
 	std::string fileName = "test.bhv";
 	if (argc > 1) {
 		fileName = argv[1];
 	}
+  
   
 	Stream *stream = new FileStream(fileName);
 	Parser::Node *node = bhv.extractTree(stream);
@@ -38,12 +40,13 @@ int main(int argc, char** argv) {
       std::cout << node << "\n";
 		
     Datatable data;
-    data.set("type", &type);
-    data.set("rand", Variable(&rand, data.makeChild())); 
-    data.set("read", Variable(&input, data.makeChild()));
-    data.set("data", &showdata);
-    data.set("load", &loadfile);
-    data.set("print", &printvar);
+    data.setOrphanCFunc("type", &type);
+    data.setCFunc("rand", &rand);
+    data.setCFunc("read", &input);
+    data.setCFunc("data", &showdata);
+    data.setOrphanCFunc("load", &loadfile);
+    data.setOrphanCFunc("print", &printvar);
+    data.setOrphanCFunc("pdata", &printData);
 		
     clock_t start = clock();
 		Variable value = evaluator.evaluate(node, &data);
@@ -94,6 +97,7 @@ Variable rand(Datatable* data) {
   if (!data->has("seed")) {
     srand(time(NULL));
     data->setLocal("seed", (int)time(NULL));
+    std::cout << "setting seed " << data->get("seed").number << "\n";
   }
   return rand();
 }
@@ -145,7 +149,15 @@ Variable loadfile(Datatable* data){
       std::cerr << "couldn't open '" << filename.string << "'\n";
     }
   }
+  else {
+    std::cerr << "no file " << "\n";
+  }
   return Variable();
+}
+
+Variable printData(Datatable* data) {
+  std::cout << data->context->parent << "\n";
+  return true;
 }
 
 Variable printvar(Datatable* data) {

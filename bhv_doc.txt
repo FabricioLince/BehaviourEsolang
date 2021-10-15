@@ -9,29 +9,74 @@
 
 
 
-NUMBER + NUMBER = NUMBER # adds lhs and rhs
-STRING + _ = STRING # concats lhs and the string rep of rhs
-LIST + _ = LIST # appends rhs to lhs
-_ + _ = NIL # invalid 
+NUMBER + NUMBER = NUMBER --> adds lhs and rhs
+LIST + _ = LIST --> appends rhs to lhs
+STRING + _ = STRING --> concats lhs and the string rep of rhs
+_ + STRING = STRING --> concats the string rep of lhs and rhs
+_ + _ = NIL --> invalid 
 
-NUMBER - NUMBER = NUMBER # subtracts rhs from lhs
-STRING - NUMBER = STRING # remove the character in the rhs position from lhs
-STRING - STRING = STRING # remove the first occurrence of lhs from lhs
-LIST - NUMBER = LIST # remove the item in the rhs position from lhs
-_ - _ = NIL # invalid
+NUMBER - NUMBER = NUMBER --> subtracts rhs from lhs
+STRING - NUMBER = STRING --> remove the character in the rhs position from lhs
+STRING - STRING = STRING --> remove the first occurrence of lhs from lhs
+LIST - NUMBER = LIST --> remove the item in the rhs position from lhs
+_ - _ = NIL --> invalid
 
-NUMBER * NUMBER = NUMBER # multiplies rhs and lhs
-STRING * NUMBER = STRING # repeats lhs rhs times iff rhs is >= 0
-_ * _ = NIL # invalid
+NUMBER * NUMBER = NUMBER --> multiplies rhs and lhs
+NUMBER * NODE = LIST --> executes rhs lhs times, an incremental argument is passed each time, evaluates to a list with all the results
+BOOLEAN * -1 = BOOLEAN --> inverts the value of lhs
+STRING * NUMBER = STRING --> repeats lhs rhs times iff rhs is >= 0
+STRING * NODE = STRING --> executes rhs for each character of lhs, passing said character as argument each time, evaluates to a string with all the results concatenated
+LIST * LIST = LIST --> concatenates lhs and rhs
+LIST * NUMBER = LIST --> repeats lhs rhs times iff rhs is >= 0
+LIST * NODE = LIST  --> executes rhs for each item of lhs, passing said item as argument each time, evaluates to a list with all the results
+_ * _ = NIL --> invalid
 
-NUMBER / NUMBER = NUMBER # divides rhs by lhs
-_ / _ = NIL # invalid
+NUMBER / NUMBER = NUMBER --> divides rhs by lhs
+LIST / NUMBER = LIST --> clips lhs to a list with atmost rhs items, if rhs > 0 gets the first rhs items, if rhs < 0 gets the last rhs items
+STRING / NUMBER = STRING --> clips lhs to a string with atmost rhs characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters
+_ / _ = NIL --> invalid
 
-NUMBER % NUMBER = NUMBER # rhs modulo lhs, both are cast to integers
-STRING % NUMBER = STRING or NIL # gets the character in the rhs position from lhs
-LIST % NUMBER = _ # gets the item in the rhs position from lhs
-_ % _ = NIL # invalid
+NUMBER % NUMBER = NUMBER --> rhs modulo lhs, both are cast to integers
+STRING % NUMBER = STRING or NIL --> gets the character in the rhs position from lhs
+STRING % STRING = NUMBER or NIL --> finds the rhs position within lhs, nil if rhs isn't a substring of lhs
+LIST % NUMBER = _ --> gets the item in the rhs position from lhs
+_ % _ = NIL --> invalid
 
+
+# NUMBER = NUMBER --> cast the number to integer
+# BOOLEAN = NUMBER --> 1 if true else 0
+# STRING = NUMBER --> length of the string (amount of characters)
+# LIST = NUMBER --> length of the list (amount of items)
+# _ = 0
+
+~ BOOLEAN = BOOLEAN --> invert the boolean
+~ NIL = true
+~ _ = false
+
+  
+  expr :: comp ';'
+  comp :: addition ?(compop addition)
+  compop :: ['>=' '>' '<=' '<' '==' '~=' '|']
+  addition :: multiplication *(['+' '-'] multiplication)
+  multiplication :: value *(['*' '/' '%'] value)
+  value :: [signedvalue list integer string cmd name]
+  signedvalue :: ['-' '~' '#'] value
+  list :: '{' *expr '}'
+  
+  cmd :: [print assign execute sequence select optional gettree repeat]
+  print :: '@' ?'@' expr
+  assign :: name ['=' '+=' '-=' '*=' '/=' '%='] expr
+  execute :: [execname execexpr]
+  execname :: ?'!' name args
+  execexpr :: '!' expr ?args
+  args :: ':' expr *(',' expr)
+  sequence :: '(' +expr ')'
+  sequence :: '[' +expr ']'
+  optional :: '?' expr
+  gettree :: '&' ?'&' expr
+  repeat :: '\' expr
+  
+  main :: expr
 
 assign :: var '=' expr
 expr :: comp

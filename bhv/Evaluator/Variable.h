@@ -298,6 +298,7 @@ class Variable {
       if (type == STRING && other.type == STRING) {
         return string.compare(other.string) >= 0;
       }
+      
       return Variable();
     }
     Variable operator<=(const Variable& other) {
@@ -306,15 +307,32 @@ class Variable {
       if (type == STRING && other.type == STRING) {
         return string.compare(other.string) <= 0;
       }
+      if (type == LIST) {
+        int index = 0;
+        for (Variable v : list) {
+          if (v.equals(other)) {
+            return index;
+          }
+          index++;
+        }
+        return Variable();
+      }
       return Variable();
     }
     Variable operator==(const Variable& other) {
+      return equals(other);
+    }
+
+    Variable operator!=(const Variable& other) {
+      return !equals(other);
+    }
+    bool equals(const Variable& other) {
       if (type == NUMBER && other.type == NUMBER)
-        return Variable(number == other.number);
+        return (number == other.number);
       if (type == STRING && other.type == STRING)
-        return Variable(string == other.string);
+        return (string == other.string);
       if (type == BOOL && other.type == BOOL)
-        return Variable(number == other.number);
+        return (number == other.number);
       if (type == LIST && other.type == LIST) {
         if (list.size() != other.list.size())
           return false;
@@ -331,10 +349,7 @@ class Variable {
       if (type == CFUNC && other.type == CFUNC) {
         return cfunc == other.cfunc;
       }
-      return Variable(false);
-    }
-    Variable operator!=(const Variable& other) {
-      return !(operator==(other).toBool());
+      return (false);
     }
 
     int length() {
@@ -346,7 +361,7 @@ class Variable {
         case Variable::STRING:
           return string.size();
         case Variable::BOOL:
-          return 1;
+          return toBool()?1:0;
         case Variable::NODE:
           return 0;
         case Variable::LIST:
@@ -365,6 +380,7 @@ class Variable {
     VarList list;
     Variable (*cfunc)(Datatable*);
     
+    bool invert = false; // invert boolean result for node/cfunc ?
 
 };
 

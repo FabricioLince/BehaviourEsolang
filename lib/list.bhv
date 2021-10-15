@@ -1,11 +1,11 @@
   
   
   !&(
-    reduce = &(r=a%0 i=1 \~(i<#a r=f:r,b=a%i i+=1) r)
+    filter = &(r={} a*&&(!f r+=a) r)
     removeif = &(i=0 \~(i<#a [(pred:a%i a-=i) i+=1]) a)
     flatten = &(r=a%0 i=1 \~(i<#a j=0 \~(j<#(a%i) r+=a%i%j j+=1) i+=1) r)
-    max = &reduce:f=&[(a>b a) b]
-    min = &reduce:f=&[(a<b a) b]
+    max = &a > &[(a%0 > a%1 a%0) a%1]
+    min = &a > &[(a%0 < a%1 a%0) a%1]
     insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
     split = &[(i<0 {{} a}) (i>#a {a {}}) {a/i a/-(#a-i)}]
     sort = &[

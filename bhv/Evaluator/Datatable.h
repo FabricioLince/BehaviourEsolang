@@ -29,6 +29,17 @@ class Datatable {
       memory[varName] = value;
     }
     
+    /// set a cfunc with a child context
+    void setCFunc(std::string varName, Variable cfunc) {
+      cfunc.context = makeChild();
+      set(varName, cfunc); 
+    }
+    /// set a cfunc with an orphan context
+    void setOrphanCFunc(std::string varName, Variable cfunc) {
+      cfunc.context = makeOrphan();
+      set(varName, cfunc); 
+    }
+    
     /// get value for varName on the first parent to have it
     Variable get(std::string varName) {
       Datatable* p = firstParentToHave(varName);

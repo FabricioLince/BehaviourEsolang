@@ -33,7 +33,8 @@ class Evaluator {
     Variable list(Tree* tree, Datatable* data);
     Variable unary(Tree* tree, Datatable* data);
     Variable execute(Tree* tree, Datatable* data);
-    Variable executeChildTree(Node* tree, Datatable* data, Variable arg = Variable());
+    
+    
     void evaluateArgs(Tree* tree, Datatable* data, Datatable* childData);
     void evaluateArg(Node* arg, Datatable* data, Datatable* childData);
     
@@ -42,6 +43,11 @@ class Evaluator {
     Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
     Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);
     Variable applyCFuncOnList(Variable list, Variable cfunc, Datatable* data);
+    
+    Variable executeChildTree(Node* tree, Datatable* data);
+    Variable executeCFunc(Variable cfunc, Datatable* data);
+    Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable());
+    Variable justExecute(Variable nodeOrFunc, Datatable* data);
 
     Variable string(Node* node, Datatable* data) {
       std::string str = node->asToken()->string;

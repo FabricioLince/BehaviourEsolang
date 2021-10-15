@@ -22,7 +22,7 @@ class Bhv {
       Node* node = main->execute(stream);
        if (node) {
         node->asTree()->removeEmpty({"ops", "comp"});
-        node->asTree()->subsOnlyChild({"comparation", "addition", "multiplication", "comp", "parentheses", "arg", "sequence"});
+        node->asTree()->subsOnlyChild({"expression", "comparation", "addition", "multiplication", "comp", "parentheses", "arg", "sequence"});
        }
        return node;
     }
