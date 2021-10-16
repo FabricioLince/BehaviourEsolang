@@ -7,10 +7,12 @@
 class Datatable {
     std::vector<Datatable*> children;
     std::vector<Datatable*> orphans;
+    
   public:
     std::map<std::string, Variable> memory;
     Datatable* parent = NULL;
     Datatable* context = NULL; // execution context, for when a tree is executed
+    bool isOrphan = false;
     
     /// set value on the first parent to have varname, if none saves locally
     void set(std::string varName, Variable value) {
@@ -59,7 +61,7 @@ class Datatable {
     
     /// does varName exists locally?
     bool has(std::string varName) {
-      return memory.count(varName) > 0;
+      return memory.count(varName) > 0 && memory[varName].type != Variable::NIL;
     }
     
     /// search in the ancestry which Datatable is the first to contain varName, from here to global
@@ -94,6 +96,7 @@ class Datatable {
     Datatable* makeOrphan() {
       Datatable* orphan = new Datatable();
       orphans.push_back(orphan);
+      orphan->isOrphan = true;
       return orphan;
     }
     
@@ -110,6 +113,10 @@ class Datatable {
     
     void removeLocal(std::string varName) {
       memory.erase(varName);
+    }
+    
+    void clear() {
+      memory.clear();
     }
     
     ~Datatable() {

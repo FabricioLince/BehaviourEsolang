@@ -51,29 +51,30 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
   //std::cout << tree << "\n";
   
   Variable bt = evaluate(tree->children.at(0), data);
-  
-  if (bt.type == Variable::STRING) {
-    return bt.string.size() > 0;
-  }
-  else if (bt.type == Variable::NUMBER) {
-    return int(bt.number) != 0;
-  }
-  else if (bt.type == Variable::LIST) {
-    return bt.list.size() > 0;
-  }
-  if (bt.type == Variable::NODE or bt.type == Variable::CFUNC) {
-    Datatable* childData = bt.context;
-    if (childData == NULL) {
-      childData = data->makeOrphan();
+  switch (bt.type) {
+    case Variable::STRING:
+      return bt.string.size() > 0;
+      break;
+    case Variable::NUMBER:
+      return int(bt.number) != 0;
+      break;
+    case Variable::LIST:
+      return bt.list.size() > 0;
+      break;
+    case Variable::NODE:
+    case Variable::CFUNC:
+    {
+      Datatable* childData = bt.context;
+      childData->context = data;
+      //std::cout << "childData:\n" << childData << "\n";
+      
+      evaluateArgs(tree, data, childData);
+      
+      Variable result = justExecute(bt, childData);
+      
+      childData->context = NULL;
+      return result;
     }
-    childData->context = data;
-    
-    evaluateArgs(tree, data, childData);
-    
-    Variable result = justExecute(bt, childData);
-    
-    childData->context = NULL;
-    return result;
   }
   
   return bt.toBool();
@@ -114,6 +115,9 @@ Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
   if (nodeOrFunc.type == Variable::CFUNC) {
     r = executeCFunc(nodeOrFunc, data);
   }
+  if (data->isOrphan) {
+      data->clear();
+    }
   if (nodeOrFunc.invert) {
     return !r.toBool();
   }
