@@ -5,6 +5,8 @@
 #include <time.h>
 #include <iostream>
 
+#include "def_lib.cpp"
+
 Bhv bhv;
 Evaluator evaluator;
 std::vector<Node*> nodesLoaded; 
@@ -17,6 +19,8 @@ bool anyarg(int argc, char** argv, const char* arg) {
   }
   return false;
 }
+
+
 
 Variable type(Datatable* data);
 Variable rand(Datatable* data);
@@ -47,6 +51,8 @@ int main(int argc, char** argv) {
     data.setOrphanCFunc("load", &loadfile);
     data.setOrphanCFunc("print", &printvar);
     data.setOrphanCFunc("pdata", &printData);
+    
+    addToDatatable(&data);
 		
     clock_t start = clock();
 		Variable value = evaluator.evaluate(node, &data);

@@ -5,6 +5,8 @@
 #include <time.h>
 #include <iostream>
 
+#include "def_lib.cpp"
+
 bool anyarg(int argc, char** argv, const char* arg) {
   for (int i = 0; i < argc; ++i) {
     if (strcmp(arg, argv[i]) == 0) {
@@ -47,12 +49,14 @@ int main(int argc, char** argv) {
   std::cout << "Behaviour Runtime environment v0.1.9\n\n" ;
   
   Datatable data;
-  data.set("type", &type);
-  data.set("rand", Variable(&rand, data.makeChild())); 
-  data.set("read", Variable(&input, data.makeChild()));
-  data.set("data", &showdata);
-  data.set("load", &loadfile);
-  data.set("print", &printvar);
+  data.setOrphanCFunc("type", &type);
+  data.setCFunc("rand", &rand);
+  data.setCFunc("read", &input);
+  data.setCFunc("data", &showdata);
+  data.setOrphanCFunc("load", &loadfile);
+  data.setOrphanCFunc("print", &printvar);
+  
+  addToDatatable(&data);
   
   while (true) {
   
@@ -158,12 +162,17 @@ Variable loadfile(Datatable* data) {
     file.open(filename.string.c_str());
     if (file.is_open()) {
       file.close();
-      Parser::Stream* stream = new Parser::FileStream(filename.string);
-      Node* node = bhv.extractTree(stream);
-      delete stream;
-      if (node) {
-        nodesLoaded.push_back(node);
-        return evaluator.evaluate(node, data);
+      try {
+        Parser::Stream* stream = new Parser::FileStream(filename.string);
+        Node* node = bhv.extractTree(stream);
+        delete stream;
+        if (node) {
+          nodesLoaded.push_back(node);
+          return evaluator.evaluate(node, data);
+        }
+      }
+      catch (std::exception& e) {
+        std::cerr << e.what() << "\n";
       }
     }
     else {

@@ -1,7 +1,7 @@
 
   !&(
     isprime = &(a>1 i=1 \(i+=1 a%i==0) a==i)
-    primedivs = &(l={} d=2 \([(a%d==0 l+=d a/=d) d+=1] a==1) l)
+    primedivs = &(a>1 l={} d=2 \([(a%d==0 l+=d a/=d) d+=1] a==1) l)
     sqrt = &(d=0 e=1 \( \(d+=1/e d*d>a) d-=1/e e*=10 a-d*d<0.0000001) d)
     pow = &(r=1 \~(b>0 r*=a b-=1) r)
     

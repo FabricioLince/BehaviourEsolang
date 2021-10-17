@@ -103,12 +103,69 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
         else if (value.type == Variable::LIST && other.type == Variable::CFUNC) {
           value = applyCFuncOnList(value, other, data);
         }
+        else if (value.type == Variable::STRING && other.type == Variable::CFUNC) {
+          value = applyTreeOnString(value, other, data);
+        }
         else {
           value = value * other;
         }
       }
       else if (symbol == "/") {
-        value = value / other;
+        if (value.type == Variable::STRING) {
+          switch (other.type) {
+            case Variable::NODE:
+            case Variable::CFUNC:
+            {
+              Variable::VarList list = Variable::VarList();
+              std::string item = "";
+              for (int i = 0; i < value.string.size(); ++i) {
+                std::string c = std::string(1, value.string.at(i));
+                Variable r = executeAny(other, data, c);
+                if (r.toBool()) {
+                  if (item.size() > 0) {
+                    list.push_back(item);
+                    item = "";
+                  }
+                }
+                else {
+                  item += c;
+                }
+              }
+              if (item.size() > 0) {
+                list.push_back(item);
+              }
+              value = list;
+              break;
+            }
+            case Variable::STRING:
+            {
+              Variable::VarList list = Variable::VarList();
+              std::string item = "";
+              for (int i = 0; i < value.string.size(); ++i) {
+                std::string c = std::string(1, value.string.at(i));
+                if (c == other.string) {
+                  if (item.size() > 0) {
+                    list.push_back(item);
+                    item = "";
+                  }
+                }
+                else {
+                  item += c;
+                }
+              }
+              if (item.size() > 0) {
+                list.push_back(item);
+              }
+              value = list;
+              break;
+            }
+            default:
+              value = value / other;
+          }
+        }
+        else {
+          value = value / other;
+        }
       }
       else if (symbol == "%") {
         value = value % other;
@@ -199,12 +256,12 @@ Variable Evaluator::applyTreeOnList(Variable list, Variable tree, Datatable* dat
 
 Variable Evaluator::applyTreeOnString(Variable string, Variable tree, Datatable* data) {
   //std::cout << "applying " << tree << " on " << list << "\n";
-  Variable r = "";
+  Variable::VarList list;
   //std::cout << r.type << "\n";
   for (int i = 0; i < string.string.size(); ++i) {
-    r.string += executeAny(tree, data, std::string(1, string.string.at(i))).toString();
+    list.push_back(executeAny(tree, data, std::string(1, string.string.at(i))));
   }
-  return r;
+  return list;
 }
 
 Variable Evaluator::applyCFuncOnList(Variable list, Variable cfunc, Datatable* data) {

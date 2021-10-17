@@ -12,11 +12,12 @@
       (#a<2 a)
       (
         pivot = a%0
-        l = r = {}
-        (i=1 \~(i<#a [(a%i<pivot l+=a%i) r+=a%i] i+=1))
-        (sort:l)*{pivot}*(sort:r)
+        c = l = r = {}
+        a*&&[(a==pivot c+=a) (a<pivot l+=a) r+=a]
+        (sort:l) * c * (sort:r)
       )
     ]
+    unique = &{{}}*a > &[(a<=b a) a+b]
     
-    &&a
+    &&(?r=a ?a=() r)
   )
