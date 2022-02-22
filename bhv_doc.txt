@@ -1,12 +1,14 @@
 
-// if only one positional argument it will be set to 'a'
-!behaviour:12
-!behaviour:a=12
 
-// if there's more than one positional argument they will populate the list 'a'
+
+
+// positional arguments populate the variables 'a', 'b', 'c', 'd' and 'e' respectively
 !behaviour:1,2,3
-!behaviour:a={1 2 3}
+!behaviour:a=1,b=2,c=3
 
+
+
+Operators:
 
 
 NUMBER + NUMBER = NUMBER --> adds lhs and rhs
@@ -25,15 +27,17 @@ NUMBER * NUMBER = NUMBER --> multiplies rhs and lhs
 NUMBER * NODE = LIST --> executes rhs lhs times, an incremental argument is passed each time, evaluates to a list with all the results
 BOOLEAN * -1 = BOOLEAN --> inverts the value of lhs
 STRING * NUMBER = STRING --> repeats lhs rhs times iff rhs is >= 0
-STRING * NODE = STRING --> executes rhs for each character of lhs, passing said character as argument each time, evaluates to a string with all the results concatenated
+STRING * NODE = LIST --> executes rhs for each character of lhs, passing said character as argument each time, evaluates to a list with all the results except when said result is NIL (so it can be used as a filter)
 LIST * LIST = LIST --> concatenates lhs and rhs
 LIST * NUMBER = LIST --> repeats lhs rhs times iff rhs is >= 0
-LIST * NODE = LIST  --> executes rhs for each item of lhs, passing said item as argument each time, evaluates to a list with all the results
+LIST * NODE = LIST  --> executes rhs for each item of lhs, passing said item as argument each time, evaluates to a list with all the results except when said result is NIL (so it can be used as a filter)
 _ * _ = NIL --> invalid
 
 NUMBER / NUMBER = NUMBER --> divides rhs by lhs
 LIST / NUMBER = LIST --> clips lhs to a list with atmost rhs items, if rhs > 0 gets the first rhs items, if rhs < 0 gets the last rhs items
 STRING / NUMBER = STRING --> clips lhs to a string with atmost rhs characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters
+STRING / STRING = LIST --> splits lhs by rhs, evaluates to a list with resulting items
+STRING / NODE = LIST --> splits lhs using rhs as divisor, evaluates to a list with resulting items
 _ / _ = NIL --> invalid
 
 NUMBER % NUMBER = NUMBER --> rhs modulo lhs, both are cast to integers
@@ -42,6 +46,31 @@ STRING % STRING = NUMBER or NIL --> finds the rhs position within lhs, nil if rh
 LIST % NUMBER = _ --> gets the item in the rhs position from lhs
 _ % _ = NIL --> invalid
 
+NUMBER < NUMBER = BOOLEAN --> compares the values of lhs ad rhs with <
+STRING < STRING = BOOLEAN --> compares lhs and rhs lexicographically by <
+LIST < NODE = NUMBER or NIL -> finds the index of the first item of lhs that returns truthy when passed to rhs
+_ < _ = NIL --> invalid
+
+NUMBER <= NUMBER = BOOLEAN --> compares the values of lhs ad rhs with <=
+STRING <= STRING = BOOLEAN --> compares lhs and rhs lexicographically by <=
+LIST <= _ = NUMBER or NIL -> finds the index of the first occurrence of rhs in lhs 
+_ <= _ = NIL --> invalid
+
+NUMBER > NUMBER = BOOLEAN --> compares the values of lhs ad rhs with >
+STRING > STRING = BOOLEAN --> compares lhs and rhs lexicographically by >
+LIST > NODE = _ --> reduce operator, NIL if lhs is empty, the first item of lhs if lhs only has one item, else loops through the list applying rhs with the result of the last iteration and the current item as arguments
+_ < _ = NIL --> invalid
+
+NUMBER >= NUMBER = BOOLEAN --> compares the values of lhs ad rhs with >=
+STRING >= STRING = BOOLEAN --> compares lhs and rhs lexicographically by >=
+_ >= _ = NIL --> invalid
+
+NUMBER == NUMBER = BOOLEAN --> compares the values of lhs ad rhs with ==
+BOOLEAN == BOOLEAN = BOOLEAN -> compares the values of lhs ad rhs with ==
+STRING == STRING = BOOLEAN --> compares the values of lhs ad rhs with ==
+LIST == LIST = BOOLEAN --> compares each value of lhs with the corresponding index of rhs with ==, true only if every index returns true
+NODE == NODE = BOOLEAN --> compares the values of lhs ad rhs with ==
+_ == _ = false
 
 # NUMBER = NUMBER --> cast the number to integer
 # BOOLEAN = NUMBER --> 1 if true else 0

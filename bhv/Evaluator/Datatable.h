@@ -127,6 +127,7 @@ class Datatable {
         delete orphan;
       }
       children.clear();
+      orphans.clear();      
     }
     
     void printFamily() {
@@ -142,19 +143,21 @@ class Datatable {
     
 };
 
-std::ostream& operator<<(std::ostream& out, Datatable& data) {
-  for (std::map<std::string, Variable>::iterator it = data.memory.begin(); it != data.memory.end(); ++it) {
-    out << it->first << " = " << it->second << "\n";
-  }
 
+std::ostream& operator<<(std::ostream& out, Datatable* data) {
+  if (data->memory.size() == 0) {
+    return out << "Empty Datatable\n";
+  }
+  else {
+    for (std::map<std::string, Variable>::iterator it = data->memory.begin(); it != data->memory.end(); ++it) {
+      out << it->first << " = " << it->second << "\n";
+    }
+  }
   return out;
 }
 
-std::ostream& operator<<(std::ostream& out, Datatable* data) {
-  for (std::map<std::string, Variable>::iterator it = data->memory.begin(); it != data->memory.end(); ++it) {
-    out << it->first << " = " << it->second << "\n";
-  }
-  return out;
+std::ostream& operator<<(std::ostream& out, Datatable& data) {
+  return out << &data;
 }
 
 #endif

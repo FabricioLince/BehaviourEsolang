@@ -7,8 +7,6 @@ void Evaluator::evaluateArg(Node* arg, Datatable* data, Datatable* childData) {
   //std::cout << arg << "\n";
   if (arg->name == "assign") {
     assign(arg, data, childData);
-    //std::cout << "arg data:\n" << childData << "\n";
-    //std::cout << arg->asTree()->getToken(0)->string << " = " << value << "\n";
   }
   else {
     Variable value = evaluate(arg, data);
@@ -36,7 +34,7 @@ void Evaluator::evaluateArgs(Tree* tree, Datatable* data, Datatable* childData) 
     Variable argList = childData->getLocal("_a");
     if (argList.type == Variable::LIST) {
       std::vector<std::string> names = std::vector<std::string>({"a", "b", "c", "d", "e"});
-      for (int i = 0; i < argList.list.size(); ++i) {
+      for (int i = 0; i < std::min(names.size(), argList.list.size()); ++i) {
         childData->setLocal(names.at(i), argList.list.at(i));
       }
     }
@@ -65,6 +63,11 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
     case Variable::CFUNC:
     {
       Datatable* childData = bt.context;
+      
+      if (bt.context == NULL) {
+        childData = new Datatable(); /// create new Datatable for this execution
+      }
+      
       childData->context = data;
       //std::cout << "childData:\n" << childData << "\n";
       
@@ -73,6 +76,12 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       Variable result = justExecute(bt, childData);
       
       childData->context = NULL;
+      
+      /// deleting newly created datatable
+      if (bt.context == NULL) {
+        delete childData;
+      }
+      
       return result;
     }
   }
@@ -92,7 +101,7 @@ Variable Evaluator::executeCFunc(Variable cfunc, Datatable* data) {
 Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable arg, Variable b) {
   Datatable* childData = nodeOrFunc.context;
   if (childData == NULL) {
-    std::cout << "No context detected for " << nodeOrFunc.toString() << "\n";
+    //std::cout << "No context detected for " << nodeOrFunc.toString() << "\n";
     childData = data->makeOrphan();
   }
   
@@ -112,56 +121,25 @@ Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
   if (nodeOrFunc.type == Variable::NODE) {
     r = executeChildTree(nodeOrFunc.node, data);
   }
-  if (nodeOrFunc.type == Variable::CFUNC) {
+  else if (nodeOrFunc.type == Variable::CFUNC) {
     r = executeCFunc(nodeOrFunc, data);
   }
-  if (data->isOrphan) {
-      data->clear();
-    }
   if (nodeOrFunc.invert) {
     return !r.toBool();
   }
   return r;
 }
 
-Variable Evaluator::loadstring(Variable str, Datatable* data) {
-  //std::cout <<"loading "<<str <<"\n";
-  std::ifstream file;
-  file.open(str.string.c_str());
-  if (file.is_open()) {
-    Parser::Stream* stream = new Parser::FileStream(str.string);
-    Bhv bhv;
-    Node* node = bhv.extractTree(stream);
-    delete stream;
-    if (node) {
-      return evaluate(node, data);
-    }
-  }
-  else {
-    Parser::Stream* stream = new Parser::StringStream(str.string+"  ");
-    Bhv bhv;
-    Node* node = NULL;
-    try {
-      node = bhv.extractTree(stream);
-    }
-    catch (Parser::ParsingError e) {
-    }
-    delete stream;
-    if (node) {
-      return evaluate(node, data);
-    }
-  }
-  return false;
-}
-
 Variable Evaluator::getTree(Tree* tree, Datatable* data) {
   //std::cout << tree << "\n";
   Datatable* treeData = NULL;
   if (tree->subTree(0)->children.size() > 0) {
+    // not orphan node
     treeData = data->makeChild();
   }
   else {
-    treeData = data->makeOrphan();
+    // is orphan node
+    treeData = NULL;
   }
   return Variable(tree->children.at(1), treeData);
 }

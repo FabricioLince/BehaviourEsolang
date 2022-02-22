@@ -1,12 +1,47 @@
+
+
+  // calculate the factorial of a
+  fact = &[(a<2;1)a*fact:a-1]
+  @@"factorial of 4 = " + 
+  fact:4
+
+  // calculate the aº fibonacci number
+  fib = &[
+    (a < 2; 1)
+    (fib:a-1)+(fib:a-2)
+  ]
   
+  @@"Those are the first 6 fibonacci numbers: " +
   
-  int:"a"
-  
+  6*fib // fill an array with the first 6 fibonacci numbers
   
   $$
   
+  // fill an array with the fibonacci numbers up to a
+  fib = &(
+    i = 0
+    j = 1
+    a*&&(
+      k = i
+      i += j
+      j = k
+    )
+  )
+  
+  fib:11
+  
+  ispair = &a%2==0
+  
+  numbers = 10*&a
+  numbers * &[(!ispair a)]
+  
+  $$
+  
+  max = &[(a>b a) b]
+  min = &[(a<b a) b]
+  add = &a+b
+  
   s = "1+(3*5)+((5)-1+1)"
-  s = ""
   
   maxDepth = &(
     count = 0
@@ -25,15 +60,28 @@
     ]
   )
   
-  maxDepth:s
+  scan = && (&&
+    [
+      (
+        (type:a) == "list"
+        a+(f:a%-1,b)
+      )
+      {!f}
+    ]
+  )
+  
+  md2 = &a*&["))("%a-1 0]
+  
+  ((md2:s) > scan:f=add ) > max
+  
+  
+  
   
   $
 
   
   list = load:"lib/list.bhv"
   
-  max = &[(a>b a) b]
-  min = &[(a<b a) b]
   
   
   gcd = &(

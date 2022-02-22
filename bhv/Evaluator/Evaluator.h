@@ -38,7 +38,6 @@ class Evaluator {
     void evaluateArgs(Tree* tree, Datatable* data, Datatable* childData);
     void evaluateArg(Node* arg, Datatable* data, Datatable* childData);
     
-    Variable loadstring(Variable str, Datatable* data);
     Variable getTree(Tree* tree, Datatable* data);
     Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
     Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);

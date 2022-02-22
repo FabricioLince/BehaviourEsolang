@@ -3,12 +3,12 @@
     upalpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     lowalpha= "abcdefghijklmnopqrstuvwxyz"
     
-    toupper = &a*&[upalpha%(lowalpha%a) a]
-    tolower = &a*&[lowalpha%(upalpha%a) a]
+    toupper = &(a*&[upalpha%(lowalpha%a) a])>&a+b
+    tolower = &(a*&[lowalpha%(upalpha%a) a])>&a+b
     substr = &(s="" (i=index \(s+=a%i i+=1 i-index>=size) ) s)
-    split = &(r={}\~(p=a%div r+=a/p a/=p+#div-#a)r+a)
+    
     format = &(i=0 r="" \~(p=str%"_" r+=str/p+a%i i+=1 str/=p+1-#str) r)
     
-    tocharlist = &(l={} \~(#l<#a l+=a%#l) l)
+    
     &&a
   )

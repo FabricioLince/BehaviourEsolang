@@ -19,5 +19,11 @@
     ]
     unique = &{{}}*a > &[(a<=b a) a+b]
     
+    find = &a<f
+    any = &~~(a<f)
+    all = &~(a<~f)
+    
+    count = &((a*f) > &#a+#b)
+    
     &&(?r=a ?a=() r)
   )

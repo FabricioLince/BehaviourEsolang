@@ -188,7 +188,7 @@ void Bhv::constructRules() {
   Rule getTree = Sequence("getTree", {
     Discard(Symbol("&")),
     Optional(Symbol("&")),
-    Checkpoint("expression expected"),
+    Checkpoint("expression expected after $token"),
     expression
   });
   cmd->rules.push_back(getTree);

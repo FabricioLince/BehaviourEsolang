@@ -246,12 +246,14 @@ Variable Evaluator::comparation(Node* node, Datatable* data) {
 
 Variable Evaluator::applyTreeOnList(Variable list, Variable tree, Datatable* data) {
   //std::cout << "applying " << tree << " on " << list << "\n";
-  Variable r = (Variable::VarList());
+  Variable rlist = (Variable::VarList());
   //std::cout << r.type << "\n";
   for (Variable v : list.list) {
-    r.list.push_back(executeAny(tree, data, v));
+    Variable r = executeAny(tree, data, v);
+    if (r.type != Variable::NIL) 
+      rlist.list.push_back(r);
   }
-  return r;
+  return rlist;
 }
 
 Variable Evaluator::applyTreeOnString(Variable string, Variable tree, Datatable* data) {
@@ -270,7 +272,8 @@ Variable Evaluator::applyCFuncOnList(Variable list, Variable cfunc, Datatable* d
   
   for (Variable v : list.list) {
     Variable r = executeAny(cfunc, data, v);
-    rlist.list.push_back(r);
+    if (r.type != Variable::NIL) 
+      rlist.list.push_back(r);
   }
   
   return rlist;

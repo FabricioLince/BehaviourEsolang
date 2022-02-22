@@ -1,11 +1,18 @@
 
+      
+
+
+
     ds = &(i=0\~(c=a%i@c+c i+=1))
     ds = &(i=0\~(a%i@a%i*2i+=1))
     ds = &(s=a#s*&@s%a*2)
-    ds = &a*&a*2
+    ds = &(a*&a*2)>&a+b
 
     ds:"Hello World!"
-;
+    
+    
+
+;$#
 
 
 

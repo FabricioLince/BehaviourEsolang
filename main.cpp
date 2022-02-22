@@ -132,7 +132,7 @@ Variable input(Datatable* data) {
   return Variable();
 }
 Variable showdata(Datatable* data) {
-  std::cout << "Data:\n" << data->global() << "\n";
+  std::cout << "Data:\n" << data->context << "\n";
   return true;
 }
 

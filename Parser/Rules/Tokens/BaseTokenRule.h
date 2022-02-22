@@ -10,6 +10,22 @@ class TokenRule : public BaseRule {
     void ridWhiteSpaces(Stream* stream) {
       while (stream->hasNext() && isspace(stream->next())) {}
       stream->setPos(stream->getPos() - 1);
+      
+      ridComments(stream);
+      
+      while (stream->hasNext() && isspace(stream->next())) {}
+      stream->setPos(stream->getPos() - 1);
+    }
+    
+    void ridComments(Stream* stream) {
+      if (stream->get() == '/') {
+        stream->next();
+        if (stream->get() == '/') {
+          while (stream->hasNext() && stream->next() != '\n') {}
+        }
+        stream->setPos(stream->getPos() - 1);
+        
+      }
     }
 };
 
