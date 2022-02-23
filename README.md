@@ -10,6 +10,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [BOOLEAN](#boolean)
   - [NUMBER](#number)
   - [STRING](#string)
+  - [LIST](#list)
 - [Control Nodes](#control-nodes)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
@@ -138,6 +139,47 @@ The Length operator `#` can be used to evaluate the amount of characters in the 
 It can be evaluated to BOOLEAN False with Negator `~` before it.
 
 The Execute `!` can be use to test a non-empty STRING, evaluating to BOOLEAN False on a empty STRING, BOOLEAN True otherwise.
+
+### LIST
+
+A LIST is a collection of values stored consecutively, like an array on most languages. 
+
+It is defined by a list of Expressions surrounded by curly brackets `{}`
+
+The following operations can be performed on LIST values:
+
+- Append `+`
+  - Put a value of any type in the end of the LIST.
+- Remove `-`
+  - Used with a NUMBER value, remove the item in the position passed.
+- Multiplication `*`
+  - When used with another LIST, concatenate the two LIST values;
+  - When used with a NUMBER value, repeat the list the amount passed if the amount is >= 0;
+  - When used with a NODE value, executes the NODE for each item of the LIST, passing said item as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
+- Division `/`
+  - Used with a NUMBER value, clips the LIST to a list with atmost NUMBER items, if number > 0 gets the first number items, if number < 0 gets the last number items.
+- Index `%`
+  - used with a NUMBER value, gets the item in the number position from the list, NIL if the position is out of range.
+- Find `<`
+  - used with a NODE value, find the first index of the list that evaluates truthy when passed to the NODE. NIL if no item evaluated truthy.
+- Find Equal `<=`
+  - find the index of the first occurence of rhs in the LIST. NIL if it couldn't find the item.
+- Reduce `>`
+  - Used with a NODE value;
+  - if the LIST is empty evaluates to NIL;
+  - if lhs only has one item, evaluates to the first item;
+  - otherwise loops through the list applying the NODE with the result of the last iteration and the current item as arguments
+- Comparison `==`, `~=`
+  - Used with another LIST, compares each value of lhs with the corresponding index of rhs:
+    - for `==`, true only if every index are equals on both;
+    - for `~=`, true if any index is differente on both.
+
+The Length operator `#` can be used to evaluate the amount of items in the LIST.
+
+It can be evaluated to BOOLEAN False with Negator `~` before it.
+
+The Execute `!` can be use to test a non-empty LIST, evaluating to BOOLEAN False on a empty LIST, BOOLEAN True otherwise.
+
 
 ## Control Nodes
 
