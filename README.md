@@ -58,11 +58,11 @@ this evaluation will stop if:
 - A child Node is evaluated falsy,
 - Or all children were evaluated truthy.
 
-Then the Sequencer Node is evaluted to the same value of its last child Node value.
+The Sequencer Node assumes the value of its last child Node.
 
 In another words, the Sequencer will be succesfull if all of its children are evaluated successfully, in order.
 
-For example, the following Sequencer will evaluate each addition and finally be evaluated to the value of the final addition:
+For example, the following Sequencer will evaluate each addition and finally assume the value of the final addition:
 
 `seq = (2+3; 5+9; 6+13)`
 
@@ -75,7 +75,7 @@ An empty Sequencer will be evaluated to NIL.
 The Selector is denoted by a list of zero or more Expressions inside square brackets `[]`.
 
 When evaluated the Selector will evaluate each of its _child Nodes_ in order,
-this evaluation will stop on the first _child Node_ that is not evaluated falsy.
+this evaluation will stop on the first _child Node_ that is evaluated truthy.
 The Selector assumes the value of the first child that evaluated truthy, or NIL if none of them did.
 
 In another words, the Selector "selects" the value of the first child that evaluated succesfully.
@@ -95,7 +95,7 @@ An empty Selector will be evaluated to NIL.
 The Repeater is denoted by the back-slash `\` followed by a single Expression.
 
 When evaluated the Repeater will evaluate its child node repeatedly until the child evaluates truthy.
-When it happens the Repeater stops and assumes the value BOOLEAN True.
+When this happens the Repeater stops and assumes the value BOOLEAN True.
 
 For example, the following script will initialize a Variable `i` with the value `0`, then repeat a Sequencer that increments `i` by `1` and tests if `i` is bigger than `9`.
 It will stop when `i` equals `10`:
