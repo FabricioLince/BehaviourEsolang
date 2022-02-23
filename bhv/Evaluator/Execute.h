@@ -121,6 +121,9 @@ Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
   else if (nodeOrFunc.type == Variable::CFUNC) {
     r = executeCFunc(nodeOrFunc, data);
   }
+  if (data->isOrphan) {
+    data->clear();
+  }
   if (nodeOrFunc.invert) {
     return !r.toBool();
   }

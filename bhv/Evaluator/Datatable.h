@@ -27,7 +27,6 @@ class Datatable {
     
     /// set value locally for varName
     void setLocal(std::string varName, Variable value) {
-      //std::cout << varName << " being set on " << std::hex << static_cast<void*>(this) << std::dec << "\n";
       memory[varName] = value;
     }
     
