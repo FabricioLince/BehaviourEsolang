@@ -115,7 +115,7 @@ With Node Referencing you can put a Node inside a Variable to be evaluated later
 
 To extract the Node from an Expression use the ampersand `&` followed by a single Expression.
 
-For example, the following script will create a reference for a Node that sum the values of `a` and `b`:
+For example, the following script will create a reference for a Node that adds the values of `a` and `b`:
 
 `sum = &a+b`
 
@@ -123,7 +123,7 @@ To then evaluate the referenced node use the exclamation point `!` followed by t
 
 `result = !sum`
 
-Note that the Referenced Node expects a value for the Variable `a` and `b`, so we need to define before them before evaluating the Node:
+Note that the Referenced Node expects a value for the Variable `a` and `b`, so we need to define them before evaluating the Node:
 
 ```
 a = 2
