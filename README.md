@@ -9,6 +9,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [NIL](#nil)
   - [BOOLEAN](#boolean)
   - [NUMBER](#number)
+  - [STRING](#string)
 - [Control Nodes](#control-nodes)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
@@ -109,6 +110,34 @@ The NUMBER can be converted to integer (i.e. discard the decimal part) using Len
 It can be evaluated to BOOLEAN False with Negator `~` before it.
 
 It can be evaluated as non-zero with Execute `!` before it, this evaluates to BOOLEAN False when zero, BOOLEAN True otherwise.
+
+### STRING
+
+String of characters. Defined by characters surrounded by double quotes `"`.
+
+The following operations can be performed on STRING values:
+- Concatenation `+`
+  - Concatenate the lhs STRING with the string representation of the rhs value.
+- Subtraction `-`
+  - Remove the first occurence of rhs from lhs
+- Multiplication `*`
+  - When used with a NUMBER value, repeat the STRING value that number of times;
+  - When used with a NODE value, executes the NODE for each character of the STRING, passing said character as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
+- Division `/`
+  - When used with a NUMBER value, clips the string to a string with atmost the number of characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters;
+  - When used with a STRING value, splits lhs by rhs, evaluates to a LIST with the resulting items;
+  - When used with a NODE value, splits the string using the node as divisor, evaluates to a LIST with resulting items.
+- Finding `%`
+  - When used with a NUMBER value, gets the character in the position from the string, NIL if the position is out of range;
+  - When used with a STRING value, finds the rhs position within lhs, NIL if rhs isn't a substring of lhs.
+- Comparison `>`, `<`, `>=`, `<=`, `==`, `~=`
+  - Compares lexicographically the two STRING values.
+
+The Length operator `#` can be used to evaluate the amount of characters in the STRING.
+
+It can be evaluated to BOOLEAN False with Negator `~` before it.
+
+The Execute `!` can be use to test a non-empty STRING, evaluating to BOOLEAN False on a empty STRING, BOOLEAN True otherwise.
 
 ## Control Nodes
 
