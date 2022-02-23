@@ -1,12 +1,71 @@
   
-  !data
-  name = "Lince"
+  tower = {1 2 3}
   
-  fact = &[(a<2;1)a*fact:a-1]
-  @@"factorial of 5 = " + 
-  fact:5
+  istower = &![
+    (#a < 3)
+    (
+      t=a
+      (#a-2)*&(v=t%(a+1) [v>t%a; v>t%(a+2)])
+    ) > &(a b)
+  ]
   
-  fact:5
+  aistower = &[
+    (
+      i=1
+      \~(
+        [
+          a%i > a%(i+1)
+          a%i > a%(i-1)
+        ]
+        i += 1
+        i < #a-1
+      )
+      i >= #a-1
+    )
+  ]
+  
+  istower = &![#a<3(t=a(#a-2)*&(v=t%(a+1)[v>t%a;v>t%(a+2)]))>&(a;b)]
+  
+  t=&(i=1\~([a%i>a%(i+1)a%i>a%(i-1)]i+=1i<#a-1)i>#a-2)
+  
+  correct = istower
+  
+  aistower = &(
+    i=1 // start on the index 1
+    // repeat the following sequence until failure
+    \~( 
+      // either the ith member is bigger than the previous or bigger than the next
+      [ 
+        a%i > a%(i+1)
+        a%i > a%(i-1)
+      ]
+      // increment index and check if it still is less than n-1
+      i += 1
+      i < #a-1
+    )
+    // is a tower if the index stopped incrementing on the last possible index (i.e. passed all the checks)
+    i > #a-2
+  )
+  
+  istower = &{a>&a*(a-b) a>&a*(b-a)}
+  
+  test = &(
+    @@""+a + ": " + (istower:a) + " -> " + correct:a
+   )
+  
+  test:{1}
+  test:{1 2}
+  test:{1 2 3}
+  test:{1 3 2}
+  test:{3 1 2}
+  test:{2 1 3}
+  test:{2 3 1}
+  test:{1 2 3 4}
+  test:{3 4 2 1}
+  test:{4 3 1 2}
+  test:{4 1 2 3}
+  test:{3 4 1 5 2}
+  test:{4 3 1 2 5}
   
 $$
 

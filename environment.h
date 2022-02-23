@@ -30,6 +30,14 @@ class Environment {
     return sn;
   }
   
+  void showHelp() {
+    std::cout << "!quit \n\tExits the Runtime Environment\n\n";
+    std::cout << "!doc \n\tOpen the documentation at 'https://github.com/FabricioLince/BehaviourExolang/blob/main/README.md'\n\n";
+    std::cout << "!load:filepath \n\tLoad and Evaluate the file denoted by filepath\n\n";
+    std::cout << "!type:var \n\tReturns a string representation of the data type for var\n\n";
+    std::cout << "!data \n\tPrints the Datatable at the current context\n\n";
+  }
+  
   public:
     
     Environment() {
@@ -60,7 +68,8 @@ class Environment {
     }
   
     void console() {
-      std::cout << "Behaviour Runtime environment v0.1.10\n\n" ;
+      std::cout << "Behaviour Runtime environment v0.1.10\n" ;
+      std::cout << "type !help for help\n\n";
       
       while (true) {
   
@@ -72,6 +81,12 @@ class Environment {
         
         if (userString == "!quit") {
           break;
+        }
+        else if (userString == "!help") {
+          showHelp();
+        }
+        else if (userString == "!doc") {
+          system("start https://github.com/FabricioLince/BehaviourExolang/blob/main/README.md");
         }
         else {
           Stream *stream = new StringStream(userString);

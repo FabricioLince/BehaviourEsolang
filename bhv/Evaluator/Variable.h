@@ -4,6 +4,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include "../../Parser/Tree.h"
 
@@ -237,9 +238,8 @@ class Variable {
 
     Variable operator%(const Variable& other) {
       if (type == NUMBER && other.type == NUMBER) {
-        int m = int(other.number);
-        if (m != 0) {
-          return Variable(int(number) % m);
+        if (other.number != 0) {
+          return Variable(static_cast<long double>(fmod(number, other.number)));
         }
         return Variable();
       } 
