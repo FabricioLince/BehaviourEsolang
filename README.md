@@ -1,5 +1,5 @@
-# BehaviourExolang
-My Exolang called Behaviour
+# BehaviourEsolang
+My Esolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
