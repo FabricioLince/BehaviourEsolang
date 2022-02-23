@@ -11,6 +11,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [NUMBER](#number)
   - [STRING](#string)
   - [LIST](#list)
+  - [NODE](#node)
 - [Control Nodes](#control-nodes)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
@@ -84,6 +85,8 @@ There is no reserved word or symbol to represent them in an expression, they can
 
 BOOLEAN values can be compared against each other using `==` and `~=`. The value can be inverted using `~` or by multiplying it by `-1`. 
 Any other operation will result in NIL.
+
+The Length operator `#` evaluates to `1` when used with BOOLEAN True, and evaluates to `0` when used with BOOLEAN False.
 
 ### NUMBER
 
@@ -180,6 +183,24 @@ It can be evaluated to BOOLEAN False with Negator `~` before it.
 
 The Execute `!` can be use to test a non-empty LIST, evaluating to BOOLEAN False on a empty LIST, BOOLEAN True otherwise.
 
+### NODE
+
+A NODE is a reference to a parsed Expression that can be evaluated later. More at [Node Referencing](#node-referencing).
+
+This works essencially as a first class function, since it can be stored in Variable and used in Expression like any other value.
+
+A function defined in C++ Engine, and injected in the Datatable works pretty much exactly like a NODE value, 
+the only difference being if you inspect its type or print it, you're gonna see "CFUNC" instead of "NODE".
+
+Other than the operators already specified that accepts NODE values, the following operators are valid:
+
+- Comparison `==` and `~=`:
+  - Checks if the two NODES are the same or not.
+
+The Length operator `#` always evaluates to `0` when used before a NODE value. 
+
+The Negator `~` evaluates to a inverted NODE value. This value can be used and executed like a regular NODE value, 
+the difference being that it evaluates to the negated version of the original NODE result.
 
 ## Control Nodes
 
@@ -289,6 +310,7 @@ For example, the following script will create a reference for a Node that adds t
 
 `sum = &a+b`
 
+Now the Variable `sum` has a reference to a NODE that adds `a` and `b`. 
 To then evaluate the referenced node use the exclamation mark `!` followed by the variable that contains the Node:
 
 `result = !sum`
