@@ -12,13 +12,13 @@ class BaseDecoratorRule : public BaseRule {
 
 class MultipleRule : public BaseDecoratorRule {
   public:
-    int min = 0;
+    unsigned int min = 0;
     MultipleRule(std::string name, BaseRule* child, int min = 0) {
       this->min = min;
       this->child = child;
       this->name = name;
     }
-    MultipleRule(BaseRule* child, int min = 0) {
+    MultipleRule(BaseRule* child, unsigned int min = 0) {
       this->min = min;
       this->child = child;
       this->name = child->name;

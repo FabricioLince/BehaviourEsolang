@@ -129,7 +129,7 @@ Variable Evaluator::main(Tree* tree, Datatable* data) {
   
   Tree* exprs = tree->subTree(0);
   Variable r;
-  for (int i=0; i < exprs->children.size(); ++i) {
+  for (unsigned int i = 0; i < exprs->children.size(); ++i) {
     //std::cout << cmds->children.at(i)->name << "\n";
     r = evaluate(exprs->children.at(i), data);
   }
@@ -139,7 +139,7 @@ Variable Evaluator::main(Tree* tree, Datatable* data) {
 Variable Evaluator::list(Tree* tree, Datatable* data) {
   std::vector<Variable> v;
   Tree* values = tree->children.at(0)->asTree();
-  for (int i = 0; i < values->children.size(); ++i) {
+  for (unsigned int i = 0; i < values->children.size(); ++i) {
     v.push_back(evaluate(values->children.at(i), data));
   }
   return Variable(v);

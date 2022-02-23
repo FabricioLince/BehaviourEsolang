@@ -22,7 +22,7 @@ class PatternRule : public TokenRule {
       ridWhiteSpaces(stream);
       int pos = stream->getPos();
       bool ok = true;
-      for (int i = 0; i < pattern.size(); ++i) {
+      for (unsigned int i = 0; i < pattern.size(); ++i) {
         if (stream->hasNext() && stream->next() == pattern.at(i)) {
           //std::cout << "ok " << pattern.at(i) << "\n";
         }

@@ -1,7 +1,9 @@
 #ifndef EVAL_EXECUTE_H
 #define EVAL_EXECUTE_H
 
+
 #include "Evaluator.h"
+#include <algorithm>
 
 void Evaluator::evaluateArg(Node* arg, Datatable* data, Datatable* childData) {
   //std::cout << arg << "\n";
@@ -27,14 +29,14 @@ void Evaluator::evaluateArgs(Tree* tree, Datatable* data, Datatable* childData) 
     evaluateArg(argTree->children.at(0), childData, childData);
 
     Tree* args = argTree->subTree("args");
-    for (int i = 0; i < args->children.size(); ++i) {
+    for (unsigned int i = 0; i < args->children.size(); ++i) {
       evaluateArg(args->children.at(i), data, childData);
     }
     
     Variable argList = childData->getLocal("_a");
     if (argList.type == Variable::LIST) {
       std::vector<std::string> names = std::vector<std::string>({"a", "b", "c", "d", "e"});
-      for (int i = 0; i < std::min(names.size(), argList.list.size()); ++i) {
+      for (unsigned int i = 0; i < std::min(names.size(), argList.list.size()); ++i) {
         childData->setLocal(names.at(i), argList.list.at(i));
       }
     }

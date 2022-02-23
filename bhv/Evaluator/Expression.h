@@ -3,6 +3,7 @@
 
 #include "Evaluator.h"
 #include <iostream>
+#include <string>
 
 Variable Evaluator::integer(Node* node, Datatable* data) {
   return  Variable(std::stoi(node->asToken()->string));
@@ -12,7 +13,7 @@ Variable Evaluator::decimal(Tree* tree, Datatable* data) {
   Variable i = integer(tree->children.at(0), data);
   Variable d = integer(tree->children.at(1), data);
   double e = 1;
-  for (int i=0; i < tree->getToken(1)->string.size(); ++i) {
+  for (unsigned int i = 0; i < tree->getToken(1)->string.size(); ++i) {
     e *= 10;
   }
   return i.number + d.number/e;
@@ -118,7 +119,7 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
             {
               Variable::VarList list = Variable::VarList();
               std::string item = "";
-              for (int i = 0; i < value.string.size(); ++i) {
+              for (unsigned int i = 0; i < value.string.size(); ++i) {
                 std::string c = std::string(1, value.string.at(i));
                 Variable r = executeAny(other, data, c);
                 if (r.toBool()) {
@@ -141,7 +142,7 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
             {
               Variable::VarList list = Variable::VarList();
               std::string item = "";
-              for (int i = 0; i < value.string.size(); ++i) {
+              for (unsigned int i = 0; i < value.string.size(); ++i) {
                 std::string c = std::string(1, value.string.at(i));
                 if (c == other.string) {
                   if (item.size() > 0) {
@@ -189,7 +190,7 @@ Variable Evaluator::comparation(Node* node, Datatable* data) {
           return Variable();
         }
         Variable r = value.list.at(0);
-        for (int i = 1; i < value.list.size(); ++i) {
+        for (unsigned int i = 1; i < value.list.size(); ++i) {
           r = executeAny(other, data, r, value.list.at(i));
         }
         return r;
@@ -260,7 +261,7 @@ Variable Evaluator::applyTreeOnString(Variable string, Variable tree, Datatable*
   //std::cout << "applying " << tree << " on " << list << "\n";
   Variable::VarList list;
   //std::cout << r.type << "\n";
-  for (int i = 0; i < string.string.size(); ++i) {
+  for (unsigned int i = 0; i < string.string.size(); ++i) {
     list.push_back(executeAny(tree, data, std::string(1, string.string.at(i))));
   }
   return list;

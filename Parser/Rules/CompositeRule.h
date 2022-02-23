@@ -4,6 +4,7 @@
 #include "BaseRule.h"
 #include "CheckpointRule.h"
 #include <vector>
+#include <string>
 
 namespace Parser {
 
@@ -70,7 +71,7 @@ class SelectRule : public BaseCompositeRule {
   public:
 
     Node* execute(Stream* stream) {
-      for (int i = 0; i < rules.size(); ++i) {
+      for (unsigned int i = 0; i < rules.size(); ++i) {
         Node* result = rules.at(i)->execute(stream);
         if (result) {
           return result;

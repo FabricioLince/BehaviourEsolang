@@ -21,7 +21,7 @@ void collectRules(BaseRule* rule, RuleCollection& collection) {
   BaseCompositeRule* composite = dynamic_cast<BaseCompositeRule*>(rule);
   if (composite) {
     //printf("rule %s is composite\n", rule->name.c_str());
-    for (int i = 0; i < composite->rules.size(); ++i) {
+    for (unsigned int i = 0; i < composite->rules.size(); ++i) {
       collectRules(composite->rules.at(i), collection);
     }
     return;

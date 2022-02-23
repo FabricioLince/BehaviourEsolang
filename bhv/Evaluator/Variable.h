@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <vector>
+#include <string>
 
 #include "../../Parser/Tree.h"
 
@@ -93,7 +94,7 @@ class Variable {
           return std::string("Node:") + node->name;
         case Variable::LIST:
           s = "{";
-          for (int i = 0; i < list.size(); ++i) {
+          for (unsigned int i = 0; i < list.size(); ++i) {
             if (list.at(i).type == STRING)
               s += "\"";
             s += list.at(i).toString();
@@ -130,14 +131,14 @@ class Variable {
         switch (other.type) {
           case NUMBER:
             index = int(other.number);
-            if (index >= 0 && index < string.size()) {
+            if (index >= 0 && index < int(string.size())) {
               string.erase(index, 1);
             }
             return *this;
             break;
           case STRING:
             index = string.find(other.string);
-            if (index >= 0 && index < string.size()) {
+            if (index >= 0 && index < int(string.size())) {
               string.erase(index, other.string.size());
             }
             return *this;
@@ -150,11 +151,10 @@ class Variable {
           if (index < 0) {
             index = list.size() + index;
           }
-          if (index >= 0 && index < list.size()) {
+          if (index >= 0 && index < int(list.size())) {
             list.erase(list.begin()+index);
           }
           return *this;
-          
         }
       }
       return Variable();
@@ -200,7 +200,7 @@ class Variable {
       if (type == LIST && other.type == NUMBER) {
         Variable r = VarList();
         if (other.number > 0) {
-          for (int i = 0; i < other.number; ++i) {
+          for (unsigned int i = 0; i < other.number; ++i) {
             if (i < list.size())
               r.list.push_back(list.at(i));
           }
@@ -217,7 +217,7 @@ class Variable {
       if (type == STRING && other.type == NUMBER) {
         Variable r = std::string("");
         if (other.number > 0) {
-          for (int i = 0; i < other.number; ++i) {
+          for (unsigned int i = 0; i < other.number; ++i) {
             if (i < string.size())
               r.string += string.at(i);
           }
@@ -250,7 +250,7 @@ class Variable {
           if (index < 0) {
             index = string.size() + index;
           }
-          if (index >= 0 && index < string.size()) {
+          if (index >= 0 && index < int(string.size())) {
             return std::string(1, string.at(index));
           }
         }
@@ -268,7 +268,7 @@ class Variable {
           if (index < 0) {
             index = list.size() + index;
           }
-          if (index >= 0 && index < list.size()) {
+          if (index >= 0 && index < int(list.size())) {
             return list.at(index);
           }
         }
@@ -336,7 +336,7 @@ class Variable {
       if (type == LIST && other.type == LIST) {
         if (list.size() != other.list.size())
           return false;
-        for (int i = 0; i < list.size(); ++i) {
+        for (unsigned int i = 0; i < list.size(); ++i) {
           if (!(list.at(i) == other.list.at(i)).toBool()) {
             return false;
           }

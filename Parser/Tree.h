@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include <vector>
+#include <string>
 #include <set>
 #include "Printable.h"
 
@@ -36,7 +37,7 @@ class Token : public Node {
     }
     std::string toString() {
       if (this->name.size() == 0) {
-        return this->id + ":'" + this->string + "'";
+        return std::to_string(this->id) + ":'" + this->string + "'";
       }
       return this->name + ":'" + this->string + "'";//("+       std::to_string(this->pos)+")";
     }
@@ -70,7 +71,7 @@ class Tree : public Node {
     }
 
     Node* get(std::string childName) {      
-      for (int i = 0; i < children.size(); ++i) {
+      for (unsigned int i = 0; i < children.size(); ++i) {
         if (children.at(i)->name == childName) {
           return children.at(i);
         }
@@ -78,7 +79,7 @@ class Tree : public Node {
       return NULL;
     }
     Node* getById(int id) {
-      for (int i = 0; i < children.size(); ++i) {
+      for (unsigned int i = 0; i < children.size(); ++i) {
         if (children.at(i)->id == id) {
           return children.at(i);
         }
@@ -92,7 +93,7 @@ class Tree : public Node {
       }
       return NULL;
     }
-    Tree* subTree(int index) {
+    Tree* subTree(unsigned int index) {
       if (index >= 0 && index < children.size()) {
         return children.at(index)->asTree();
       }
@@ -106,7 +107,7 @@ class Tree : public Node {
       return NULL;
     }
     
-    Token* getToken(int index) {
+    Token* getToken(unsigned int index) {
       if (index >= 0 && index < children.size()) {
         return children.at(index)->asToken();
       }
@@ -134,7 +135,7 @@ class Tree : public Node {
         s += "\n" + tab() + "EMPTY";
       }
       else {
-        for (int i = 0; i < children.size(); ++i) {
+        for (unsigned int i = 0; i < children.size(); ++i) {
           s += "\n" + tab() + children.at(i)->toString();
         }
       }
@@ -144,7 +145,7 @@ class Tree : public Node {
 
     ~Tree() {
       //printf("deleting tree %s\n", name.c_str());
-      for (int i= 0; i < children.size(); ++i) {
+      for (unsigned int i = 0; i < children.size(); ++i) {
         delete children.at(i);
       }
       children.clear();
