@@ -3,6 +3,18 @@ My Exolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
+## Table of Contents
+- [The Basics](#the-basics)
+- [Types](#types)
+- [Control Nodes](#control-nodes)
+  - [Sequencer](#sequencer)
+  - [Selector](#selector)
+  - [Repeater](#repeater)
+- [Node Referencing](#node-referencing)
+- [Example Algorithms](#example-algorithms)
+  - [FizzBuzz](#fizzbuzz)
+  - [Factorial](#factorial)
+
 ## The Basics
 
 Behaviour's syntax in inspired in the [Behaviour Tree](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control))
@@ -49,7 +61,7 @@ A value is _falsy_ when it's NIL or BOOLEAN False.
 
 There are Sequencers, Selector and Repeaters, these are the control Nodes.
 
-#### Sequencer
+### Sequencer
 
 The Sequencer is denoted by a list of zero or more Expressions inside parentheses `()`.
 
@@ -70,7 +82,7 @@ Since none of those addition will cause any problems, by the end, the value of `
 
 An empty Sequencer will be evaluated to NIL.
 
-#### Selector
+### Selector
 
 The Selector is denoted by a list of zero or more Expressions inside square brackets `[]`.
 
@@ -90,7 +102,7 @@ The multiplication `10*3` is never evaluated.
 
 An empty Selector will be evaluated to NIL.
 
-#### Repeater
+### Repeater
 
 The Repeater is denoted by the back-slash `\` followed by a single Expression.
 
@@ -148,7 +160,39 @@ You can also ommit the exclamation point if you are passing values, like this:
 
 ## Example Algorithms
 
-#### Factorial
+### FizzBuzz
+
+The fizz-buzz algorithm is good to demonstrate simple looping and conditionals,
+in this example I will print the fizz buzz results from 1 to 50:
+
+```
+i = 1
+\(
+  ?mod3 = i%3 == 0
+  ?mod5 = i%5 == 0
+  [
+    (mod3; mod5; @@"fizzbuzz")
+    (mod3; @@"fizz")
+    (mod5; @@"buzz")
+    @@i
+  ]
+  i += 1
+  i > 50
+)
+```
+
+Explanation:
+
+First initialize `i` to `1` and enter a Repeater Sequencer. Inside the Sequencer, assigns `mod3` with the info for if the Variable `i` is divisible by `3`, 
+and `mod5` if the Variable `i` is divisible by `5`. Since said assigns can result in BOOLEAN False, they can stop the Sequencer, so we preceed the assign with `?` 
+to make the Sequencer ignore the assign evaluation.
+
+Then a Selector tests each of the possibilities and prints accordingly.
+
+Finnaly we increment `i` by `1` and test if `i` is bigger than `50`. When this final test evaluates BOOLEAN True, the Sequencer ends in BOOLEAN True, 
+allowing the Repeater to stop repeating.
+
+### Factorial
 
 The factorial algorithm is a good example for demonstrating recursion:
 
