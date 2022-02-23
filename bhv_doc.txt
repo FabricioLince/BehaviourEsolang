@@ -19,7 +19,7 @@ _ + _ = NIL --> invalid
 
 NUMBER - NUMBER = NUMBER --> subtracts rhs from lhs
 STRING - NUMBER = STRING --> remove the character in the rhs position from lhs
-STRING - STRING = STRING --> remove the first occurrence of lhs from lhs
+STRING - STRING = STRING --> remove the first occurrence of rhs from lhs
 LIST - NUMBER = LIST --> remove the item in the rhs position from lhs
 _ - _ = NIL --> invalid
 

@@ -13,6 +13,7 @@ Variable parseInt(Datatable* data);
 Variable toAscii(Datatable* data);
 Variable fromAscii(Datatable* data);
 Variable ascii(Datatable* data);
+Variable pow(Datatable* data);
 
 
 void addToDatatable(Datatable* data) {
@@ -26,6 +27,7 @@ void addToDatatable(Datatable* data) {
   
   data->setOrphanCFunc("int", &parseInt);
   data->setOrphanCFunc("ascii", &ascii);
+  data->setOrphanCFunc("pow", &pow);
 }
 
 
@@ -136,6 +138,15 @@ Variable ascii(Datatable* data) {
   }
   if (arg.type == Variable::STRING) {
     return static_cast<int>(arg.string[0]);
+  }
+  return nil;
+}
+
+Variable pow(Datatable* data) {
+  Variable base = data->get("a");
+  Variable exp = data->get("b");
+  if (base.type == Variable::NUMBER && exp.type == Variable::NUMBER) {
+    return static_cast<long double>(pow(base.number, exp.number));
   }
   return nil;
 }
