@@ -65,7 +65,7 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       Datatable* childData = bt.context;
       
       if (bt.context == NULL) {
-        childData = new Datatable(); /// create new Datatable for this execution
+        childData = data->makeOrphan(); /// create new Datatable for this execution
       }
       
       childData->context = data;
@@ -76,11 +76,6 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       Variable result = justExecute(bt, childData);
       
       childData->context = NULL;
-      
-      /// deleting newly created datatable
-      if (bt.context == NULL) {
-        delete childData;
-      }
       
       return result;
     }

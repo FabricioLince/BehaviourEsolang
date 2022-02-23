@@ -1,4 +1,7 @@
 
+  
+
+$$
 
   // calculate the factorial of a
   fact = &[(a<2;1)a*fact:a-1]
