@@ -6,14 +6,20 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 ## Table of Contents
 - [The Basics](#the-basics)
 - [Types](#types)
+  - [NIL](#nil)
+  - [BOOLEAN](#boolean)
+  - [NUMBER](#number)
 - [Control Nodes](#control-nodes)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
   - [Repeater](#repeater)
+  - [Optional](#optional)
+  - [Negator](#negator)
 - [Node Referencing](#node-referencing)
 - [Example Algorithms](#example-algorithms)
   - [FizzBuzz](#fizzbuzz)
   - [Factorial](#factorial)
+
 
 ## The Basics
 
@@ -37,6 +43,7 @@ To print a value to the console we can use a Print Expression. The Print Express
 
 Ending Expressions with semicolon `;` is not necessary, but can be done to organize the code.
 
+
 ## Types
 
 The basic value types in Behaviour are:
@@ -57,9 +64,58 @@ A value is _truthy_ when it's anything other than NIL or BOOLEAN False.
 
 A value is _falsy_ when it's NIL or BOOLEAN False.
 
+### NIL
+
+NIL can represent an empty value, such as non-initialized Variables or a position outside range on a STRING or a LIST. 
+They are also used to repesent an error status, like an invalid operation.
+
+There is no reserved word or symbol to represent it in an expression, it can only be achieved as a result for an evaluation.
+
+Any operation with NIL will be evaluated to NIL. Currently the only exception is the equals `==` and not equals `~=` operations,
+which evaluates to BOOLEAN False and BOOLEAN True respectively. This may change in the near future.
+
+### BOOLEAN
+
+The regular old True or False.
+
+There is no reserved word or symbol to represent them in an expression, they can only be achieved as a result for an evaluation.
+
+BOOLEAN values can be compared against each other using `==` and `~=`. The value can be inverted using `~` or by multiplying it by `-1`. 
+Any other operation will result in NIL.
+
+### NUMBER
+
+Numerical value. Long double value as defined in C++.
+
+You can type a integer value like this: `25`. Or a decimal value with the decimal portion separated by a dot like this: `2.5`. 
+If the number only has a decimal part you need to preceed with zero, like this: `0.25`.
+
+Between two NUMBER values the following operations can be performed:
+- Addition `+`;
+- Subtraction `-`;
+- Multiplication `*`;
+- Division `/`;
+- Modulo (division remainder) `%`;
+- Comparison:
+  - (bigger than) `>`;
+  - (less than) `<`;
+  - (bigger equal than) `>=`;
+  - (less equal than) `<=`;
+  - (equals) `==`;
+  - (not equals) `~=`;
+
+The NUMBER can be converted to integer (i.e. discard the decimal part) using Length operator `#` before it.
+
+It can be evaluated to BOOLEAN False with Negator `~` before it.
+
+It can be evaluated as non-zero with Execute `!` before it, this evaluates to BOOLEAN False when zero, BOOLEAN True otherwise.
+
 ## Control Nodes
 
 There are Sequencers, Selector and Repeaters, these are the control Nodes.
+
+We also have the Optional and the Negator, which modify the resulting evaluation of a Node.
+
 
 ### Sequencer
 
@@ -119,6 +175,37 @@ i=0
 
 Note that to repeat both the increment and the comparison each time I have to put them inside a Sequencer.
 
+### Optional
+
+The Optional is denoted by the interrogation mark `?` followed by a single Expression.
+
+The Optional is used to ignore a falsy evaluation of the child Node. Making it always evaluate to BOOLEAN True.
+
+For example, if you have a Sequencer with an Expression that may evaluate falsy, but you don't want the Sequencer to stop because of it, 
+you put child Expression inside a Optional:
+
+`(?mayEvaluateFalsy; needsToBeEvaluatedRegardless)`
+
+In this script, all the two children Expressions will be evaluated.
+
+### Negator
+
+The Negator is denoted by the tilde `~` followed by a single Expression.
+
+The Negator is used to convert truthy values into BOOLEAN False, and falsy values into BOOLEAN True.
+
+In another words, if the child Node evaluates to NIL or to BOOLEAN False, the Negator evaluates to BOOLEAN True. 
+Otherwise it evaluates to BOOLEAN False.
+
+For example, the following script has a Negator followed by a Expression that evaluates to BOOLEAN False. 
+The Negator then evaluates to BOOLEAN True:
+
+`~(1>2)`
+
+In this case we have to use the parentheses to make sure the Negator is negating the evaluation of the whole comparison, 
+and not the value of the number `1` (which would result in BOOLEAN False, and when compared to `2` would result in NIL)
+
+
 ## Node Referencing
 
 in Behaviour, Node Referencing is the equivalent of functions in most languages.
@@ -131,7 +218,7 @@ For example, the following script will create a reference for a Node that adds t
 
 `sum = &a+b`
 
-To then evaluate the referenced node use the exclamation point `!` followed by the variable that contains the Node:
+To then evaluate the referenced node use the exclamation mark `!` followed by the variable that contains the Node:
 
 `result = !sum`
 
@@ -157,6 +244,7 @@ it's assumed to be the Variables `a`, `b`, `c`, `d` and `e`, in that order.
 You can also ommit the exclamation point if you are passing values, like this:
 
 `result = sum:2,3`
+
 
 ## Example Algorithms
 
