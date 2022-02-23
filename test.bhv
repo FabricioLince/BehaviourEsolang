@@ -2,7 +2,9 @@
   fact = &[(a<2;1)a*fact:a-1]
   @@"factorial of 5 = " + 
   fact:5
-
+  
+  fact:5
+  
 $$
 
   // calculate the factorial of a

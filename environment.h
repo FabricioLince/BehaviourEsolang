@@ -30,41 +30,10 @@ class Environment {
     return sn;
   }
   
-  
-  Variable loadfile(std::string filename, Datatable* data) {
-    std::ifstream file;
-    file.open(filename.c_str());
-    if (file.is_open()) {
-      file.close();
-      Parser::Stream* stream = new Parser::FileStream(filename);
-      Node* node = bhv.extractTree(stream);
-      delete stream;
-      if (node) {
-        nodesLoaded.push_back(node);
-        return evaluator.evaluate(node, data);
-      }
-    }
-    else {
-      std::cerr << "couldn't open '" << filename << "'\n";
-    }
-    return Variable();
-  }
-
-  Variable loadfile_cfunc(Datatable* data) {
-    Variable filename = data->getLocal("a");
-    if (filename.type == Variable::STRING) {
-      return loadfile(filename.string, data);
-    }
-    else {
-      std::cerr << "no file " << "\n";
-    }
-    return Variable();
-  }
-  
   public:
     
     Environment() {
-      mainDatatable.setOrphanCFunc("load", &loadfile_cfunc);
+      
     }
     ~Environment() {
       for (Node* node : nodesLoaded) {
@@ -84,6 +53,9 @@ class Environment {
       Variable result = loadfile(filename, &mainDatatable);
       if (showResult) {
         std::cout << "result = " << result << "\n";
+      }
+      if (showDatatable) {
+        std::cout << "Data:\n" << mainDatatable << "\n";
       }
     }
   
@@ -127,9 +99,28 @@ class Environment {
       if (showDatatable) {
         std::cout << "Data:\n" << mainDatatable << "\n";
       }
-      
-      
     }
+    
+    Variable loadfile(std::string filename, Datatable* data) {
+    std::ifstream file;
+    file.open(filename.c_str());
+    if (file.is_open()) {
+      file.close();
+      Parser::Stream* stream = new Parser::FileStream(filename);
+      Node* node = bhv.extractTree(stream);
+      delete stream;
+      if (node) {
+        if (showParseTree)
+          std::cout << node << "\n";
+        nodesLoaded.push_back(node);
+        return evaluator.evaluate(node, data);
+      }
+    }
+    else {
+      std::cerr << "couldn't open '" << filename << "'\n";
+    }
+    return Variable();
+  }
 };
 
 
