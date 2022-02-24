@@ -74,7 +74,7 @@ They are also used to repesent an error status, like an invalid operation.
 
 There is no reserved word or symbol to represent it in an expression, it can only be achieved as a result for an evaluation.
 
-The Length operator `#` evaluates to `0`.
+The Length operator `#` evaluates to `0` when used before a NIL value.
 
 The Comparison operators equals `==` always evaluates to BOOLEAN False, and not equals `~=` always evaluates to BOOLEAN True. This may change in the near future.
 
