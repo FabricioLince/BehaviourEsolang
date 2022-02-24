@@ -122,13 +122,17 @@ class Environment {
     if (file.is_open()) {
       file.close();
       Parser::Stream* stream = new Parser::FileStream(filename);
-      Node* node = bhv.extractTree(stream);
+      SafeNode safeNode = extractNodeSafe(stream);
       delete stream;
-      if (node) {
+      if (safeNode.node) {
         if (showParseTree)
-          std::cout << node << "\n";
-        nodesLoaded.push_back(node);
-        return evaluator.evaluate(node, data);
+          std::cout << safeNode.node << "\n";
+        nodesLoaded.push_back(safeNode.node);
+        return evaluator.evaluate(safeNode.node, data);
+      }
+      else {
+        std::cerr << "Parsing failed\n";
+        std::cerr << safeNode.error << "\n";
       }
     }
     else {

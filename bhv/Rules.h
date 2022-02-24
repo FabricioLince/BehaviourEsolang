@@ -54,6 +54,7 @@ void Bhv::constructRules() {
           Symbol("*"),
           Symbol("/"),
           Symbol("%"),
+          Symbol("^"),
         }),
         Checkpoint("expression expected after $token"),
         value,

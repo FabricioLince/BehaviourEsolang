@@ -4,6 +4,7 @@
 #include "Evaluator.h"
 #include <iostream>
 #include <string>
+#include <cmath>
 
 Variable Evaluator::integer(Node* node, Datatable* data) {
   return  Variable(std::stoi(node->asToken()->string));
@@ -170,6 +171,11 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
       }
       else if (symbol == "%") {
         value = value % other;
+      }
+      else if (symbol == "^") {
+        if (value.type == Variable::NUMBER && other.type == Variable::NUMBER) {
+          value = static_cast<long double>(pow(value.number, other.number));
+        }
       }
     }
   }

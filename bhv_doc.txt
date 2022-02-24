@@ -87,7 +87,7 @@ _ == _ = false
   comp :: addition ?(compop addition)
   compop :: ['>=' '>' '<=' '<' '==' '~=' '|']
   addition :: multiplication *(['+' '-'] multiplication)
-  multiplication :: value *(['*' '/' '%'] value)
+  multiplication :: value *(['*' '/' '%' '^'] value)
   value :: [signedvalue list integer string cmd name]
   signedvalue :: ['-' '~' '#'] value
   list :: '{' *expr '}'
@@ -99,19 +99,13 @@ _ == _ = false
   execname :: ?'!' name args
   execexpr :: '!' expr ?args
   args :: ':' expr *(',' expr)
-  sequence :: '(' +expr ')'
-  sequence :: '[' +expr ']'
+  sequence :: '(' *expr ')'
+  sequence :: '[' *expr ']'
   optional :: '?' expr
   gettree :: '&' ?'&' expr
   repeat :: '\' expr
   
   main :: expr
 
-assign :: var '=' expr
-expr :: comp
-comp :: addition ?(compop addition)
-addition :: multiplication *(addop multiplication)
-multiplication :: value *(mulop value)
-value :: [var string integer]
 
-() [] ! ? @ ~ &
+() [] ! ? @ ~ & # % 
