@@ -33,6 +33,7 @@ class Evaluator {
     Variable list(Tree* tree, Datatable* data);
     Variable unary(Tree* tree, Datatable* data);
     Variable execute(Tree* tree, Datatable* data);
+    Variable ifcond(Tree* tree, Datatable* data);
     
     
     void evaluateArgs(Tree* tree, Datatable* data, Datatable* childData);
@@ -117,6 +118,9 @@ class Evaluator {
       }
       if (node->name == "getTree") {
         return getTree(node->asTree(), data);
+      }
+      if (node->name == "ifcond") {
+        return ifcond(node->asTree(), data);
       }
 
       printf("no evaluator for <%s>\n", node->name.c_str());

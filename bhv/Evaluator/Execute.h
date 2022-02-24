@@ -102,9 +102,8 @@ Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable ar
     childData = data->makeOrphan();
   }
   
-  if (arg.type != Variable::NIL) {
-    childData->setLocal("a", arg);
-  }
+  childData->setLocal("a", arg);
+  
   if (b.type != Variable::NIL) {
     childData->setLocal("b", b);
   }

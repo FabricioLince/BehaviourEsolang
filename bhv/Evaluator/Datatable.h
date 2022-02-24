@@ -60,7 +60,7 @@ class Datatable {
     
     /// does varName exists locally?
     bool has(std::string varName) {
-      return memory.count(varName) > 0 && memory[varName].type != Variable::NIL;
+      return memory.count(varName) > 0;// && memory[varName].type != Variable::NIL; // this nil check was causing a bug 
     }
     
     /// search in the ancestry which Datatable is the first to contain varName, from here to global

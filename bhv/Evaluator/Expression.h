@@ -165,6 +165,25 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
               value = value / other;
           }
         }
+        else if (value.type == Variable::LIST) {
+          switch (other.type) {
+            case Variable::NODE:
+            case Variable::CFUNC:
+            {
+              Variable rlist = Variable::VarList();
+              //std::cout << r.type << "\n";
+              for (Variable v : value.list) {
+                Variable r = executeAny(other, data, v);
+                if (r.toBool())
+                  rlist.list.push_back(v);
+              }
+              value = rlist;
+              break;
+            }
+            default:
+              value = value / other;
+          }
+        }
         else {
           value = value / other;
         }
@@ -227,25 +246,6 @@ Variable Evaluator::comparation(Node* node, Datatable* data) {
     }
     else if (symbol == "~=") {
       return value != other;
-    }
-    else if (symbol == "|") {
-      int count = 999999;
-      while ((other != value).toBool()) {
-        if (count-- < -999999) {
-          return false;
-        }
-        if (value.type == Variable::NIL || other.type == Variable::NIL) {
-          // if any expr returns NIL the comparation should stop
-          return Variable();
-        }
-        
-        value = evaluate(tree->children.at(0), data);
-        other = evaluate(comp->children.at(1), data);
-        //std::cout << value << " != " << other << "\n";
-        //std::cout << comp->children.at(1) << "\n";
-        
-      }
-      return true;
     }
   }
   return value;

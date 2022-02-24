@@ -46,6 +46,9 @@ STRING % STRING = NUMBER or NIL --> finds the rhs position within lhs, nil if rh
 LIST % NUMBER = _ --> gets the item in the rhs position from lhs
 _ % _ = NIL --> invalid
 
+NUMBER ^ NUMBER = NUMBER --> elevates lhs to the power of rhs
+_ ^ _ = _ --> just returns lhs
+
 NUMBER < NUMBER = BOOLEAN --> compares the values of lhs ad rhs with <
 STRING < STRING = BOOLEAN --> compares lhs and rhs lexicographically by <
 LIST < NODE = NUMBER or NIL -> finds the index of the first item of lhs that returns truthy when passed to rhs
@@ -83,9 +86,10 @@ _ == _ = false
 ~ _ = false
 
   
-  expr :: comp ';'
+  expr :: if ';'
+  if :: comp ?('|' comp)
   comp :: addition ?(compop addition)
-  compop :: ['>=' '>' '<=' '<' '==' '~=' '|']
+  compop :: ['>=' '>' '<=' '<' '==' '~=']
   addition :: multiplication *(['+' '-'] multiplication)
   multiplication :: value *(['*' '/' '%' '^'] value)
   value :: [signedvalue list integer string cmd name]

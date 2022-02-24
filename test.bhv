@@ -1,3 +1,61 @@
+
+  divisors = &(n=a (n+1)*&a|n%a==0)*&a
+  divisors = &(n=a (n+1)*&a)/&n%a==0
+  
+  divisors:24
+  
+  $$
+
+  ispair = &a%2==0
+  
+  
+  numbers = 10*&a
+  
+  @@numbers*&a|ispair
+  @@numbers/ispair
+  
+  $$
+
+  
+  fact = &[(a<2;1)a*fact:a-1]
+  
+  @@fact:4
+  
+  // calculate the aº fibonacci number
+  fib = &[
+    (a < 2; 1)
+    (fib:a-1)+(fib:a-2)
+  ]
+  
+  @@"Those are the first 6 fibonacci numbers: " +
+  
+  6*fib // fill an array with the first 6 fibonacci numbers
+
+  
+  divisors = &(n=a (n+1)*&a|n%a==0)*&a
+  
+  
+  $$
+
+  [(if:a; a)]
+  a|if
+  
+  [(cond; a)]
+  a|cond
+  
+  [(if:a; a) b]
+  [a|if b]
+  
+  [(if:a; a) (if:b; b) c]
+  [a|if b|if c]
+  
+  [(n%a==0;a)]
+  a|n%a==0
+
+  
+  
+  $$
+
   
   f=&#((a*&(pow:10,#(""+a))-1-a)>&a+b)
   f=&#(a*&pow:10,#(""+a);-1-a;>&a+b)
@@ -5,13 +63,11 @@
   //f=&#(a*&10^#(""+a)-1-a;>+)
   
   
-  f1=&
-    #(
-      (
-        a * &(
-          pow:10,#(""+a)
-        )-1-a
-      ) > &a+b
+  f=&
+    #(                  // deal with 0 case, convert nil into 0
+      a * &             // generate array for n nine complements
+        10^#(""+a)-1-a; // nine complements logic
+      >&a+b             // reduce array by adding its items
     )
   
   @@f:0
@@ -55,29 +111,7 @@
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   $$
-  
   
   
   

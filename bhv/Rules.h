@@ -87,16 +87,25 @@ void Bhv::constructRules() {
           Symbol("~="),
           Symbol(">"),
           Symbol("<"),
-          Symbol("|"),
         }),
         Checkpoint("expression expected after $token"),
         addition
       })
     )
   });
+  
+  Rule ifcond = Sequence("ifcond", {
+    comparation,
+    Optional("cond",
+      Sequence("cond", {
+        Symbol("|"),
+        comparation
+      })
+    )
+  });
 
   Rule expression = Sequence("expression", {
-    comparation,
+    ifcond,
     Discard(Optional(Symbol(";")))
   });
   

@@ -51,4 +51,28 @@ Variable Evaluator::optional(Node* node, Datatable* data) {
   return true;
 }
 
+
+Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
+  
+  //std::cout << tree << "\n";
+  
+  Variable value = evaluate(tree->children.at(0), data);
+  //std::cout << "value = " << value << "\n";
+  
+  Node* cond = tree->subTree(1)->children.at(1);
+  //std::cout << "cond = " << cond << "\n";
+  
+  Variable other = evaluate(cond, data);
+      
+  if (other.type == Variable::NODE or other.type == Variable::CFUNC) {
+    other = executeAny(other, data, value);
+  }
+  
+  if (other.toBool()) {
+    return value;
+  }
+  
+  return Variable();
+}
+
 #endif

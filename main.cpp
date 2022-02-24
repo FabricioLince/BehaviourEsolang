@@ -8,7 +8,7 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE true
+#define RUN_FILE false
 
 Environment env; 
 
