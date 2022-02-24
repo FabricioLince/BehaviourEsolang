@@ -104,6 +104,7 @@ Between two NUMBER values the following operations can be performed:
 - Multiplication `*`;
 - Division `/`;
 - Modulo (division remainder) `%`;
+- Power `^`;
 - Comparison:
   - (bigger than) `>`;
   - (less than) `<`;
