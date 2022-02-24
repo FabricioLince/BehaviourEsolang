@@ -1,5 +1,5 @@
-# BehaviourExolang
-My Exolang called Behaviour
+# BehaviourEsolang
+My Esolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
@@ -74,8 +74,11 @@ They are also used to repesent an error status, like an invalid operation.
 
 There is no reserved word or symbol to represent it in an expression, it can only be achieved as a result for an evaluation.
 
-Any operation with NIL will be evaluated to NIL. Currently the only exception is the equals `==` and not equals `~=` operations,
-which evaluates to BOOLEAN False and BOOLEAN True respectively. This may change in the near future.
+The Length operator `#` evaluates to `0` when used before a NIL value.
+
+The Comparison operators equals `==` always evaluates to BOOLEAN False, and not equals `~=` always evaluates to BOOLEAN True. This may change in the near future.
+
+Any other operation with NIL will be evaluated to NIL. 
 
 ### BOOLEAN
 
@@ -218,7 +221,7 @@ this evaluation will stop if:
 - A child Node is evaluated falsy,
 - Or all children were evaluated truthy.
 
-The Sequencer Node assumes the value of its last child Node.
+The Sequencer Node assumes the value of its last evaluated child Node. 
 
 In another words, the Sequencer will be succesfull if all of its children are evaluated successfully, in order.
 
