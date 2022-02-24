@@ -16,6 +16,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
   - [Repeater](#repeater)
+  - [If Operator](#if-operator)
   - [Optional](#optional)
   - [Negator](#negator)
 - [Node Referencing](#node-referencing)
@@ -164,7 +165,8 @@ The following operations can be performed on LIST values:
   - When used with a NUMBER value, repeat the list the amount passed if the amount is >= 0;
   - When used with a NODE value, executes the NODE for each item of the LIST, passing said item as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
 - Division `/`
-  - Used with a NUMBER value, clips the LIST to a list with atmost NUMBER items, if number > 0 gets the first number items, if number < 0 gets the last number items.
+  - Used with a NUMBER value, clips the LIST to a list with atmost NUMBER items, if number > 0 gets the first number items, if number < 0 gets the last number items;
+  - Used with a NODE value, works as a filter, evaluates to a LIST with all the members of the original LIST that evaluated truthy when passed to the NODE.
 - Index `%`
   - used with a NUMBER value, gets the item in the number position from the list, NIL if the position is out of range.
 - Find `<`
@@ -208,7 +210,7 @@ the difference being that it evaluates to the negated version of the original NO
 
 ## Control Nodes
 
-There are Sequencers, Selector and Repeaters, these are the control Nodes.
+There are Sequencers, Selectors, Repeaters and the If Operator, these are the control Nodes.
 
 We also have the Optional and the Negator, which modify the resulting evaluation of a Node.
 
@@ -270,6 +272,28 @@ i=0
 ```
 
 Note that to repeat both the increment and the comparison each time I have to put them inside a Sequencer.
+
+### If Operator
+
+The pipe symbol `|` between two Expressions is called the If Operator, and its used to evaluate to the left hand side Expression value if the test on the right evaluates truthy, the If Operator evaluates to NIL otherwise. 
+
+There are two main cases:
+
+- With a NODE on the right hand side
+  - In this case the NODE is evaluated using the left hand side value as argument.
+- With anything else on the right hand side
+  - The truthy value of the rhs is used as a condition.
+
+It's often used as an alternative to the Selector, on in conjunction to the Selector Node.
+
+For example, the following pairs of lines are equivalent:
+```
+[(func:a; a)]
+a|func
+
+[(func:a; a) b]
+[a|func b]
+```
 
 ### Optional
 
