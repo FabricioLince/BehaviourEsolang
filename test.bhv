@@ -1,6 +1,10 @@
+  
+  
 
+  // these 03 different nodes evaluate the same thing:
   divisors = &(n=a (n+1)*&a|n%a==0)*&a
   divisors = &(n=a (n+1)*&a)/&n%a==0
+  divisors = &(n=a (n+1)/&n%a==0)
   
   divisors:24
   
@@ -33,25 +37,6 @@
 
   
   divisors = &(n=a (n+1)*&a|n%a==0)*&a
-  
-  
-  $$
-
-  [(if:a; a)]
-  a|if
-  
-  [(cond; a)]
-  a|cond
-  
-  [(if:a; a) b]
-  [a|if b]
-  
-  [(if:a; a) (if:b; b) c]
-  [a|if b|if c]
-  
-  [(n%a==0;a)]
-  a|n%a==0
-
   
   
   $$
@@ -215,11 +200,6 @@ $$
   
   fib:11
   
-  ispair = &a%2==0
-  
-  numbers = 10*&a
-  numbers * &[(!ispair a)]
-  
   $$
   
   max = &[(a>b a) b]
@@ -270,9 +250,9 @@ $$
   
   
   gcd = &(
-    n1 = a; n2 = b
-    ((1 + !min) * &[(!a n1%a==0 n2%a==0 a) 0]) > max
-  )
+    n1 = a
+    (1+[a|a<b;b]) / &(n1%a==0 b%a==0); %-1
+  ) 
   
   ispair = &a%2==0
   notpair = ~ispair
@@ -281,7 +261,7 @@ $$
   any = &~~(a<f)
   all = &~(a<~f)
   
-  count = &((a*f) > &#a+#b)
+  count = &#(a/f)
   
   pred = &(@@"Calling on "+a+" = "+(!f) !f)
   numbers = {1 3 5 6 7 9 5 3 2 1}
@@ -304,7 +284,7 @@ $$
   
   ;
   
-  hanoi = !&(
+  hanoi = !&&(
     ms = &"move "+from+ " to "+to
     ms = &""+from+"->"+to
     move = &@@!ms

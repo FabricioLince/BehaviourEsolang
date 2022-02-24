@@ -1,13 +1,5 @@
 
 
-
-
-// positional arguments populate the variables 'a', 'b', 'c', 'd' and 'e' respectively
-!behaviour:1,2,3
-!behaviour:a=1,b=2,c=3
-
-
-
 Operators:
 
 
@@ -34,7 +26,9 @@ LIST * NODE = LIST  --> executes rhs for each item of lhs, passing said item as 
 _ * _ = NIL --> invalid
 
 NUMBER / NUMBER = NUMBER --> divides rhs by lhs
+NUMBER / NODE = LIST --> filter a list of numbers from 0 to lhs using rhs; the same as (lhs * &a) * rhs
 LIST / NUMBER = LIST --> clips lhs to a list with atmost rhs items, if rhs > 0 gets the first rhs items, if rhs < 0 gets the last rhs items
+LIST / NODE = LIST --> filter lhs using rhs as a condition
 STRING / NUMBER = STRING --> clips lhs to a string with atmost rhs characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters
 STRING / STRING = LIST --> splits lhs by rhs, evaluates to a list with resulting items
 STRING / NODE = LIST --> splits lhs using rhs as divisor, evaluates to a list with resulting items
@@ -86,6 +80,8 @@ _ == _ = false
 ~ _ = false
 
   
+  Grammar
+  
   expr :: if ';'
   if :: comp ?('|' comp)
   comp :: addition ?(compop addition)
@@ -112,4 +108,12 @@ _ == _ = false
   main :: expr
 
 
-() [] ! ? @ ~ & # % 
+used symbols:
+() [] {} ! ? @ ~ & # % | + - * / \ " . , > < = ^ : ;
+
+not yet used symbols:
+$ _ ' 
+
+symbols I probably wont use:
+` § ¬ ¢ £ ° ª º
+

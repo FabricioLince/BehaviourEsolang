@@ -113,7 +113,26 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
         }
       }
       else if (symbol == "/") {
-        if (value.type == Variable::STRING) {
+        if (value.type == Variable::NUMBER) {
+          switch (other.type) {
+            case Variable::NODE:
+            case Variable::CFUNC:
+            {
+              Variable::VarList l;
+              for (int i = 0; i < value.number; ++i) {
+                Variable r = executeAny(other, data, i);
+                if (r.toBool())
+                  l.push_back(i);
+              }
+              value = l;
+              break;
+            }
+            default:
+              value = value / other;
+              break;
+          }
+        }
+        else if (value.type == Variable::STRING) {
           switch (other.type) {
             case Variable::NODE:
             case Variable::CFUNC:
