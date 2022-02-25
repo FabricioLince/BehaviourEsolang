@@ -266,6 +266,20 @@ Variable Evaluator::comparation(Node* node, Datatable* data) {
     else if (symbol == "~=") {
       return value != other;
     }
+    else if (symbol == ".." and value.type == Variable::NUMBER && other.type == Variable::NUMBER) {
+      Variable::VarList l;
+      if (value.number<other.number) {
+        for (int i = int(value.number); i <= int(other.number); ++i) {
+          l.push_back(i);
+        }
+      }
+      else {
+        for (int i = int(value.number); i >= int(other.number); --i) {
+          l.push_back(i);
+        }
+      }
+      return l;
+    }
   }
   return value;
 }

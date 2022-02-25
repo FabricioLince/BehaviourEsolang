@@ -1,12 +1,38 @@
+    
   
+  
+  
+  f=&[~m=0(-1|!(a*&["))("%a-1;0])>&&(m=[a|a>m;m]a+b))m]
+  
+  @@f:"1+(3*5)+((5)-1+1)"
+  @@f:"1+((3*5)+((5)-1+1)"
+  @@f:"((())())"
+  
+  
+  $$
+  
+  divisors = &(n=a (1..n)/&n%a==0)
+  
+  divisors:24
+  
+  
+  $$
   
 
-  // these 03 different nodes evaluate the same thing:
+  // these 05 different nodes evaluate the same thing:
   divisors = &(n=a (n+1)*&a|n%a==0)*&a
   divisors = &(n=a (n+1)*&a)/&n%a==0
   divisors = &(n=a (n+1)/&n%a==0)
+  divisors = &(n=a (1..n)/&n%a==0)
+  divisors = &(1..n=a)/&n%a==0
   
   divisors:24
+  
+  
+  
+  
+  
+  
   
   $$
 
@@ -247,25 +273,29 @@ $$
   
   list = load:"lib/list.bhv"
   
+  // commom divisors list
+  cd = &(
+    n = a
+    (1..[a|a<b;b]) / &(n%a==0 b%a==0)
+  )
   
-  
+  // greatest commom divisor
   gcd = &(
-    n1 = a
-    (1+[a|a<b;b]) / &(n1%a==0 b%a==0); %-1
-  ) 
+    n = a
+    (1..[a|a<b;b]) / &(n%a==0 b%a==0); %-1
+  )
   
   ispair = &a%2==0
   notpair = ~ispair
   
-  find = &a<f
-  any = &~~(a<f)
-  all = &~(a<~f)
-  
-  count = &#(a/f)
+  any = &~~(a<b)
+  all = &~(a<~b)
+  first = &a%(a<b)
+  count = &#(a/b)
   
   pred = &(@@"Calling on "+a+" = "+(!f) !f)
   numbers = {1 3 5 6 7 9 5 3 2 1}
-  count:numbers,f=~ispair
+  count:numbers,~ispair
   
   
   

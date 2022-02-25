@@ -69,6 +69,9 @@ LIST == LIST = BOOLEAN --> compares each value of lhs with the corresponding ind
 NODE == NODE = BOOLEAN --> compares the values of lhs ad rhs with ==
 _ == _ = false
 
+NUMBER .. NUMBER = LIST --> creates a list of numbers in the range from lhs to rhs inclusive
+_ .. _ = _ --> just returns lhs
+
 # NUMBER = NUMBER --> cast the number to integer
 # BOOLEAN = NUMBER --> 1 if true else 0
 # STRING = NUMBER --> length of the string (amount of characters)
@@ -85,7 +88,7 @@ _ == _ = false
   expr :: if ';'
   if :: comp ?('|' comp)
   comp :: addition ?(compop addition)
-  compop :: ['>=' '>' '<=' '<' '==' '~=']
+  compop :: ['>=' '>' '<=' '<' '==' '~=' '..']
   addition :: multiplication *(['+' '-'] multiplication)
   multiplication :: value *(['*' '/' '%' '^'] value)
   value :: [signedvalue list integer string cmd name]
