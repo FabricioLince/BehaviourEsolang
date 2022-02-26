@@ -41,6 +41,7 @@ LIST % NUMBER = _ --> gets the item in the rhs position from lhs
 _ % _ = NIL --> invalid
 
 NUMBER ^ NUMBER = NUMBER --> elevates lhs to the power of rhs
+LIST ^ NODE = LIST --> finds all indices of lhs that returns truthy when passed to rhs
 _ ^ _ = _ --> just returns lhs
 
 NUMBER < NUMBER = BOOLEAN --> compares the values of lhs ad rhs with <
@@ -56,7 +57,7 @@ _ <= _ = NIL --> invalid
 NUMBER > NUMBER = BOOLEAN --> compares the values of lhs ad rhs with >
 STRING > STRING = BOOLEAN --> compares lhs and rhs lexicographically by >
 LIST > NODE = _ --> reduce operator, NIL if lhs is empty, the first item of lhs if lhs only has one item, else loops through the list applying rhs with the result of the last iteration and the current item as arguments
-_ < _ = NIL --> invalid
+_ > _ = NIL --> invalid
 
 NUMBER >= NUMBER = BOOLEAN --> compares the values of lhs ad rhs with >=
 STRING >= STRING = BOOLEAN --> compares lhs and rhs lexicographically by >=

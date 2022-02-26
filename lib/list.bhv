@@ -1,9 +1,6 @@
   
   
-  !&(
-    filter = &(r={} a*&&(!f r+=a) r)
-    removeif = &(i=0 \~(i<#a [(pred:a%i a-=i) i+=1]) a)
-    flatten = &(r=a%0 i=1 \~(i<#a j=0 \~(j<#(a%i) r+=a%i%j j+=1) i+=1) r)
+  !&&(
     max = &a > &[(a>b a) b]
     min = &a > &[(a<b a) b]
     insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
@@ -17,13 +14,11 @@
         (sort:l) * c * (sort:r)
       )
     ]
-    unique = &{{}}*a > &[(a<=b a) a+b]
     
-    find = &a<f
-    any = &~~(a<f)
-    all = &~(a<~f)
-    
-    count = &((a*f) > &#a+#b)
+    find = &a<b
+    any = &~~(a<b)
+    all = &~(a<~b)
+    count = &#(a/b)
     
     &&(?r=a ?a=() r)
   )

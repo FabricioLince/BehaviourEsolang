@@ -1,5 +1,51 @@
-    
+
+  print = &
+    [
+      (
+        (type:a) == "node"
+        a:toString
+        @@a:!toString
+      )
+      @@a
+    ]  
+   
+  Table  = &!&&(&&a)
   
+  User = &!&&(
+    name = "unnamed"
+    age = 0
+    toString = &"Name: "+name + "\nage: " + age
+    setName = &&[
+      (!a (type:a)=="string" ?name=a)
+      @@"Name can't be "+ a
+    ]
+    
+    &&a
+  )
+  user1 = !User
+  user1:?age = 26
+  
+  user1:setName:"Lince"
+  print:user1
+  
+  user1:setName:123
+  print:user1
+  
+
+  $$
+  
+  
+  allIndices = &(0..#l=a)/&b:l%a
+  
+  ms = &(
+    allIndices:a,&a<0
+    
+  )
+  
+  @@ms:{-1; 0}
+  @@ms:{0; 1; -1; -1}
+   
+   $$
   
   
   f=&[~m=0(-1|!(a*&["))("%a-1;0])>&&(m=[a|a>m;m]a+b))m]
@@ -9,15 +55,7 @@
   @@f:"((())())"
   
   
-  $$
-  
-  divisors = &(n=a (1..n)/&n%a==0)
-  
-  divisors:24
-  
-  
-  $$
-  
+  $$  
 
   // these 05 different nodes evaluate the same thing:
   divisors = &(n=a (n+1)*&a|n%a==0)*&a

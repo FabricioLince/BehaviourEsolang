@@ -68,46 +68,71 @@ class Environment {
     }
   
     void console() {
-      std::cout << "Behaviour Runtime environment v0.1.10\n" ;
+      std::cout << "Behaviour Runtime environment v0.2.0\n" ;
       std::cout << "type !help for help\n\n";
+      
+      std::string expression;
       
       while (true) {
   
         std::string userString;
         
-        std::cout << ">>";
-        
-        getline(std::cin, userString);
-        
-        if (userString == "!quit") {
-          break;
-        }
-        else if (userString == "!help") {
-          showHelp();
-        }
-        else if (userString == "!doc") {
-          system("start https://github.com/FabricioLince/BehaviourExolang/blob/main/README.md");
+        if (expression.length() == 0) {
+          std::cout << ">>";
         }
         else {
-          Stream *stream = new StringStream(userString);
-          SafeNode sn = extractNodeSafe(stream);
-          if (sn.node) {
-            Node* node = sn.node;
-            if (showParseTree)
-              std::cout << node << "\n";
-            
-            Variable value = evaluator.evaluate(node, &mainDatatable);
-            
-            std::cout << "= " << value << "\n";
-            
-            nodesLoaded.push_back(node);
-            
-          } else {
-            std::cerr << "Parsing failed\n";
-            std::cerr << sn.error << "\n";
-            
+          std::cout << "..";
+        }
+        
+        getline(std::cin, userString);
+        expression += userString;
+        
+        if (expression == "!quit") {
+          break;
+        }
+        else if (expression == "!help") {
+          showHelp();
+          expression = "";
+        }
+        else if (expression == "!doc") {
+          system("start https://github.com/FabricioLince/BehaviourExolang/blob/main/README.md");
+          expression = "";
+        }
+        else if (expression.length() > 0) {
+          
+          int parCount = 0;
+          int brackCount = 0;
+          int curlyCount = 0;
+          for (char c : expression) {
+            switch (c) {
+              case '(':
+                parCount += 1;
+                break;
+              case ')':
+                parCount -= 1;
+                break;
+              case '[':
+                brackCount += 1;
+                break;
+              case ']':
+                brackCount -= 1;
+                break;
+              case '{':
+                curlyCount += 1;
+                break;
+              case '}':
+                curlyCount -= 1;
+                break;
+            }
           }
-          delete stream;
+          
+          if (parCount == 0 && brackCount == 0 && curlyCount == 0) {
+            execute(expression, &mainDatatable);
+            expression = "";
+          }
+          else {
+            expression += "\n";
+          }
         }
       }
       
@@ -139,6 +164,27 @@ class Environment {
       std::cerr << "couldn't open '" << filename << "'\n";
     }
     return Variable();
+  }
+  
+  void execute(std::string expression, Datatable* data) {
+    Stream *stream = new StringStream(expression);
+    SafeNode sn = extractNodeSafe(stream);
+    if (sn.node) {
+      Node* node = sn.node;
+      if (showParseTree)
+        std::cout << node << "\n";
+      
+      Variable value = evaluator.evaluate(node, data);
+      
+      std::cout << "= " << value << "\n";
+      
+      nodesLoaded.push_back(node);
+    } 
+    else {
+      std::cerr << "Parsing failed\n";
+      std::cerr << sn.error << "\n";
+    }
+    delete stream;
   }
 };
 

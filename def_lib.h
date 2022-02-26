@@ -1,4 +1,11 @@
 
+#include <ctime>
+#include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif // _WIN32
 
 
 const Variable nil;
@@ -8,13 +15,12 @@ Variable rand(Datatable* data);
 Variable input(Datatable* data);
 Variable showdata(Datatable* data);
 Variable printvar(Datatable* data);
-Variable printData(Datatable* data);
 Variable parseInt(Datatable* data);
 Variable toAscii(Datatable* data);
 Variable fromAscii(Datatable* data);
 Variable ascii(Datatable* data);
-Variable pow(Datatable* data);
-
+Variable time(Datatable* data);
+Variable wait(Datatable* data);
 
 void addToDatatable(Datatable* data) {
   
@@ -23,11 +29,11 @@ void addToDatatable(Datatable* data) {
   data->setCFunc("read", &input);
   data->setCFunc("data", &showdata);
   data->setOrphanCFunc("print", &printvar);
-  data->setOrphanCFunc("pdata", &printData);
   
   data->setOrphanCFunc("int", &parseInt);
   data->setOrphanCFunc("ascii", &ascii);
-  data->setOrphanCFunc("pow", &pow);
+  data->setOrphanCFunc("time", &time);
+  data->setOrphanCFunc("wait", &wait);
 }
 
 
@@ -54,8 +60,8 @@ Variable type(Datatable* data) {
 }
 Variable rand(Datatable* data) {
   if (!data->has("seed")) {
-    srand(time(NULL));
-    data->setLocal("seed", (int)time(NULL));
+    srand(std::time(NULL));
+    data->setLocal("seed", (int)std::time(NULL));
     //std::cout << "setting seed " << data->get("seed").number << "\n";
   }
   return rand();
@@ -89,11 +95,6 @@ Variable showdata(Datatable* data) {
   return true;
 }
 
-
-Variable printData(Datatable* data) {
-  std::cout << data->context->parent << "\n";
-  return true;
-}
 
 Variable printvar(Datatable* data) {
   Variable arg = data->getLocal("a");
@@ -142,11 +143,24 @@ Variable ascii(Datatable* data) {
   return nil;
 }
 
-Variable pow(Datatable* data) {
-  Variable base = data->get("a");
-  Variable exp = data->get("b");
-  if (base.type == Variable::NUMBER && exp.type == Variable::NUMBER) {
-    return static_cast<long double>(pow(base.number, exp.number));
-  }
-  return nil;
+Variable time(Datatable* data) {
+  
+  std::time_t t = std::time(0);
+  std::tm* now = std::localtime(&t);
+  Variable l = Variable::VarList();
+  l.list.push_back(now->tm_sec);
+  l.list.push_back(now->tm_min);
+  l.list.push_back(now->tm_hour);
+  
+  return l;
+}
+
+Variable wait(Datatable* data) {
+  Variable arg = data->get("a");
+  #ifdef _WIN32
+        Sleep(arg.number);
+    #else
+        usleep(arg.number * 1000);
+    #endif // _WIN32
+  return true;
 }
