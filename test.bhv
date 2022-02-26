@@ -23,13 +23,20 @@
     &&a
   )
   user1 = !User
+  user2 = !User
   user1:?age = 26
   
   user1:setName:"Lince"
-  print:user1
+  user2:setName:"Cacatua"
   
-  user1:setName:123
   print:user1
+  print:user2
+  
+  @@""
+  @@user1
+  @@user1:name
+  @@user2
+  @@user2:name
   
 
   $$

@@ -68,7 +68,7 @@ class Environment {
     }
   
     void console() {
-      std::cout << "Behaviour Runtime environment v0.2.0\n" ;
+      std::cout << "Behaviour Runtime environment v0.2.1\n" ;
       std::cout << "type !help for help\n\n";
       
       std::string expression;
@@ -99,35 +99,9 @@ class Environment {
           expression = "";
         }
         else if (expression.length() > 0) {
-          
-          int parCount = 0;
-          int brackCount = 0;
-          int curlyCount = 0;
-          for (char c : expression) {
-            switch (c) {
-              case '(':
-                parCount += 1;
-                break;
-              case ')':
-                parCount -= 1;
-                break;
-              case '[':
-                brackCount += 1;
-                break;
-              case ']':
-                brackCount -= 1;
-                break;
-              case '{':
-                curlyCount += 1;
-                break;
-              case '}':
-                curlyCount -= 1;
-                break;
-            }
-          }
-          
-          if (parCount == 0 && brackCount == 0 && curlyCount == 0) {
-            execute(expression, &mainDatatable);
+          if (countPairs(expression)) {
+            Variable value = execute(expression, &mainDatatable);
+            std::cout << "= " << value << "\n";
             expression = "";
           }
           else {
@@ -142,50 +116,81 @@ class Environment {
     }
     
     Variable loadfile(std::string filename, Datatable* data) {
-    std::ifstream file;
-    file.open(filename.c_str());
-    if (file.is_open()) {
-      file.close();
-      Parser::Stream* stream = new Parser::FileStream(filename);
-      SafeNode safeNode = extractNodeSafe(stream);
-      delete stream;
-      if (safeNode.node) {
+      std::ifstream file;
+      file.open(filename.c_str());
+      if (file.is_open()) {
+        file.close();
+        Parser::Stream* stream = new Parser::FileStream(filename);
+        Node* node = parse(stream);
+        delete stream;
+        if (node) {
+          return evaluator.evaluate(node, data);
+        }
+      }
+      else {
+        std::cerr << "couldn't open '" << filename << "'\n";
+      }
+      return Variable();
+    }
+    
+    Variable execute(std::string expression, Datatable* data) {
+      Node* node = parse(expression);
+      if (node) {
+        return evaluator.evaluate(node, data);
+      }
+      return Variable();
+    }
+    
+    Node* parse(Stream* stream) {
+      SafeNode sn = extractNodeSafe(stream);
+      if (sn.node) {        
         if (showParseTree)
-          std::cout << safeNode.node << "\n";
-        nodesLoaded.push_back(safeNode.node);
-        return evaluator.evaluate(safeNode.node, data);
+          std::cout << sn.node << "\n";
+        nodesLoaded.push_back(sn.node);
+        return sn.node;
       }
       else {
         std::cerr << "Parsing failed\n";
-        std::cerr << safeNode.error << "\n";
+        std::cerr << sn.error << "\n";
       }
+      return NULL;
     }
-    else {
-      std::cerr << "couldn't open '" << filename << "'\n";
+    Node* parse(std::string string) {
+      Stream *stream = new StringStream(string);
+      Node* node = parse(stream);
+      delete stream;
+      return node;
     }
-    return Variable();
-  }
   
-  void execute(std::string expression, Datatable* data) {
-    Stream *stream = new StringStream(expression);
-    SafeNode sn = extractNodeSafe(stream);
-    if (sn.node) {
-      Node* node = sn.node;
-      if (showParseTree)
-        std::cout << node << "\n";
-      
-      Variable value = evaluator.evaluate(node, data);
-      
-      std::cout << "= " << value << "\n";
-      
-      nodesLoaded.push_back(node);
-    } 
-    else {
-      std::cerr << "Parsing failed\n";
-      std::cerr << sn.error << "\n";
+  private:
+    bool countPairs(std::string expression) {
+      int parCount = 0;
+      int brackCount = 0;
+      int curlyCount = 0;
+      for (char c : expression) {
+        switch (c) {
+          case '(':
+            parCount += 1;
+            break;
+          case ')':
+            parCount -= 1;
+            break;
+          case '[':
+            brackCount += 1;
+            break;
+          case ']':
+            brackCount -= 1;
+            break;
+          case '{':
+            curlyCount += 1;
+            break;
+          case '}':
+            curlyCount -= 1;
+            break;
+        }
+      }
+      return parCount == 0 && brackCount == 0 && curlyCount == 0;
     }
-    delete stream;
-  }
 };
 
 

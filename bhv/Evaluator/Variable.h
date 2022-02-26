@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <sstream>
 
 #include "../../Parser/Tree.h"
 
@@ -92,7 +93,11 @@ class Variable {
         case Variable::BOOL:
           return (number?"true":"false");
         case Variable::NODE:
-          return std::string("Node:") + node->name;
+        {
+          std::stringstream ss;
+          ss << ("Node:") << node->name << "@0x" << std::hex << reinterpret_cast<uintptr_t>(node);
+          return ss.str();
+        }
         case Variable::LIST:
           s = "{";
           for (unsigned int i = 0; i < list.size(); ++i) {

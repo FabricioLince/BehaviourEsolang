@@ -8,12 +8,14 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE false
+#define RUN_FILE true
 
 Environment env; 
 
 bool anyarg(int argc, char** argv, const char* arg);
 Variable loadfile_cfunc(Datatable* data);
+Variable exec_cfunc(Datatable* data);
+Variable parse_cfunc(Datatable* data);
 
 int main(int argc, char** argv) {
   
@@ -22,6 +24,8 @@ int main(int argc, char** argv) {
   env.showParseTree = anyarg(argc, argv, "-tree");
   addToDatatable(env.getDatatable());
   env.getDatatable()->setOrphanCFunc("load", &loadfile_cfunc);
+  env.getDatatable()->setOrphanCFunc("exec", &exec_cfunc);
+  env.getDatatable()->setOrphanCFunc("parse", &parse_cfunc);
   
   if (RUN_FILE) {
     std::string fileName = "test.bhv";
@@ -58,4 +62,21 @@ Variable loadfile_cfunc(Datatable* data) {
   }
   return Variable();
 }
-
+Variable exec_cfunc(Datatable* data) {
+  Variable expression = data->get("a");
+  if (expression.type == Variable::STRING) {
+    return env.execute(expression.string, data);
+  }
+  return Variable();
+}
+Variable parse_cfunc(Datatable* data) {
+  Variable expression = data->get("a");
+  if (expression.type == Variable::STRING) {
+    Node* node = env.parse(expression.string);
+    if (node) {
+      return Variable(node, data);
+    }
+  }
+  return Variable();
+}
+  
