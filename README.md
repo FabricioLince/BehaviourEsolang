@@ -41,9 +41,7 @@ The following is an example of an Assign Expression, in which the Variable `coun
 
 To print a value to the console we can use a Print Expression. The Print Expression can be used in the forms:
 
-`@"Hello World!"` will print the string `Hello World!` **without** a trailing newline.
-
-`@@"Hello World!"` will print the string `Hello World!` **with** a trailing newline.
+`@"Hello World!"` will print the string `Hello World!` **with** a trailing newline.
 
 Ending Expressions with semicolon `;` is not necessary, but can be done to organize the code.
 
