@@ -33,6 +33,7 @@ class PatternRule : public TokenRule {
       }
       if (ok) {
         Token* token = new Token(this->name, pattern, pos);
+        token->line = stream->lineNumber();
         return token;
       }
       stream->setPos(pos);

@@ -1,10 +1,41 @@
 
-  !&(
+  !&&(
+  
+    // is the number a prime
     isprime = &(a>1 i=1 \(i+=1 a%i==0) a==i)
+    
+    // list of prime numbers that multiply to a
     primedivs = &(a>1 l={} d=2 \([(a%d==0 l+=d a/=d) d+=1] a==1) l)
+    
+    // these 05 different expressions evaluate the same thing:
+    divisors = &(n=a (n+1)*&a|n%a==0)*&a
+    divisors = &(n=a (n+1)*&a)/&n%a==0
+    divisors = &(n=a (n+1)/&n%a==0)
+    divisors = &(n=a (1..n)/&n%a==0)
+    divisors = &(1..n=a)/&n%a==0
+    
+    // list of commom divisors between a and b
+    cd = &(
+      n = a
+      (1..[a|a<b;b]) / &(n%a==0 b%a==0)
+    )
+    
+    // greatest commom divisor between a and b
+    gcd = &(!cd) %-1
+    
+    
+    // square root of a
     sqrt = &(d=0 e=1 \( \(d+=1/e d*d>a) d-=1/e e*=10 a-d*d<0.0000001) d)
-    pow = &(r=1 \~(b>0 r*=a b-=1) r)
+    
+    // factorial of a
+    fact = &[1|a<2 a*fact:a-1]
+    
+    // calculate the aº fibonacci number
+    fib = &[
+      (a < 2; 1)
+      (fib:a-1)+(fib:a-2)
+    ]
     
     
-    &&(?r=a ?a=() r)
+    &&a
   )

@@ -7,7 +7,7 @@
 #include <cmath>
 
 Variable Evaluator::integer(Node* node, Datatable* data) {
-  return  Variable(std::stoi(node->asToken()->string));
+  return Variable(std::stoi(node->asToken()->string));
 }
 
 Variable Evaluator::decimal(Tree* tree, Datatable* data) {
@@ -45,12 +45,10 @@ Variable Evaluator::unary(Tree* tree, Datatable* data) {
 }
 
 Variable Evaluator::var(Node* node, Datatable* data) {
-  Variable value = data->get(node->asToken()->string);
-  return value;
+  return data->get(node->asToken()->string);
 }
 
-Variable Evaluator::addition(Node* node, Datatable* data) {
-  Tree* tree = node->asTree();
+Variable Evaluator::addition(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Node* ops = tree->get("ops");
   if (ops) {
@@ -69,8 +67,7 @@ Variable Evaluator::addition(Node* node, Datatable* data) {
   return value;
 }
 
-Variable Evaluator::multiplication(Node* node, Datatable* data) {
-  Tree* tree = dynamic_cast<Tree*>(node);
+Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* ops = tree->subTree("ops");
   if (ops) {
@@ -221,8 +218,7 @@ Variable Evaluator::multiplication(Node* node, Datatable* data) {
 }
 
 
-Variable Evaluator::comparation(Node* node, Datatable* data) {
-  Tree* tree = node->asTree();
+Variable Evaluator::comparation(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* comp = tree->subTree("comp");
   if (comp) {

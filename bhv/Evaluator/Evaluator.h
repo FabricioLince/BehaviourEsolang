@@ -13,114 +13,95 @@ typedef Parser::Node Node;
 typedef Parser::Tree Tree;
 
 class Evaluator {
+  
+  Variable main(Tree* node, Datatable* data);
+  
+  Variable sequence(Tree* tree, Datatable* data);
+  Variable select(Tree* tree, Datatable* data);
+  Variable repeat(Tree* tree, Datatable* data);
+  Variable ifcond(Tree* tree, Datatable* data);
+  
+  Variable negate(Tree* tree, Datatable* data);
+  Variable optional(Tree* tree, Datatable* data);
+  Variable print(Tree* tree, Datatable* data);
+  
+  Variable assign(Node*node, Datatable* dataFrom, Datatable* dataTo);
+  
+  Variable comparation(Tree* tree, Datatable* data);
+  Variable addition(Tree* tree, Datatable* data);
+  Variable multiplication(Tree* tree, Datatable* data);
+  Variable unary(Tree* tree, Datatable* data);
+  Variable integer(Node* node, Datatable* data);
+  Variable decimal(Tree* tree, Datatable* data);
+  Variable var(Node* node, Datatable* data);
+  Variable list(Tree* tree, Datatable* data);
+  Variable string(Node* node, Datatable* data);
+  
+  Variable execute(Tree* tree, Datatable* data);
+  Variable getTree(Tree* tree, Datatable* data);
+  
+  void evaluateArgs(Tree* tree, Datatable* data, Datatable* childData);
+  void evaluateArg(Node* arg, Datatable* data, Datatable* childData);
+  
+  
+  Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
+  Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);
+  Variable applyCFuncOnList(Variable list, Variable cfunc, Datatable* data);
+  
+  Variable executeChildTree(Node* tree, Datatable* data);
+  Variable executeCFunc(Variable cfunc, Datatable* data);
+  Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable(), Variable b = Variable());
+  Variable justExecute(Variable nodeOrFunc, Datatable* data);
+  
+  
+  std::hash<std::string> hasher;
+  const int assign_id = hasher("assign");
+  
+  std::map<int, Variable(Evaluator::*)(Node*, Datatable*)> evaluatorsNode;
+  std::map<int, Variable(Evaluator::*)(Tree*, Datatable*)> evaluatorsTree;
+  
   public:
-    Variable sequence(Node*node, Datatable* data);
-    Variable select(Node*node, Datatable* data);
-    Variable repeat(Node*node, Datatable* data);
-    Variable negate(Node*node, Datatable* data);
-    Variable optional(Node*node, Datatable* data);
-    Variable assign(Node*node, Datatable* dataFrom, Datatable* dataTo);
-    Variable expression(Node* node, Datatable* data);
-    Variable comparation(Node* node, Datatable* data);
-    Variable addition(Node* node, Datatable* data);
-    Variable multiplication(Node* node, Datatable* data);
-    Variable integer(Node* node, Datatable* data);
-    Variable decimal(Tree* tree, Datatable* data);
-    Variable var(Node* node, Datatable* data);
-    Variable print(Node* node, Datatable* data);
-    Variable test(Node* node, Datatable* data);
-    Variable main(Tree* node, Datatable* data);
-    Variable list(Tree* tree, Datatable* data);
-    Variable unary(Tree* tree, Datatable* data);
-    Variable execute(Tree* tree, Datatable* data);
-    Variable ifcond(Tree* tree, Datatable* data);
     
-    
-    void evaluateArgs(Tree* tree, Datatable* data, Datatable* childData);
-    void evaluateArg(Node* arg, Datatable* data, Datatable* childData);
-    
-    Variable getTree(Tree* tree, Datatable* data);
-    Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
-    Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);
-    Variable applyCFuncOnList(Variable list, Variable cfunc, Datatable* data);
-    
-    Variable executeChildTree(Node* tree, Datatable* data);
-    Variable executeCFunc(Variable cfunc, Datatable* data);
-    Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable(), Variable b = Variable());
-    Variable justExecute(Variable nodeOrFunc, Datatable* data);
-
-    Variable string(Node* node, Datatable* data) {
-      std::string str = node->asToken()->string;
-      int pos = str.find("\\n");
-      while (pos != std::string::npos) {
-        str.replace(pos, 2, "\n");
-        pos = str.find("\\n");
-      }
-      return Variable(str);
+    bool printLineNumber = true;
+  
+    Evaluator() {
+      evaluatorsTree[hasher("main")] = &main;
+      
+      evaluatorsTree[hasher("sequence")] = &sequence;
+      evaluatorsTree[hasher("select")] = &select;
+      evaluatorsTree[hasher("repeat")] = &repeat;
+      evaluatorsTree[hasher("ifcond")] = &ifcond;
+      
+      evaluatorsTree[hasher("print")] = &print;
+      evaluatorsTree[hasher("negate")] = &negate;
+      evaluatorsTree[hasher("optional")] = &optional;
+      evaluatorsTree[hasher("unary")] = &unary;
+      
+      evaluatorsTree[hasher("comparation")] = &comparation;
+      evaluatorsTree[hasher("addition")] = &addition;
+      evaluatorsTree[hasher("multiplication")] = &multiplication;
+      evaluatorsNode[hasher("integer")] = &integer;
+      evaluatorsTree[hasher("decimal")] = &decimal;
+      
+      evaluatorsNode[hasher("string")] = &string;
+      evaluatorsNode[hasher("var")] = &var;
+      evaluatorsTree[hasher("list")] = &list;
+      
+      evaluatorsTree[hasher("execute")] = &execute;
+      evaluatorsTree[hasher("getTree")] = &getTree;
     }
+    
     Variable evaluate(Node* node, Datatable* data) {
-      if (node->name == "sequence") {
-        return sequence(node, data);
+      
+      if (evaluatorsNode.count(node->id)) {
+        return (this->*evaluatorsNode[node->id])(node, data);
       }
-      if (node->name == "select") {
-        return select(node, data);
+      if (evaluatorsTree.count(node->id)) {
+        return (this->*evaluatorsTree[node->id])(node->asTree(), data);
       }
-      if (node->name == "assign") {
+      
+      if (node->id == assign_id) {
         return assign(node, data, data);
-      }
-      if (node->name == "integer") {
-        return integer(node, data);
-      }
-      if (node->name == "decimal") {
-        return decimal(node->asTree(), data);
-      }
-      if (node->name == "addition") {
-        return addition(node, data);
-      }
-      if (node->name == "multiplication") {
-        return multiplication(node, data);
-      }
-      if (node->name == "print") {
-        return print(node, data);
-      }
-      if (node->name == "string") {
-        return string(node, data);
-      }
-      if (node->name == "var") {
-        return var(node, data);
-      }
-      if (node->name == "test") {
-        return test(node, data);
-      }
-      if (node->name == "comparation") {
-        return comparation(node, data);
-      }
-      if (node->name == "repeat") {
-        return repeat(node, data);
-      }
-      if (node->name == "negate") {
-        return negate(node, data);
-      }
-      if (node->name == "main") {
-        return main(node->asTree(), data);
-      }
-      if (node->name == "list") {
-        return list(node->asTree(), data);
-      }
-      if (node->name == "unary") {
-        return unary(node->asTree(), data);
-      }
-      if (node->name == "execute") {
-        return execute(node->asTree(), data);
-      }
-      if (node->name == "optional") {
-        return optional(node, data);
-      }
-      if (node->name == "getTree") {
-        return getTree(node->asTree(), data);
-      }
-      if (node->name == "ifcond") {
-        return ifcond(node->asTree(), data);
       }
 
       printf("no evaluator for <%s>\n", node->name.c_str());
@@ -149,5 +130,13 @@ Variable Evaluator::list(Tree* tree, Datatable* data) {
   return Variable(v);
 }
 
-
+Variable Evaluator::string(Node* node, Datatable* data) {
+  std::string str = node->asToken()->string;
+  int pos = str.find("\\n");
+  while (pos != std::string::npos) {
+    str.replace(pos, 2, "\n");
+    pos = str.find("\\n");
+  }
+  return Variable(str);
+}
 #endif

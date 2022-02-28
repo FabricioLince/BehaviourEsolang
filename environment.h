@@ -56,6 +56,10 @@ class Environment {
     bool showParseTree = false;
     bool showDatatable = false;
     bool showResult = false;
+    
+    void setPrintLineNumber(bool print) {
+      evaluator.printLineNumber = print;
+    }
   
     void runfile(std::string filename) {
       Variable result = loadfile(filename, &mainDatatable);

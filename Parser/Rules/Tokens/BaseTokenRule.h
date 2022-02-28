@@ -8,9 +8,9 @@ namespace Parser {
 class TokenRule : public BaseRule {
   protected:
     void ridWhiteSpaces(Stream* stream) {
+      stream->get();
       while (stream->hasNext() && isspace(stream->next())) {}
       stream->setPos(stream->getPos() - 1);
-      
       ridComments(stream);
       
       while (stream->hasNext() && isspace(stream->next())) {}

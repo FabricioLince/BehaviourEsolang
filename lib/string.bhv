@@ -1,14 +1,26 @@
 
-  !&(
-    upalpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    lowalpha= "abcdefghijklmnopqrstuvwxyz"
+  !&&(
+    upalpha  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    lowalpha = "abcdefghijklmnopqrstuvwxyz"
     
     toupper = &(a*&[upalpha%(lowalpha%a) a])>&a+b
     tolower = &(a*&[lowalpha%(upalpha%a) a])>&a+b
-    substr = &(s="" (i=index \(s+=a%i i+=1 i-index>=size) ) s)
+    substr = &a/(index-#a)/size
     
-    format = &(i=0 r="" \~(p=str%"_" r+=str/p+a%i i+=1 str/=p+1-#str) r)
-    
+    format = &(
+      str = a
+      args = al/(1-#al)
+      res = ""
+      i = 0
+      \~(
+        p = str%"_"
+        res += str/p
+        res += args%i
+        i += 1
+        str /= (p-#str+1)
+      )
+      res + str
+    )
     
     &&a
   )

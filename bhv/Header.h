@@ -7,6 +7,5 @@ class Evaluator;
 #include "Evaluator/Assign.h"
 #include "Evaluator/Expression.h"
 #include "Evaluator/Print.h"
-#include "Evaluator/Test.h"
 #include "Evaluator/Control.h"
 #include "Evaluator/Execute.h"

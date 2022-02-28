@@ -1,44 +1,32 @@
-
-  print = &
-    [
-      (
-        (type:a) == "node"
-        a:toString
-        @@a:!toString
-      )
-      @@a
-    ]  
-   
-  Table  = &!&&(&&a)
   
-  User = &!&&(
-    name = "unnamed"
-    age = 0
-    toString = &"Name: "+name + "\nage: " + age
-    setName = &&[
-      (!a (type:a)=="string" ?name=a)
-      @@"Name can't be "+ a
-    ]
-    
-    &&a
-  )
-  user1 = !User
-  user2 = !User
-  user1:?age = 26
   
-  user1:setName:"Lince"
-  user2:setName:"Cacatua"
+  list = load:"lib/list.bhv"
   
-  print:user1
-  print:user2
+  numbers = 10*&(!rand)%10
   
-  @@""
-  @@user1
-  @@user1:name
-  @@user2
-  @@user2:name
+  @numbers
+  @list:sort:numbers
+  @list:!data
+  @list:!sort
+  @list:!data
   
-
+  get = &[
+    ((type:a)=="string" !(parse:a))
+  ]
+  
+  Table = &!&&(&&(a))
+  
+  t1 = !Table
+  t1:name = "Lince"
+  t1:skill = 1337
+  
+  @t1:name
+  @t1:skill
+  @t1:age
+  
+  @t1:get:"name"
+  @t1:get:"skill"
+  
   $$
   
   
@@ -49,303 +37,10 @@
     
   )
   
-  @@ms:{-1; 0}
-  @@ms:{0; 1; -1; -1}
-   
-   $$
-  
-  
-  f=&[~m=0(-1|!(a*&["))("%a-1;0])>&&(m=[a|a>m;m]a+b))m]
-  
-  @@f:"1+(3*5)+((5)-1+1)"
-  @@f:"1+((3*5)+((5)-1+1)"
-  @@f:"((())())"
-  
-  
-  $$  
-
-  // these 05 different nodes evaluate the same thing:
-  divisors = &(n=a (n+1)*&a|n%a==0)*&a
-  divisors = &(n=a (n+1)*&a)/&n%a==0
-  divisors = &(n=a (n+1)/&n%a==0)
-  divisors = &(n=a (1..n)/&n%a==0)
-  divisors = &(1..n=a)/&n%a==0
-  
-  divisors:24
-  
-  
-  
-  
-  
-  
+  @ms:{-1; 0}
+  @ms:{0; 1; -1; -1}
   
   $$
-
-  ispair = &a%2==0
-  
-  
-  numbers = 10*&a
-  
-  @@numbers*&a|ispair
-  @@numbers/ispair
-  
-  $$
-
-  
-  fact = &[(a<2;1)a*fact:a-1]
-  
-  @@fact:4
-  
-  // calculate the aº fibonacci number
-  fib = &[
-    (a < 2; 1)
-    (fib:a-1)+(fib:a-2)
-  ]
-  
-  @@"Those are the first 6 fibonacci numbers: " +
-  
-  6*fib // fill an array with the first 6 fibonacci numbers
-
-  
-  divisors = &(n=a (n+1)*&a|n%a==0)*&a
-  
-  
-  $$
-
-  
-  f=&#((a*&(pow:10,#(""+a))-1-a)>&a+b)
-  f=&#(a*&pow:10,#(""+a);-1-a;>&a+b)
-  f=&#(a*&10^#(""+a)-1-a;>&a+b)
-  //f=&#(a*&10^#(""+a)-1-a;>+)
-  
-  
-  f=&
-    #(                  // deal with 0 case, convert nil into 0
-      a * &             // generate array for n nine complements
-        10^#(""+a)-1-a; // nine complements logic
-      >&a+b             // reduce array by adding its items
-    )
-  
-  @@f:0
-  @@f:1
-  @@f:10
-  @@f:100
-  @@f:1000
-  
-  $$
-  
-  
-  
-  createList = &
-    [
-      (~!a; {})
-      (
-        list = createList:a-1
-        smallest = 0 
-        \(
-          ~(list <= smallest+=1)
-          
-          sum = list+smallest > &a+b
-          
-          ~!sum%a 
-        )
-        list + smallest
-      )
-    ]
-  c=&[(a==1{1})(l=c:a-1s=0\(s+=1~(l<=s)p=[l>&a+b;0]+s;p%a==0)l+s)]f=&(!c)%-1
-  c=&[(a==1{1})(l=c:a-1s=0\(s+=1~(l<=s)([l>&a+b;0]+s)%a==0)l+s)]f=&(!c)%-1
-  c=&[(~!a{})(l=c:a-1s=0\(s+=1~(l<=s)([l>&a+b;0]+s)%a==0)l+s)]f=&(!c)%-1
-  c=&[(~!a{})(l=c:a-1s=0\(s+=1~(l<=s)~!([l>&a+b;0]+s)%a)l+s)]f=&(!c)%-1
-  c=&[(~!a{})(l=c:a-1s=0\(s+=1~(l<=s)~!(l+s>&a+b)%a)l+s)]f=&(!c)%-1
-  c=&[(~!a{})(l=c:a-1s=0\(~(l<=s+=1)~!(l+s>&a+b)%a)l+s)]f=&(!c)%-1
-  
-  
-  @@f:1
-  @@f:2
-  @@f:3
-  @@f:10
-  
-  
-  
-  $$
-  
-  
-  
-  tower = {1 2 3}
-  
-  istower = &![
-    (#a < 3)
-    (
-      t=a
-      (#a-2)*&(v=t%(a+1) [v>t%a; v>t%(a+2)])
-    ) > &(a b)
-  ]
-  
-  aistower = &[
-    (
-      i=1
-      \~(
-        [
-          a%i > a%(i+1)
-          a%i > a%(i-1)
-        ]
-        i += 1
-        i < #a-1
-      )
-      i >= #a-1
-    )
-  ]
-  
-  istower = &![#a<3(t=a(#a-2)*&(v=t%(a+1)[v>t%a;v>t%(a+2)]))>&(a;b)]
-  
-  t=&(i=1\~([a%i>a%(i+1)a%i>a%(i-1)]i+=1i<#a-1)i>#a-2)
-  
-  correct = istower
-  
-  aistower = &(
-    i=1 // start on the index 1
-    // repeat the following sequence until failure
-    \~( 
-      // either the ith member is bigger than the previous or bigger than the next
-      [ 
-        a%i > a%(i+1)
-        a%i > a%(i-1)
-      ]
-      // increment index and check if it still is less than n-1
-      i += 1
-      i < #a-1
-    )
-    // is a tower if the index stopped incrementing on the last possible index (i.e. passed all the checks)
-    i > #a-2
-  )
-  
-  istower = &{a>&a*(a-b) a>&a*(b-a)}
-  
-  test = &(
-    @@""+a + ": " + (istower:a) + " -> " + correct:a
-   )
-  
-  test:{1}
-  test:{1 2}
-  test:{1 2 3}
-  test:{1 3 2}
-  test:{3 1 2}
-  test:{2 1 3}
-  test:{2 3 1}
-  test:{1 2 3 4}
-  test:{3 4 2 1}
-  test:{4 3 1 2}
-  test:{4 1 2 3}
-  test:{3 4 1 5 2}
-  test:{4 3 1 2 5}
-  
-$$
-
-  // calculate the factorial of a
-  fact = &[(a<2;1)a*fact:a-1]
-  @@"factorial of 4 = " + 
-  fact:4
-
-  // calculate the aº fibonacci number
-  fib = &[
-    (a < 2; 1)
-    (fib:a-1)+(fib:a-2)
-  ]
-  
-  @@"Those are the first 6 fibonacci numbers: " +
-  
-  6*fib // fill an array with the first 6 fibonacci numbers
-  
-  $$
-  
-  // fill an array with the fibonacci numbers up to a
-  fib = &(
-    i = 0
-    j = 1
-    a*&&(
-      k = i
-      i += j
-      j = k
-    )
-  )
-  
-  fib:11
-  
-  $$
-  
-  max = &[(a>b a) b]
-  min = &[(a<b a) b]
-  add = &a+b
-  
-  s = "1+(3*5)+((5)-1+1)"
-  
-  maxDepth = &(
-    count = 0
-    max = 0
-    a*&&(
-      ?(count>max max=count)
-      [
-        (count<0 max=-1)
-        (a == "(" count+=1)
-        (a == ")" count-=1)
-      ]
-    )
-    [
-      (count == 0 max)
-      (-1)
-    ]
-  )
-  
-  scan = && (&&
-    [
-      (
-        (type:a) == "list"
-        a+(f:a%-1,b)
-      )
-      {!f}
-    ]
-  )
-  
-  md2 = &a*&["))("%a-1 0]
-  
-  ((md2:s) > scan:f=add ) > max
-  
-  
-  
-  
-  $
-
-  
-  list = load:"lib/list.bhv"
-  
-  // commom divisors list
-  cd = &(
-    n = a
-    (1..[a|a<b;b]) / &(n%a==0 b%a==0)
-  )
-  
-  // greatest commom divisor
-  gcd = &(
-    n = a
-    (1..[a|a<b;b]) / &(n%a==0 b%a==0); %-1
-  )
-  
-  ispair = &a%2==0
-  notpair = ~ispair
-  
-  any = &~~(a<b)
-  all = &~(a<~b)
-  first = &a%(a<b)
-  count = &#(a/b)
-  
-  pred = &(@@"Calling on "+a+" = "+(!f) !f)
-  numbers = {1 3 5 6 7 9 5 3 2 1}
-  count:numbers,~ispair
-  
-  
-  
-  $
-
   
   Matrix = load:"lib/matrix.bhv"
   
@@ -381,39 +76,6 @@ $$
   moves*&@@a
   ;
   
-  Queue = load:"lib/Queue.bhv"
-  
-  q = !Queue
-  
-  q:itens = {1 2 3}
-  
-  q:itens+=15
-  
-  q:push:12
-  q:push:1337
-  
-  q2 = !Queue
-  
-  q2:push:10
-  q2:push:20
-  q2:push:30
-  
-  @@q2:itens
-  
-  @@q:itens
-  
-  
-  \~(q:!peek @@q:!pop)
-  
-  @@q2:itens
-  @@q:itens
-  @@q:!peek
-  
-  ;
-  
-  
-  
-  
   load = (
     cload = load
     &&cload:"lib/"+a
@@ -429,24 +91,16 @@ $$
   
   ;
   
-  split = &(r={}\~(p=a%div r+=a/p a/=p+#div-#a)r+a)
   
-  split:"Lince Lazuli was here",div=" "
-  
-  format = &(i=0 r="" \~(p=str%"_" r+=str/p+a%i i+=1 str/=p+1-#str) r)
-  
-  format:str="My name is _. I made _","Lince","bhv"
-  ;
-  
-  f = &(p=a%" -> " "@@(f:'"+ a/p + "')==" + a/(p-#a+4) )
-  
-  f:"0 -> 0"
-  f:"!!1 -> 1"
-  
-  ;
-  
-  
-  
-;
+  Table  = &!&&(&&a)
 
 
+  c=&[(~!a{})(l=c:a-1s=0\(~(l<=s+=1)~!(l+s>&a+b)%a)l+s)]f=&(!c)%-1
+  
+  
+  @f:100
+  @f:200
+  @f:300
+  
+  
+  $$

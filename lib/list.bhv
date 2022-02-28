@@ -1,6 +1,5 @@
   
   
-  !&&(
     max = &a > &[(a>b a) b]
     min = &a > &[(a<b a) b]
     insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
@@ -21,4 +20,4 @@
     count = &#(a/b)
     
     &&(?r=a ?a=() r)
-  )
+  

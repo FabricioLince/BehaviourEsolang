@@ -71,7 +71,6 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       }
       
       childData->context = data;
-      //std::cout << "childData:\n" << childData << "\n";
       
       evaluateArgs(tree, data, childData);
       
@@ -87,18 +86,16 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
 }
 
 
-Variable Evaluator::executeChildTree(Node* tree, Datatable* data) {
-  Variable result = evaluate(tree, data);
-  return result;
+Variable Evaluator::executeChildTree(Node* node, Datatable* data) {
+  return evaluate(node, data);
 }
 Variable Evaluator::executeCFunc(Variable cfunc, Datatable* data) {
-  Variable result = (*cfunc.cfunc)(data);
-  return result;
+  return (*cfunc.cfunc)(data);
 }
+
 Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable arg, Variable b) {
   Datatable* childData = nodeOrFunc.context;
   if (childData == NULL) {
-    //std::cout << "No context detected for " << nodeOrFunc.toString() << "\n";
     childData = data->makeOrphan();
   }
   
@@ -112,19 +109,22 @@ Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable ar
   
   return justExecute(nodeOrFunc, childData);
 }
+
 Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
   Variable r = Variable();
   if (nodeOrFunc.type == Variable::NODE) {
-    r = executeChildTree(nodeOrFunc.node, data);
+    if (nodeOrFunc.invert) {
+      return !executeChildTree(nodeOrFunc.node, data).toBool();
+    }
+    else
+      return executeChildTree(nodeOrFunc.node, data);
   }
   else if (nodeOrFunc.type == Variable::CFUNC) {
-    r = executeCFunc(nodeOrFunc, data);
-  }
-  if (data->isOrphan) {
-    data->clear();
-  }
-  if (nodeOrFunc.invert) {
-    return !r.toBool();
+    if (nodeOrFunc.invert) {
+      return !executeCFunc(nodeOrFunc, data).toBool();
+    }
+    else
+      return executeCFunc(nodeOrFunc, data);
   }
   return r;
 }

@@ -22,7 +22,10 @@ int main(int argc, char** argv) {
   env.showResult = anyarg(argc, argv, "-result");
   env.showDatatable = anyarg(argc, argv, "-data");
   env.showParseTree = anyarg(argc, argv, "-tree");
+  env.setPrintLineNumber(anyarg(argc, argv, "-ln"));
+  
   addToDatatable(env.getDatatable());
+  
   env.getDatatable()->setOrphanCFunc("load", &loadfile_cfunc);
   env.getDatatable()->setOrphanCFunc("exec", &exec_cfunc);
   env.getDatatable()->setOrphanCFunc("parse", &parse_cfunc);

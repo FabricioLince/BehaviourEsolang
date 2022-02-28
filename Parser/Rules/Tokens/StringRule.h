@@ -20,7 +20,9 @@ class StringRule : public TokenRule {
         }
         if (stream->get() == '"') {
           stream->next(); // consume final quote
-          return new Token(this->name, string, pos);
+          Token* t = new Token(this->name, string, pos);
+          t->line = stream->lineNumber();
+          return t;
         }
       }
       stream->setPos(pos);

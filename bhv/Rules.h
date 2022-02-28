@@ -124,8 +124,7 @@ void Bhv::constructRules() {
   value->rules.insert(value->rules.end()-3, cmd);
   
   Rule print = Sequence("print", {
-    Discard(Symbol("@")),
-    Optional(Symbol("@")),
+    Symbol("@"),
     Checkpoint("expression expected"),
     expression
   });

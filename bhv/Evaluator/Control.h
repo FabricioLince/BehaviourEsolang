@@ -4,8 +4,8 @@
 #include "Evaluator.h"
 
 
-Variable Evaluator::sequence(Node* node, Datatable* data) {
-  NodeList* children = &node->asTree()->children;
+Variable Evaluator::sequence(Tree* tree, Datatable* data) {
+  NodeList* children = &tree->children;
   Datatable* childData = data;//->makeChild();
   if (children->size() == 1) {
     return evaluate(children->at(0), childData);
@@ -20,8 +20,7 @@ Variable Evaluator::sequence(Node* node, Datatable* data) {
   return r;
 }
 
-Variable Evaluator::select(Node* node, Datatable* data) {
-  Tree* tree = node->asTree();
+Variable Evaluator::select(Tree* tree, Datatable* data) {
   for (Node* child : tree->subTree(0)->children) {
     Variable r = evaluate(child, data);
     if (r.toBool()) {
@@ -32,8 +31,7 @@ Variable Evaluator::select(Node* node, Datatable* data) {
 }
 
 
-Variable Evaluator::repeat(Node* node, Datatable* data) {
-  Tree* tree = node->asTree();
+Variable Evaluator::repeat(Tree* tree, Datatable* data) {
   Variable r = evaluate(tree->children.at(0), data);
   while (!r.toBool()) {
     r = evaluate(tree->children.at(0), data);
@@ -41,13 +39,13 @@ Variable Evaluator::repeat(Node* node, Datatable* data) {
   return r;
 }
 
-Variable Evaluator::negate(Node* node, Datatable* data) {
-  Variable r = evaluate(node->asTree()->children.at(0), data);
+Variable Evaluator::negate(Tree* tree, Datatable* data) {
+  Variable r = evaluate(tree->children.at(0), data);
   return Variable(!r.toBool());
 }
 
-Variable Evaluator::optional(Node* node, Datatable* data) {
-  evaluate(node->asTree()->children.at(0), data);
+Variable Evaluator::optional(Tree* tree, Datatable* data) {
+  evaluate(tree->children.at(0), data);
   return true;
 }
 

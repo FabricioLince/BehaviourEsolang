@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 #include "Printable.h"
 
 namespace Parser {
@@ -24,12 +25,16 @@ class Node : public Printable {
 typedef std::vector<Node*> NodeList;
 
 class Token : public Node {
+  
+  std::hash<std::string> hasher;
   public:
     Token(std::string name, std::string string, int pos) {
       this->name = name;
       this->string = string;
       this->pos = pos;
+      this->id = hasher(name);
     }
+    
     Token(int id, std::string string, int pos) {
       this->id = id;
       this->string = string;
@@ -43,6 +48,8 @@ class Token : public Node {
     }
     std::string string;
     int pos;
+    int col = 0;
+    int line = 0;
 };
 
 class Tree : public Node {
@@ -58,12 +65,15 @@ class Tree : public Node {
     }
     return s;
   }
+  std::hash<std::string> hasher;
+  
   public:
     NodeList children;
 
     Tree() {}
     Tree(std::string name) {
       this->name = name;
+      this->id = hasher(name);
     }
     Tree(int id, std::string name = "") {
       this->id = id;
@@ -196,6 +206,16 @@ class Tree : public Node {
         Token* token = dynamic_cast<Token*>(last);
         if (token) {return token;}
         return last->asTree()->lastToken();
+      }
+      return NULL;
+    }
+    
+    Token* firstToken() {
+      for (Node* child : children) {
+        Token* token = child->asToken();
+        if (token) return token;
+        token = child->asTree()->firstToken();
+        if (token) return token;
       }
       return NULL;
     }

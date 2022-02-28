@@ -14,6 +14,7 @@ Variable type(Datatable* data);
 Variable rand(Datatable* data);
 Variable input(Datatable* data);
 Variable showdata(Datatable* data);
+Variable datakeys(Datatable* data);
 Variable printvar(Datatable* data);
 Variable parseInt(Datatable* data);
 Variable toAscii(Datatable* data);
@@ -28,6 +29,7 @@ void addToDatatable(Datatable* data) {
   data->setCFunc("rand", &rand);
   data->setCFunc("read", &input);
   data->setCFunc("data", &showdata);
+  data->setOrphanCFunc("datakeys", &datakeys);
   data->setOrphanCFunc("print", &printvar);
   
   data->setOrphanCFunc("int", &parseInt);
@@ -42,19 +44,19 @@ Variable type(Datatable* data) {
   Variable arg = data->get("a");
   switch (arg.type) {
     case Variable::NIL:
-          return "nil";
-        case Variable::NUMBER:
-          return "number";
-        case Variable::STRING:
-          return "string";
-        case Variable::BOOL:
-          return "bool";
-        case Variable::NODE:
-          return "node";
-        case Variable::LIST:
-          return "list";
-        case Variable::CFUNC:
-          return "cfunc";
+      return "nil";
+    case Variable::NUMBER:
+      return "number";
+    case Variable::STRING:
+      return "string";
+    case Variable::BOOL:
+      return "bool";
+    case Variable::NODE:
+      return "node";
+    case Variable::LIST:
+      return "list";
+    case Variable::CFUNC:
+      return "cfunc";
   }
   return Variable();
 }
@@ -94,11 +96,19 @@ Variable showdata(Datatable* data) {
   std::cout << "Data:\n" << data->context << "\n";
   return true;
 }
-
+Variable datakeys(Datatable* data) {
+  data = data->context;
+  Variable list = Variable::VarList();
+  list.list.reserve(data->memory.size());
+  for(std::map<std::string, Variable>::iterator it = data->memory.begin(); it != data->memory.end(); ++it) {
+    list.list.push_back(it->first);
+  }
+  return list;
+}
 
 Variable printvar(Datatable* data) {
   Variable arg = data->getLocal("a");
-  std::cout << arg.toString() << "\n";
+  std::cout << arg.toString();
   return true;
 }
 

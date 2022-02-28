@@ -26,7 +26,9 @@ class NameRule : public TokenRule {
         while (stream->hasNext() && validSecond(stream->get())) {
           string += stream->next();
         }
-        return new Token(this->name, string, pos);
+        Token* t = new Token(this->name, string, pos);
+        t->line = stream->lineNumber();
+        return t;
       }
       stream->setPos(pos);
       return NULL;
