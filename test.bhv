@@ -1,16 +1,11 @@
 
-  
-  @"loading lib/list.bhv"
-  list = load:"lib/list.bhv"
-  list:sort
-  list:!data
-  @list:!datakeys
-  list:data:1
-  @list:datakeys:1
-  list:data:2
-  @list:datakeys:2
-  list:data:-1
-  @list:datakeys:-1
+  Queue = load:"lib/queue.bhv"
+
+  q1 = !Queue
+  q1:push:1
+  q1:push:2
+  @q1:itens
+  \~(v=q1:!pop @v)
   
   $$
   

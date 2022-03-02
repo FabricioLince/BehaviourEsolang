@@ -65,30 +65,30 @@ class Evaluator {
     bool printLineNumber = true;
   
     Evaluator() {
-      evaluatorsTree[hasher("main")] = &main;
+      evaluatorsTree[hasher("main")] = &Evaluator::main;
       
-      evaluatorsTree[hasher("sequence")] = &sequence;
-      evaluatorsTree[hasher("select")] = &select;
-      evaluatorsTree[hasher("repeat")] = &repeat;
-      evaluatorsTree[hasher("ifcond")] = &ifcond;
+      evaluatorsTree[hasher("sequence")] = &Evaluator::sequence;
+      evaluatorsTree[hasher("select")] = &Evaluator::select;
+      evaluatorsTree[hasher("repeat")] = &Evaluator::repeat;
+      evaluatorsTree[hasher("ifcond")] = &Evaluator::ifcond;
       
-      evaluatorsTree[hasher("print")] = &print;
-      evaluatorsTree[hasher("negate")] = &negate;
-      evaluatorsTree[hasher("optional")] = &optional;
-      evaluatorsTree[hasher("unary")] = &unary;
+      evaluatorsTree[hasher("print")] = &Evaluator::print;
+      evaluatorsTree[hasher("negate")] = &Evaluator::negate;
+      evaluatorsTree[hasher("optional")] = &Evaluator::optional;
+      evaluatorsTree[hasher("unary")] = &Evaluator::unary;
       
-      evaluatorsTree[hasher("comparation")] = &comparation;
-      evaluatorsTree[hasher("addition")] = &addition;
-      evaluatorsTree[hasher("multiplication")] = &multiplication;
-      evaluatorsNode[hasher("integer")] = &integer;
-      evaluatorsTree[hasher("decimal")] = &decimal;
+      evaluatorsTree[hasher("comparation")] = &Evaluator::comparation;
+      evaluatorsTree[hasher("addition")] = &Evaluator::addition;
+      evaluatorsTree[hasher("multiplication")] = &Evaluator::multiplication;
+      evaluatorsNode[hasher("integer")] = &Evaluator::integer;
+      evaluatorsTree[hasher("decimal")] = &Evaluator::decimal;
       
-      evaluatorsNode[hasher("string")] = &string;
-      evaluatorsNode[hasher("var")] = &var;
-      evaluatorsTree[hasher("list")] = &list;
+      evaluatorsNode[hasher("string")] = &Evaluator::string;
+      evaluatorsNode[hasher("var")] = &Evaluator::var;
+      evaluatorsTree[hasher("list")] = &Evaluator::list;
       
-      evaluatorsTree[hasher("execute")] = &execute;
-      evaluatorsTree[hasher("getTree")] = &getTree;
+      evaluatorsTree[hasher("execute")] = &Evaluator::execute;
+      evaluatorsTree[hasher("getTree")] = &Evaluator::getTree;
     }
     
     Variable evaluate(Node* node, Datatable* data) {
