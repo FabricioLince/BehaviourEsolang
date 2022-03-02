@@ -23,6 +23,9 @@ class Environment {
     try {
       Parser::Node *node = bhv.extractTree(stream);
       sn.node = node;
+      if (node != NULL) {
+        nodesLoaded.push_back(sn.node);
+      }
     }
     catch (Parser::ParsingError e) {
       sn.error = e.what();
@@ -150,7 +153,6 @@ class Environment {
       if (sn.node) {        
         if (showParseTree)
           std::cout << sn.node << "\n";
-        nodesLoaded.push_back(sn.node);
         return sn.node;
       }
       else {

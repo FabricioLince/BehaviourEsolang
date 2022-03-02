@@ -97,7 +97,7 @@ _ .. _ = _ --> just returns lhs
   list :: '{' *expr '}'
   
   cmd :: [print assign execute sequence select optional gettree repeat]
-  print :: '@' ?'@' expr
+  print :: '@' expr
   assign :: name ['=' '+=' '-=' '*=' '/=' '%='] expr
   execute :: [execname execexpr]
   execname :: ?'!' name args
@@ -119,5 +119,5 @@ not yet used symbols:
 $ _ ' 
 
 symbols I probably wont use:
-` § ¬ ¢ £ ° ª º
+` § ¬ ¢ £ ° ª º 
 

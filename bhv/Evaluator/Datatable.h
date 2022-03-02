@@ -37,7 +37,7 @@ class Datatable {
     }
     /// set a cfunc with an orphan context
     void setOrphanCFunc(std::string varName, Variable cfunc) {
-      cfunc.context = makeOrphan();
+      cfunc.context = NULL;
       set(varName, cfunc); 
     }
     

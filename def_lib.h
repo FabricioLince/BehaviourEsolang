@@ -92,15 +92,32 @@ Variable input(Datatable* data) {
   }
   return Variable();
 }
+
+Datatable* getDatatableByArgDepth(Datatable* data) {
+  Variable arg = data->getLocal("a");
+  Datatable* show = data->context;
+  int depth = 0;
+  if (arg.type == Variable::NUMBER) depth = int(arg.number);
+  if (depth < 0) {
+    show = show->global();
+  }
+  else while (depth > 0 && show->parent) {
+    show = show->parent;
+    depth -= 1;
+  }
+  return show;
+}
+
 Variable showdata(Datatable* data) {
-  std::cout << "Data:\n" << data->context << "\n";
+  Datatable* show = getDatatableByArgDepth(data);
+  std::cout << "Data:\n" << show << "\n";
   return true;
 }
 Variable datakeys(Datatable* data) {
-  data = data->context;
+  Datatable* show = getDatatableByArgDepth(data);
   Variable list = Variable::VarList();
-  list.list.reserve(data->memory.size());
-  for(std::map<std::string, Variable>::iterator it = data->memory.begin(); it != data->memory.end(); ++it) {
+  list.list.reserve(show->memory.size());
+  for(std::map<std::string, Variable>::iterator it = show->memory.begin(); it != show->memory.end(); ++it) {
     list.list.push_back(it->first);
   }
   return list;

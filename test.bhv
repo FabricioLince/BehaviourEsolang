@@ -1,31 +1,16 @@
+
   
-  
+  @"loading lib/list.bhv"
   list = load:"lib/list.bhv"
-  
-  numbers = 10*&(!rand)%10
-  
-  @numbers
-  @list:sort:numbers
-  @list:!data
-  @list:!sort
-  @list:!data
-  
-  get = &[
-    ((type:a)=="string" !(parse:a))
-  ]
-  
-  Table = &!&&(&&(a))
-  
-  t1 = !Table
-  t1:name = "Lince"
-  t1:skill = 1337
-  
-  @t1:name
-  @t1:skill
-  @t1:age
-  
-  @t1:get:"name"
-  @t1:get:"skill"
+  list:sort
+  list:!data
+  @list:!datakeys
+  list:data:1
+  @list:datakeys:1
+  list:data:2
+  @list:datakeys:2
+  list:data:-1
+  @list:datakeys:-1
   
   $$
   

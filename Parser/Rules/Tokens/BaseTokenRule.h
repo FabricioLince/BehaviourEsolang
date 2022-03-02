@@ -8,24 +8,30 @@ namespace Parser {
 class TokenRule : public BaseRule {
   protected:
     void ridWhiteSpaces(Stream* stream) {
-      stream->get();
-      while (stream->hasNext() && isspace(stream->next())) {}
-      stream->setPos(stream->getPos() - 1);
-      ridComments(stream);
       
-      while (stream->hasNext() && isspace(stream->next())) {}
-      stream->setPos(stream->getPos() - 1);
+      bool isCmt = ridComments(stream);
+      bool isSpc = isspace(stream->get());
+      while (isCmt || isSpc) {
+        isCmt = ridComments(stream);
+        isSpc = isspace(stream->get());
+        while (isspace(stream->get())) {
+          stream->next();
+        }
+      }
     }
     
-    void ridComments(Stream* stream) {
+    bool ridComments(Stream* stream) {
       if (stream->get() == '/') {
         stream->next();
+        bool isCmt = false;
         if (stream->get() == '/') {
+          isCmt = true;
           while (stream->hasNext() && stream->next() != '\n') {}
         }
         stream->setPos(stream->getPos() - 1);
-        
+        return isCmt;
       }
+      return false;
     }
 };
 

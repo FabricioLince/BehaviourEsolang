@@ -1,9 +1,18 @@
   
   
+    // get the maximum value of list
     max = &a > &[(a>b a) b]
+    
+    // get the minimum value of list
     min = &a > &[(a<b a) b]
+    
+    // insert the value in the given index
     insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
+    
+    // split the list of the given index
     split = &[(i<0 {{} a}) (i>#a {a {}}) {a/i a/-(#a-i)}]
+    
+    // quick sort
     sort = &[
       (#a<2 a)
       (
@@ -20,4 +29,5 @@
     count = &#(a/b)
     
     &&(?r=a ?a=() r)
+    
   
