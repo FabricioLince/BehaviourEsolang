@@ -113,10 +113,10 @@ _ .. _ = _ --> just returns lhs
 
 
 used symbols:
-() [] {} ! ? @ ~ & # % | + - * / \ " . , > < = ^ : ;
+() [] {} ! ? @ ~ & # % | + - * / \ " . , > < = ^ : ; '
 
 not yet used symbols:
-$ _ ' 
+$ _ 
 
 symbols I probably wont use:
 ` § ¬ ¢ £ ° ª º 
