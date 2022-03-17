@@ -18,7 +18,8 @@ class Environment {
     std::string error;
   };
 
-  SafeNode extractNodeSafe(Stream* stream) {
+  SafeNode extractNodeSafe(TokenStream* stream) {
+    //std::cout << "extracting node from Token Stream" << std::endl;
     SafeNode sn;
     try {
       Parser::Node *node = bhv.extractTree(stream);
@@ -59,6 +60,7 @@ class Environment {
     bool showParseTree = false;
     bool showDatatable = false;
     bool showResult = false;
+    bool showTokens = false;
     
     void setPrintLineNumber(bool print) {
       evaluator.printLineNumber = print;
@@ -123,18 +125,18 @@ class Environment {
     }
     
     Variable loadfile(std::string filename, Datatable* data) {
-      std::ifstream file;
-      file.open(filename.c_str());
+      std::ifstream file(filename.c_str());
       if (file.is_open()) {
-        file.close();
-        Parser::Stream* stream = new Parser::FileStream(filename);
-        Node* node = parse(stream);
-        delete stream;
-        if (node) {
-          return evaluator.evaluate(node, data);
+        std::string line;
+        std::string content;
+        while (std::getline(file, line))
+        {
+          content += line;
+          content.push_back('\n');
         }
+        return execute(content, data);
       }
-      else {
+       else {
         std::cerr << "couldn't open '" << filename << "'\n";
       }
       return Variable();
@@ -148,9 +150,12 @@ class Environment {
       return Variable();
     }
     
-    Node* parse(Stream* stream) {
+    Node* parse(TokenStream* stream) {
       SafeNode sn = extractNodeSafe(stream);
-      if (sn.node) {        
+      if (!stream->ended()) {
+        std::cerr << "couldn't parse after " << stream->currentToken().toString() << std::endl;
+      }
+      if (sn.node) {
         if (showParseTree)
           std::cout << sn.node << "\n";
         return sn.node;
@@ -162,7 +167,12 @@ class Environment {
       return NULL;
     }
     Node* parse(std::string string) {
-      Stream *stream = new StringStream(string);
+      TokenStream* stream = new TokenStream(string);
+      if (showTokens) {
+        for (Token token : stream->tokens) {
+          std::cout << token.toString() << std::endl;
+        }
+      }
       Node* node = parse(stream);
       delete stream;
       return node;

@@ -10,14 +10,8 @@ Variable Evaluator::integer(Node* node, Datatable* data) {
   return Variable(std::stoi(node->asToken()->string));
 }
 
-Variable Evaluator::decimal(Tree* tree, Datatable* data) {
-  Variable i = integer(tree->children.at(0), data);
-  Variable d = integer(tree->children.at(1), data);
-  double e = 1;
-  for (unsigned int i = 0; i < tree->getToken(1)->string.size(); ++i) {
-    e *= 10;
-  }
-  return i.number + d.number/e;
+Variable Evaluator::decimal(Node* node, Datatable* data) {
+  return Variable(stold(node->asToken()->string));
 }
 
 Variable Evaluator::unary(Tree* tree, Datatable* data) {
@@ -54,7 +48,7 @@ Variable Evaluator::addition(Tree* tree, Datatable* data) {
   if (ops) {
     for (Node* op : ops->asTree()->children) {
       Tree* top = op->asTree();
-      std::string symbol = top->getToken("symbol")->string;
+      std::string symbol = top->getToken("addop")->string;
       Variable other = evaluate(top->children.at(1), data);
       if (symbol == "+") {
         value = value + other;
@@ -73,7 +67,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
   if (ops) {
     for (Node* op : ops->children) {
       Tree* top = op->asTree();
-      std::string symbol = top->getToken("symbol")->string;
+      std::string symbol = top->getToken("mulop")->string;
       Variable other = evaluate(top->children.at(1), data);
       if (symbol == "*") {
         if (value.type == Variable::NUMBER) {
@@ -222,7 +216,7 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* comp = tree->subTree("comp");
   if (comp) {
-    std::string symbol = comp->getToken("symbol")->string;
+    std::string symbol = comp->getToken("comparation")->string;
     Variable other = evaluate(comp->children.at(1), data);
     if (symbol == ">") {
       if (value.type == Variable::LIST && (other.type == Variable::NODE or other.type == Variable::CFUNC)) {

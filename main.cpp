@@ -8,7 +8,7 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE true
+#define RUN_FILE false
 
 Environment env; 
 
@@ -19,9 +19,10 @@ Variable parse_cfunc(Datatable* data);
 
 int main(int argc, char** argv) {
   
-  env.showResult = anyarg(argc, argv, "-result");
+  env.showResult = anyarg(argc, argv, "-result") || true;
   env.showDatatable = anyarg(argc, argv, "-data");
   env.showParseTree = anyarg(argc, argv, "-tree");
+  env.showTokens = anyarg(argc, argv, "-tokens");
   env.setPrintLineNumber(anyarg(argc, argv, "-ln"));
   
   addToDatatable(env.getDatatable());
@@ -29,19 +30,23 @@ int main(int argc, char** argv) {
   env.getDatatable()->setOrphanCFunc("load", &loadfile_cfunc);
   env.getDatatable()->setOrphanCFunc("exec", &exec_cfunc);
   env.getDatatable()->setOrphanCFunc("parse", &parse_cfunc);
-  
-  if (RUN_FILE) {
-    std::string fileName = "test.bhv";
-    if (argc > 1) {
-      fileName = argv[1];
+
+  try {
+    if (RUN_FILE) {
+      std::string fileName = "test.bhv";
+      if (argc > 1) {
+        fileName = argv[1];
+      }
+      
+      env.runfile(fileName);
     }
-    
-    env.runfile(fileName);
+    else {
+      env.console();
+    }
   }
-  else {
-    env.console();
+  catch (std::exception e) {
+    std::cout << "EXCEPTION: " << e.what() << std::endl;
   }
-  
 	return 0;
 }
 

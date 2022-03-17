@@ -3,126 +3,46 @@
 
 #include <cstring>
 #include <fstream>
+#include "Tokenizer.h"
 
 namespace Parser {
-
-template <class charT>
-class BaseStream {
-  protected:
-    int pos = 0;
-    BaseStream() {}
-  public:
-    virtual void setPos(int p) {this->pos = p;}
-    virtual int getPos() {return this->pos;}
-    virtual charT next() {
-      this->pos += 1;
-      return this->get(this->pos-1);
-    }
-    virtual charT nextIf() {
-      if (hasNext()) {
-        return next();
+  
+  class TokenStream {
+    public:
+      
+      TokenStream(std::string expression) {
+        Tokenizer tokenizer;
+        tokens = tokenizer.extractTokens(expression);
+        index = 0;
       }
-      return 0;
-    }
-    virtual ~BaseStream() { }
-
-    virtual charT get(int pos=-1) = 0;
-    virtual bool hasNext() = 0;
-
-    virtual int lineNumber() {
-      int p = 0;
-      int line = 1;
-      while (p < pos) {
-        if (get(p) == '\n') {
-          line += 1;
-        }
-        p += 1;
+    
+      std::vector<Token> tokens;
+      int index = 0;
+      bool hasCurrent() {
+        return index < tokens.size();
       }
-      return line;
-    }
-    virtual int colNumber() {
-      int p = 0;
-      int col = 1;
-      while (p < pos) {
-        if (get(p) == '\n') {
-          col = 1;
-        }
-        else {
-          col += 1;
-        }
-        p += 1;
+      Token currentToken() {
+        if (!hasCurrent())
+          std::cout << "HAS NO TOKEN!" << std::endl;
+        return tokens[index];
       }
-      return col;
-    }
-};
-
-template <class charT>
-class BaseStringStream : public BaseStream<charT> {
-  private:
-    std::basic_string<charT> string;
-  public:
-    BaseStringStream(std::basic_string<charT> string) {
-      this->string = string+" \n";
-    }
-    charT get(int pos = -1) {
-      if (pos < 0) {
-        pos = this->pos;
+      
+      int lineNumber() {
+        if (hasCurrent())
+          return currentToken().line;
+        return 0;
       }
-      if (pos < string.size()) {
-        return string.at(pos);
+      int colNumber() {
+        if (hasCurrent()) 
+          return currentToken().col;
+        return 0;
       }
-      return (charT)0;
-    }
-    bool hasNext() {
-      return string.size() > this->pos;
-    }
-};
 
-template <class charT>
-class BaseFileStream : public BaseStream<char> {
-  private:
-    std::basic_ifstream<charT>* file;
-    bool ownsFile = false;
-  public:
-    BaseFileStream(std::string filePath) {
-      this->file = new std::basic_ifstream<charT>();
-      this->file->open(filePath);
-      ownsFile = true;
-    }
-    BaseFileStream(std::basic_ifstream<charT>* file) {
-      this->file = file;
-    }
-    void setPos(int p) {
-      this->pos = p;
-      file->clear(); // clear eof flag
-      get();
-    }
-    charT get(int pos = -1) {
-      if (pos < 0) { pos = this->pos; }
-      file->seekg(pos);
-      charT c;
-      file->get(c);
-      return c;
-    }
-    bool hasNext() {
-      return file->is_open() && !file->eof();
-    }
-    ~BaseFileStream() {
-      if (ownsFile) {
-        if (this->file != NULL && this->file->is_open()) {
-          this->file->close();
-        }
-        delete this->file;
-        ownsFile = false;
-        this->file = NULL;
+      bool ended() {
+        return index >= tokens.size();
       }
-    }
-};
-
-typedef BaseStream<char> Stream;
-typedef BaseStringStream<char> StringStream;
-typedef BaseFileStream<char> FileStream;
-
+        
+  };
 }
 
 #endif

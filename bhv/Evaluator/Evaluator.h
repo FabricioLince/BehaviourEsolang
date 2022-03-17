@@ -32,7 +32,7 @@ class Evaluator {
   Variable multiplication(Tree* tree, Datatable* data);
   Variable unary(Tree* tree, Datatable* data);
   Variable integer(Node* node, Datatable* data);
-  Variable decimal(Tree* tree, Datatable* data);
+  Variable decimal(Node* node, Datatable* data);
   Variable var(Node* node, Datatable* data);
   Variable list(Tree* tree, Datatable* data);
   Variable string(Node* node, Datatable* data);
@@ -81,10 +81,10 @@ class Evaluator {
       evaluatorsTree[hasher("addition")] = &Evaluator::addition;
       evaluatorsTree[hasher("multiplication")] = &Evaluator::multiplication;
       evaluatorsNode[hasher("integer")] = &Evaluator::integer;
-      evaluatorsTree[hasher("decimal")] = &Evaluator::decimal;
+      evaluatorsNode[hasher("decimal")] = &Evaluator::decimal;
       
       evaluatorsNode[hasher("string")] = &Evaluator::string;
-      evaluatorsNode[hasher("var")] = &Evaluator::var;
+      evaluatorsNode[hasher("word")] = &Evaluator::var;
       evaluatorsTree[hasher("list")] = &Evaluator::list;
       
       evaluatorsTree[hasher("execute")] = &Evaluator::execute;
@@ -92,7 +92,7 @@ class Evaluator {
     }
     
     Variable evaluate(Node* node, Datatable* data) {
-      
+      //std::cout << "evaluating:" << node << std::endl;
       if (evaluatorsNode.count(node->id)) {
         return (this->*evaluatorsNode[node->id])(node, data);
       }
@@ -103,7 +103,7 @@ class Evaluator {
       if (node->id == assign_id) {
         return assign(node, data, data);
       }
-
+      
       printf("no evaluator for <%s>\n", node->name.c_str());
       return Variable();
     }
@@ -131,12 +131,18 @@ Variable Evaluator::list(Tree* tree, Datatable* data) {
 }
 
 Variable Evaluator::string(Node* node, Datatable* data) {
-  std::string str = node->asToken()->string;
+  std::string str = node->asToken()->capture;
   int pos = str.find("\\n");
   while (pos != std::string::npos) {
     str.replace(pos, 2, "\n");
     pos = str.find("\\n");
   }
-  return Variable(str);
+  pos = str.find("\\t");
+  while (pos != std::string::npos) {
+    str.replace(pos, 2, "\t");
+    pos = str.find("\\t");
+  }
+  return Variable(str.substr(1, str.length()-2));
 }
+
 #endif

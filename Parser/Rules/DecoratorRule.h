@@ -23,8 +23,8 @@ class MultipleRule : public BaseDecoratorRule {
       this->child = child;
       this->name = child->name;
     }
-    Node* execute(Stream* stream) {
-      int pos = stream->getPos();
+    Node* execute(TokenStream* stream) {
+      int previousIndex = stream->index;
       Tree* tree = new Tree(this->name);
       Node* result = this->child->execute(stream);
       while (result) {
@@ -34,7 +34,7 @@ class MultipleRule : public BaseDecoratorRule {
       if (tree->children.size() >= this->min) {
         return tree;
       }
-      stream->setPos(pos);
+      stream->index = previousIndex;
       return NULL;
     }
 };
@@ -49,7 +49,7 @@ class OptionalRule : public BaseDecoratorRule {
       this->child = child;
       this->name = "optional";
     }
-    Node* execute(Stream* stream) {
+    Node* execute(TokenStream* stream) {
       Tree* tree = new Tree(this->name);
       Node* result = this->child->execute(stream);
       if (result) {

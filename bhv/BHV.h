@@ -10,7 +10,6 @@ typedef Parser::BaseRule* Rule;
 class Bhv {
   Rule main;
   RuleCollection collection;
-  Rule Symbol(std::string patt);
   void constructRules();
 
   public:
@@ -18,7 +17,7 @@ class Bhv {
       constructRules();
     }
     
-    Parser::Node* extractTree(Parser::Stream* stream) {
+    Parser::Node* extractTree(Parser::TokenStream* stream) {
       Node* node = main->execute(stream);
        if (node) {
         node->asTree()->removeEmpty({"ops", "comp", "cond"});

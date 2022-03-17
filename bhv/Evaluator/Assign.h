@@ -7,8 +7,8 @@
 Variable Evaluator::assign(Node* node, Datatable* dataFrom, Datatable* dataTo) {
   Tree* tree = node->asTree();
   //std::cout << tree << "\n";
-  std::string varName = tree->getToken("name")->string;
-  std::string symbol = tree->getToken(1)->string;
+  std::string varName = tree->getToken("word")->capture;
+  std::string symbol = tree->getToken(1)->capture;
   
   Variable value = evaluate(tree->children.at(2), dataFrom);
   //std::cout << "assigning " << varName << " " << symbol << " " << value << "\n";

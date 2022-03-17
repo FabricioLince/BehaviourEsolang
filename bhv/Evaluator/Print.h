@@ -6,7 +6,7 @@
 
 Variable Evaluator::print(Tree* tree, Datatable* data) {
   
-  Variable value = evaluate(tree->children.at(1), data);
+  Variable value = evaluate(tree->children.at(0), data);
   if (printLineNumber) {
     Token* t = tree->firstToken();
     if (t) {

@@ -19,14 +19,15 @@ class BaseCompositeRule : public BaseRule {
 class SequenceRule : public BaseCompositeRule {
   public:
 
-    Node* execute(Stream* stream) {
-      int pos = stream->getPos();
+    Node* execute(TokenStream* stream) {
+      int previousIndex = stream->index;
       Tree* tree = new Tree(this->name);
       CheckpointRule* cp = NULL;
 
       for (iterator it = rules.begin(); it != rules.end(); ++it) {
         BaseRule* rule = (*it);
         if(dynamic_cast<CheckpointRule*>(rule)) {
+          // hit a checkpoint, save it as current cp and move on to next rule
           cp = dynamic_cast<CheckpointRule*>(rule);
         }
         else {
@@ -34,9 +35,12 @@ class SequenceRule : public BaseCompositeRule {
           if (result) {
             if (!rule->discard)
               tree->children.push_back(result);
+            //std::cout << "current tree:\n" << tree << std::endl;
           }
           else {
             if (cp) {
+              // if has hit a checkpoint can't roll back
+              // throw a ParsingError
               std::string err = cp->msg;
               if (err.size() == 0) {
                 err = "Error constructing " + this->name + "\n";
@@ -57,7 +61,9 @@ class SequenceRule : public BaseCompositeRule {
               throw ParsingError(err);
             }
             else {
-              stream->setPos(pos); // revert stream to the position it was before 
+              // didn't hit a checkpoint
+              // revert stream to the index it was before
+              stream->index = previousIndex; 
               return NULL;
             }
           }
@@ -70,14 +76,11 @@ class SequenceRule : public BaseCompositeRule {
 class SelectRule : public BaseCompositeRule {
   public:
 
-    Node* execute(Stream* stream) {
+    Node* execute(TokenStream* stream) {
       for (unsigned int i = 0; i < rules.size(); ++i) {
         Node* result = rules.at(i)->execute(stream);
         if (result) {
           return result;
-          //Tree* tree = new Tree(this->name);
-          //tree->children.push_back(result);
-          //return tree;
         }
       }
       return NULL;

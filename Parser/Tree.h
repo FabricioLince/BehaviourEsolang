@@ -24,32 +24,21 @@ class Node : public Printable {
 };
 typedef std::vector<Node*> NodeList;
 
-class Token : public Node {
-  
+class Leaf : public Node {
   std::hash<std::string> hasher;
   public:
-    Token(std::string name, std::string string, int pos) {
-      this->name = name;
-      this->string = string;
-      this->pos = pos;
+    Token token;
+    Leaf(Token token) {
+      this->name = token.ruleName;
       this->id = hasher(name);
-    }
-    
-    Token(int id, std::string string, int pos) {
-      this->id = id;
-      this->string = string;
-      this->pos = pos;
+      this->token = token;
     }
     std::string toString() {
       if (this->name.size() == 0) {
-        return std::to_string(this->id) + ":'" + this->string + "'";
+        return std::to_string(this->token.ruleId) + ":'" + this->token.capture + "'";
       }
-      return this->name + ":'" + this->string + "'";//("+       std::to_string(this->pos)+")";
+      return this->token.ruleName + ":'" + this->token.capture + "'";//("+       std::to_string(this->pos)+")";
     }
-    std::string string;
-    int pos;
-    int col = 0;
-    int line = 0;
 };
 
 class Tree : public Node {
@@ -203,7 +192,7 @@ class Tree : public Node {
     Token* lastToken() {
       if (children.size() > 0) {
         Node* last = children.back();
-        Token* token = dynamic_cast<Token*>(last);
+        Token* token = last->asToken();
         if (token) {return token;}
         return last->asTree()->lastToken();
       }
@@ -226,7 +215,9 @@ Tree* Node::asTree() {
   return dynamic_cast<Tree*>(this); 
 }
 Token* Node::asToken() {
-  return dynamic_cast<Token*>(this);
+  Leaf* leaf = dynamic_cast<Leaf*>(this);
+  if (leaf) return &leaf->token;
+  return NULL;
 }
 
 }

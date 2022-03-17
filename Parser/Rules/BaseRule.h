@@ -11,9 +11,42 @@ namespace Parser {
     public:
       std::string name = "unnamed rule";
       bool discard = false;
-      virtual Node* execute(Stream* stream) = 0;
+      virtual Node* execute(TokenStream* stream) = 0;
       virtual ~BaseRule() {}
   };
+  
+  class TokenRule : public BaseRule {
+    public:
+      std::string tokenName;
+      Node* execute(TokenStream* stream) {
+        if (stream->hasCurrent()) {
+          Token current = stream->currentToken();
+          if (current.ruleName == tokenName) {
+            stream->index += 1;
+            return new Leaf(current);
+          }
+        }
+        return NULL;
+      }
+  };
+  class CaptureRule : public BaseRule {
+    public:
+      std::string capture;
+      CaptureRule(std::string capture) {
+        this->capture = capture;
+      }
+      Node* execute(TokenStream* stream) {
+        if (stream->hasCurrent()) {
+          Token current = stream->currentToken();
+          if (current.capture == capture) {
+            stream->index += 1;
+            return new Leaf(current);
+          }
+        }
+        return NULL;
+      }
+  };
+  
 
   class ParsingError : public std::exception {
     std::string msg;
@@ -35,20 +68,20 @@ namespace Parser {
         this->discard = true;
       }
       
-      Node* execute(Stream* stream) {
+      Node* execute(TokenStream* stream) {
         std::cout << msg << "\n";
-        int pos = stream->getPos();
+        int previousIndex = stream->index;
         
-        int np = pos-5;
+        int np = previousIndex-5;
         if (np<0) np = 0;
         int count = 10;
         //stream->setPos(np);
-        while (count-- > 0 && stream->hasNext()) {
-          std::cout << stream->next();
+        while (count-- > 0 && stream->hasCurrent()) {
+          std::cout << stream->currentToken().toString();
         }
         std::cout << "\n";
         
-        stream->setPos(pos);
+        stream->index = previousIndex;
         return (Node*)1;
       }
       
@@ -56,10 +89,20 @@ namespace Parser {
 
   class ForceStopRule : public BaseRule {
     public:
-    Node* execute(Stream* stream) {
+    Node* execute(TokenStream* stream) {
       return NULL;
     }
   };
+  
+  TokenRule* GetToken(std::string tokenName) {
+    TokenRule* rule = new TokenRule();
+    rule->name = tokenName;
+    rule->tokenName = tokenName;
+    return rule;
+  }
+  CaptureRule* Capture(std::string capture) {
+    return new CaptureRule(capture);
+  }
 
   DebugRule* Debug(std::string msg) {
     return new DebugRule(msg);

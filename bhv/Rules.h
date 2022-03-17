@@ -4,43 +4,24 @@
 #include "../Parser/Rules/CompositeRule.h"
 #include "../Parser/Rules/DecoratorRule.h"
 #include "../Parser/Rules/BaseRule.h"
-#include "../Parser/Rules/Tokens/StringRule.h"
-#include "../Parser/Rules/Tokens/IntegerRule.h"
-#include "../Parser/Rules/Tokens/PatternRule.h"
-#include "../Parser/Rules/Tokens/NameRule.h"
 
 #include "BHV.h"
 
-Rule Bhv::Symbol(std::string patt) {
-  Rule rule = Pattern(patt);
-  rule->name = "symbol";
-  return rule;
-}
-
 void Bhv::constructRules() {
-  Rule string = new StringRule();
-  Rule integer = new IntegerRule();
-  Rule name = new NameRule();
-  Rule var = new NameRule("var");
   
-  Rule decimal = Sequence("decimal", {
-    integer,
-    Discard(Symbol(".")),
-    integer
-  });
 
   BaseCompositeRule* value = Select({
-    decimal,
-    integer,
-    string,
-    var,
+    GetToken("decimal"),
+    GetToken("integer"),
+    GetToken("string"),
+    GetToken("word"),
   });
 
   Rule unary = Sequence("unary", {
     Select({
-      Symbol("~"),
-      Symbol("-"),
-      Symbol("#")
+      GetToken("negator"),
+      Capture("-"),
+      GetToken("length")
     }),
     value
   });
@@ -50,12 +31,7 @@ void Bhv::constructRules() {
     value, 
     Multiple("ops", 
       Sequence("op", {
-        Select({
-          Symbol("*"),
-          Symbol("/"),
-          Symbol("%"),
-          Symbol("^"),
-        }),
+        GetToken("mulop"),
         Checkpoint("expression expected after $token"),
         value,
       })
@@ -66,10 +42,7 @@ void Bhv::constructRules() {
     multiplication, 
     Multiple("ops", 
       Sequence("op", {
-        Select({
-          Symbol("+"),
-          Symbol("-"),
-        }),
+        GetToken("addop"),
         Checkpoint("expression expected after $token"),
         multiplication,
       })
@@ -80,15 +53,7 @@ void Bhv::constructRules() {
     addition,
     Optional("comp", 
       Sequence("comp", {
-        Select({
-          Symbol(">="),
-          Symbol("<="),
-          Symbol("=="),
-          Symbol("~="),
-          Symbol(">"),
-          Symbol("<"),
-          Symbol(".."),
-        }),
+        GetToken("comparation"),
         Checkpoint("expression expected after $token"),
         addition
       })
@@ -99,7 +64,7 @@ void Bhv::constructRules() {
     comparation,
     Optional("cond",
       Sequence("cond", {
-        Symbol("|"),
+        GetToken("if"),
         comparation
       })
     )
@@ -107,16 +72,16 @@ void Bhv::constructRules() {
 
   Rule expression = Sequence("expression", {
     ifcond,
-    Discard(Optional(Symbol(";")))
+    Discard(Optional(GetToken("semicolon")))
   });
   
 
   
   Rule list = Sequence("list", {
-    Discard(Symbol("{")),
+    Discard(Capture("{")),
     Multiple("values", expression),
     Checkpoint("} expected"),
-    Discard(Symbol("}")),
+    Discard(Capture("}")),
   });
   value->rules.push_back(list);
   
@@ -124,87 +89,80 @@ void Bhv::constructRules() {
   value->rules.insert(value->rules.end()-3, cmd);
   
   Rule print = Sequence("print", {
-    Symbol("@"),
+    Discard(GetToken("print")),
     Checkpoint("expression expected"),
     expression
   });
   cmd->rules.push_back(print);
   
   Rule assign = Sequence("assign", {
-    name, 
-    Select({
-      Symbol("="),
-      Symbol("+="), 
-      Symbol("-="),
-      Symbol("*="),
-      Symbol("/="),
-      Symbol("%="),
-    }),
+    GetToken("word"), 
+    GetToken("assign"),
     //Checkpoint("expression expected after $token for assign"),
     expression
   });
   cmd->rules.push_back(assign);
 
   Rule args = Sequence("args", {
-    Discard(Symbol(":")),
+    Discard(GetToken("colon")),
     expression,
     Multiple("args", 
       Sequence("arg", {
-        Discard(Symbol(",")),
+        Discard(GetToken("comma")),
         expression
       })
     )
   });
 
   Rule executeWithArgs = Sequence("execute", {
-    Discard(Optional(Symbol("!"))),
-    var,
+    Discard(Optional(GetToken("execute"))),
+    GetToken("word"),
     Sequence("args", {args})
   });
   cmd->rules.push_back(executeWithArgs);
   
   Rule execute = Sequence("execute", {
-    Discard(Symbol("!")),
+    Discard(GetToken("execute")),
     expression,
     Optional(args)
   });
   cmd->rules.push_back(execute);
 
   Rule sequence = Sequence("sequence", {
-    Discard(Pattern("(")),
+    Discard(Capture("(")),
     Checkpoint("expression expected on sequence"),
     Multiple("sequence", expression),
     Checkpoint(") expected"),
-    Discard(Pattern(")")),
+    Discard(Capture(")")),
   });
   cmd->rules.push_back(sequence);
 
   Rule bhvselect = Sequence("select", {
-    Discard(Pattern("[")),
-    Checkpoint("expression expected"),
+    Discard(Capture("[")),
+    Checkpoint("expression expected on selector"),
     Multiple("exprs", expression),
     Checkpoint("] expected"),
-    Discard(Pattern("]")),
+    Discard(Capture("]")),
   });
   cmd->rules.push_back(bhvselect);
 
   Rule optional = Sequence("optional", {
-    Discard(Symbol("?")),
+    Discard(GetToken("optional")),
     Checkpoint("expression expected"),
     expression
   });
   cmd->rules.push_back(optional);
   
   Rule getTree = Sequence("getTree", {
-    Discard(Symbol("&")),
-    Optional(Symbol("&")),
+    Discard(GetToken("gettree")),
+    Optional(GetToken("gettree")),
     Checkpoint("expression expected after $token"),
     expression
   });
   cmd->rules.push_back(getTree);
   
   Rule repeat = Sequence("repeat", {
-    Discard(Symbol("\\")),
+    Discard(GetToken("repeater")),
     Checkpoint("expression expected"),
     expression
   });

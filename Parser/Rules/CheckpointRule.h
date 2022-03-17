@@ -11,7 +11,7 @@ class CheckpointRule : public BaseRule {
     CheckpointRule(std::string msg = "") {
       this->msg = msg;
     }
-    Node* execute(Stream* stream) {
+    Node* execute(TokenStream* stream) {
       printf("ERROR: Checkpoint rule (%s) must be child of Sequence Rule\n", this->name.c_str());
       return NULL;
     }
