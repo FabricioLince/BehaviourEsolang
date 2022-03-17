@@ -120,7 +120,7 @@ It can be evaluated as non-zero with Execute `!` before it, this evaluates to BO
 
 ### STRING
 
-String of characters. Defined by characters surrounded by double quotes `"`.
+String of characters. Defined by characters surrounded by double quotes `"` or surrounded by single quotes `'`. Notice that if you want single quotes inside your string you may use double quotes to delimited it, and vice versa. Also notice that a string can span multiple lines.
 
 The following operations can be performed on STRING values:
 - Concatenation `+`
@@ -378,10 +378,10 @@ i = 1
   ?mod3 = i%3 == 0
   ?mod5 = i%5 == 0
   [
-    (mod3; mod5; @@"fizzbuzz")
-    (mod3; @@"fizz")
-    (mod5; @@"buzz")
-    @@i
+    (mod3; mod5; @"fizzbuzz")
+    (mod3; @"fizz")
+    (mod5; @"buzz")
+    @i
   ]
   i += 1
   i > 50
