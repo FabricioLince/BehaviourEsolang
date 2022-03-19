@@ -35,6 +35,8 @@ Toda _Expressão_ é convertida em um _Nó_ quando analisada.
 
 Todo _Nó_ pode ser avaliado para retirar seu valor.
 
+Um script em Behaviour se torna uma árvore de expressões cuja execução imita uma árvore comportamental.
+
 O script a seguir é um exemplo de uma Expressão de Atribuição, onde a Variável `count` recebe o valor `12`:
 
 `count = 12`
@@ -68,8 +70,8 @@ Um valor é _falsil_ quando é NIL ou BOOLEAN Falso.
 
 ### NIL
 
-NIL can represent an empty value, such as non-initialized Variables or a position outside range on a STRING or a LIST. 
-They are also used to repesent an error status, like an invalid operation.
+NIL pode representar um valor vazio, como uma Variável não inicializada ou uma posição fora de alcance em uma STRING ou LIST.
+Também são usados para representar uma situação de erro, como uma operação inválida.
 
 There is no reserved word or symbol to represent it in an expression, it can only be achieved as a result for an evaluation.
 
