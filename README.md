@@ -373,18 +373,26 @@ The fizz-buzz algorithm is good to demonstrate simple looping and conditionals,
 in this example I will print the fizz buzz results from 1 to 50:
 
 ```
-i = 1
+i = 1 // initialize variable i to 1
+
+// start a repeater on the sequence
 \(
-  ?mod3 = i%3 == 0
+
+  // is the current value of i divisible by 3 (and 5)
+  // preceed next expressions with ? so they don't stop the sequence prematurely
+  ?mod3 = i%3 == 0 
   ?mod5 = i%5 == 0
+  
+  // print accordingly to divisibility
   [
-    (mod3; mod5; @"fizzbuzz")
-    (mod3; @"fizz")
-    (mod5; @"buzz")
-    @i
+    (mod3; mod5; @"fizzbuzz") // both mod3 and mod5 are true
+    (mod3; @"fizz") // only mod3 is true
+    (mod5; @"buzz") // only mod5 is true
+    @i // neither is true, print the number
   ]
-  i += 1
-  i > 50
+  
+  i += 1 // increment i by 1
+  i > 50 // test to stop the repeater when i passes 50
 )
 ```
 
@@ -398,6 +406,32 @@ Then a Selector tests each of the possibilities and prints accordingly.
 
 Finnaly we increment `i` by `1` and test if `i` is bigger than `50`. When this final test evaluates BOOLEAN True, the Sequencer ends in BOOLEAN True, 
 allowing the Repeater to stop repeating.
+
+This version of Fizzbuzz is all well and good, but we're not using all the Behaviour features we could be using.
+
+```
+fizzbuzz = &(
+  str = ""
+  ?(a%3==0; str+="fizz")
+  ?(a%5==0; str+="buzz")
+  [str|#str>0; a] // evaluates to str if the length of str is bigger than zero, evaluates to the variable 'a' otherwise
+  // remember that, in this context, 'a' is the variable containing the argument passed
+)
+```
+
+This script creates a node that evaluate the fizzbuzz response for a single number. Then we can use it on a list of numbers like so:
+
+```
+(1..20)*fizzbuzz
+```
+
+This gets the range of numbers from 1 to 20 inclusive, and evaluates to a list of results when passed to the fizzbuzz node. If we want to print each member of the result list on a line we may do it by multiplying by a node that does just it:
+
+```
+(1..20)*fizzbuzz * &@a
+```
+
+To sum it up, `(1..20)` makes a LIST with the numbers from 1 to 20 inclusive. Multiplying a LIST by a NODE executes the NODE for each member of the LIST and returns a list of the results, so multiplying the numbers by `fizzbuzz` executes `fizzbuzz` for each number and returns a list of the fizzbuzz results. Then we multiply said results, which is a LIST, by a NODE that prints each value passed on a new line.
 
 ### Factorial
 
