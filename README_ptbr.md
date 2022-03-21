@@ -79,6 +79,8 @@ O operador de comprimento `#` resulta em `0` quando usado antes de um valor NIL.
 
 O operador de comparação igual `==` sempre resulta em BOOLEAN Falso, e diferente `~=` sempre resulta em BOOLEAN Verdadeiro. Isso pode mudar em breve.
 
+O Invsersor `~` transforma NIL em BOOLEAN Verdadeiro.
+
 Qualquer outra operação com NIL resulta em NIL.
 
 ### BOOLEAN
@@ -100,95 +102,95 @@ O valor numérico pode ser um inteiro: `25`. Ou um decimal, com a parte decimal 
 Se o número possuir apenas parte decimal é necessário colocar um zero na frente: `0.25`.
 Um número inteiro também pode ser digitado em hexadecimal precedido de `0x`, as letras que fazem parte do numero pode estar maiúsculas ou minúsculas: `0x123F`.
 
-Between two NUMBER values the following operations can be performed:
-- Addition `+`;
-- Subtraction `-`;
-- Multiplication `*`;
-- Division `/`;
-- Modulo (division remainder) `%`;
-- Power `^`;
-- Comparison:
-  - (bigger than) `>`;
-  - (less than) `<`;
-  - (bigger equal than) `>=`;
-  - (less equal than) `<=`;
-  - (equals) `==`;
-  - (not equals) `~=`;
+Entre dois valores numéricos as seguintes operações podem ser realizadas:
+- Adição `+`;
+- Subtração `-`;
+- Multiplicação `*`;
+- Divisão `/`;
+- Modulo (resto da divisão) `%`;
+- Potência `^`;
+- Comparação:
+  - (maior que) `>`;
+  - (menor que) `<`;
+  - (maior ou igual) `>=`;
+  - (menor ou igual) `<=`;
+  - (igual) `==`;
+  - (diferente) `~=`;
 
-The NUMBER can be converted to integer (i.e. discard the decimal part) using Length operator `#` before it.
+O valor numérico pode ser convertido para inteiro (i.e. descartar a parte decimal) usando o operador de comprimento `#` antes do valor.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+Pode ser convertido para BOOLEAN Falso com um Inversor `~` antes do valor.
 
-It can be evaluated as non-zero with Execute `!` before it, this evaluates to BOOLEAN False when zero, BOOLEAN True otherwise.
+Pode ser avaliado como não-zero com Executar `!` antes do valor, isso resulta em BOOLEAN Falso com zero e BOOLEAN Verdadeiro com outros valores.
 
 ### STRING
 
-String of characters. Defined by characters surrounded by double quotes `"` or surrounded by single quotes `'`. Notice that if you want single quotes inside your string you may use double quotes to delimited it, and vice versa. Also notice that a string can span multiple lines.
+Cadeia de caracteres. Definida por caracteres cercados por um par de aspas duplas `"` or um par de aspas simples `'`. Note que se precisar de aspas simples dentro da string, pode se usar aspas duplas para delimitar a string, e vice-versa. Também note que uma string pode ter várias linhas.
 
-The following operations can be performed on STRING values:
-- Concatenation `+`
-  - Concatenate the lhs STRING with the string representation of the rhs value.
-- Subtraction `-`
-  - Remove the first occurence of rhs from lhs
-- Multiplication `*`
-  - When used with a NUMBER value, repeat the STRING value that number of times;
-  - When used with a NODE value, executes the NODE for each character of the STRING, passing said character as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
-- Division `/`
-  - When used with a NUMBER value, clips the string to a string with atmost the number of characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters;
-  - When used with a STRING value, splits lhs by rhs, evaluates to a LIST with the resulting items;
-  - When used with a NODE value, splits the string using the node as divisor, evaluates to a LIST with resulting items.
-- Finding `%`
-  - When used with a NUMBER value, gets the character in the position from the string, NIL if the position is out of range;
-  - When used with a STRING value, finds the rhs position within lhs, NIL if rhs isn't a substring of lhs.
-- Comparison `>`, `<`, `>=`, `<=`, `==`, `~=`
-  - Compares lexicographically the two STRING values.
+As seguintes operações podem ser realizadas em valores de STRING:
+- Concatenação `+`
+  - Concatena a STRING do lado esquerdo (lhs) com a representação STRING do valor do lado direito (rhs).
+- Subtração `-`
+  - Remove a primeira ocorrência de rhs de lhs.
+- Multiplicação `*`
+  - Quando usado com um valor numérico, repete a string essa quantidade de vezes;
+  - Quando usado com uma referência a nó, executa o nó para cada caracter da string, passando os caracteres como argumento um por vez, resulta em uma lista com todos os resultados da execução, exceto quando esse resultado é NIL.
+- Divisão `/`
+  - Quando usado com um valor numérico, corta a string e resulta em uma string com no maximo esse numero de caracteres. Se o número > 0 pega os primeiros caracteres, se o número < 0 pega os últimos caracteres;
+  - Quando usado com outra string, divide lhs usando rhs como divisor. Resulta em uma lista com os pedaços da string original;
+  - Quando usado com uma referência a nó, divide a string usando a execução do nó como divisor. Resulta em uma lista com os pedaços da string original.
+- Encontrar `%`
+  - Quando usado com valor numérico, resulta no caracter na posição do número passado, ou NIL se a posição estiver fora da string;
+  - Quando usado com outra string, encontra a posição de lhs dentro de rhs, ou NIL se rhs não for uma substring de lhs.
+- Comparação `>`, `<`, `>=`, `<=`, `==`, `~=`
+  - Compara lexicograficamente as duas string passadas.
 
-The Length operator `#` can be used to evaluate the amount of characters in the STRING.
+O operador de comprimento `#` pode ser usado para resultar na quantidade de caracteres da string.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+O Inversor `~` converte uma string em BOOLEAN Falso.
 
-The Execute `!` can be use to test a non-empty STRING, evaluating to BOOLEAN False on a empty STRING, BOOLEAN True otherwise.
+O Executar `!` pode ser usado para testar se a string é vazia, resulta em BOOLEAN Falso com string vazia, BOOLEAN Verdadeiro com string não vazia.
 
 ### LIST
 
-A LIST is a collection of values stored consecutively, like an array on most languages. 
+Uma lista é uma coleção de valores armazenados de forma consecutiva, como um array na maioria das linguagens.
 
-It is defined by a list of Expressions surrounded by curly brackets `{}`
+É definida por uma lista de expressões cercada por um abre e um fecha chaves `{}`.
 
-The following operations can be performed on LIST values:
+As seguintes operações podem ser realizadas em listas:
 
-- Append `+`
-  - Put a value of any type in the end of the LIST.
-- Remove `-`
-  - Used with a NUMBER value, remove the item in the position passed.
-- Multiplication `*`
-  - When used with another LIST, concatenate the two LIST values;
-  - When used with a NUMBER value, repeat the list the amount passed if the amount is >= 0;
-  - When used with a NODE value, executes the NODE for each item of the LIST, passing said item as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
-- Division `/`
-  - Used with a NUMBER value, clips the LIST to a list with atmost NUMBER items, if number > 0 gets the first number items, if number < 0 gets the last number items;
-  - Used with a NODE value, works as a filter, evaluates to a LIST with all the members of the original LIST that evaluated truthy when passed to the NODE.
-- Index `%`
-  - used with a NUMBER value, gets the item in the number position from the list, NIL if the position is out of range.
-- Find `<`
-  - used with a NODE value, find the first index of the list that evaluates truthy when passed to the NODE. NIL if no item evaluated truthy.
-- Find Equal `<=`
-  - find the index of the first occurence of rhs in the LIST. NIL if it couldn't find the item.
-- Reduce `>`
-  - Used with a NODE value;
-  - if the LIST is empty evaluates to NIL;
-  - if lhs only has one item, evaluates to the first item;
-  - otherwise loops through the list applying the NODE with the result of the last iteration and the current item as arguments
-- Comparison `==`, `~=`
-  - Used with another LIST, compares each value of lhs with the corresponding index of rhs:
-    - for `==`, true only if every index are equals on both;
-    - for `~=`, true if any index is differente on both.
+- Acrescentar `+`
+  - Coloca um valor de qualquer tipo no fim da lista.
+- Remover `-`
+  - Usado com um valor numérico, remove o item da posição passada.
+- Multiplicação `*`
+  - Quando usado com outra lista, concatena as duas listas;
+  - Quando usado com um valor numérico, repete a lista a quantidade de vezes passada se o valor >= 0;
+  - Quando usado com um nó, executa o nó para cada item da lista, passando os itens como argumento um por vez, resulta em uma lista com os resultados exceto quando o resultado for NIL.
+- Divisão `/`
+  - Quando usado com um valor numérico, corta a lista e resulta em uma lista com, no máximo, essa quantidade de itens. Se o número > 0 pega os primeiros itens, se número < 0 pega os últimos itens;
+  - Quando usado com um nó funciona como filtro, resulta em uma lista com todos os itens da lista original que, quando avaliado pelo nó, resultaram em _verdadeiril_.
+- Indice `%`
+  - Usado com um valor numérico, resulta no item da lista que estiver na posição passada, ou NIL se a posição estiver fora da lista.
+- Encontrar `<`
+  - Usado com um nó, resulta no indice do primeiro item da lista que, quando avaliado pelo nó, resulta em _verdadeiril_. Ou NIL se nenhum item resultar _verdadeiril_.
+- Encontrar igual `<=`
+  - Encontra o indice da primeira ocorrência de rhs na lista, ou NIL se rhs não estiver na lista.
+- Reduzir `>`
+  - Usado com um nó;
+  - Se a lista estiver vazia, resulta em NIL;
+  - Se a lista só possuir um item, resulta neste item;
+  - Nos outros casos, é feita uma varredura na lista aplicando o nó com o resultado da última iteração e o item atual como argumentos. Resulta no resultado final da varredura.
+- Comparação `==`, `~=`
+  - Usado com outra lista, compara cada valor das duas listas de acordo com o indice:
+    - para `==`, verdadeiro apenas se todos os itens forem iguais nos dois;
+    - para `~=`, verdadeiro se qualquer item de mesmo indice for diferente entre as duas listas.
 
-The Length operator `#` can be used to evaluate the amount of items in the LIST.
+O operador de comprimento `#` pode ser usado para avaliar a quantidade de itens na lista.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+O Inversor `~` resulta em BOOLEAN Falso.
 
-The Execute `!` can be use to test a non-empty LIST, evaluating to BOOLEAN False on a empty LIST, BOOLEAN True otherwise.
+O Executar `!` pode ser usado para testar se a lista possui itens, resulta em BOOLEAN Falso com lista vazia, BOOLEAN Verdadeiro com lista não vazia.
 
 ### NODE
 
