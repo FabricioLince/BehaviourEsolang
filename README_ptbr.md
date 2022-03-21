@@ -73,31 +73,32 @@ Um valor é _falsil_ quando é NIL ou BOOLEAN Falso.
 NIL pode representar um valor vazio, como uma Variável não inicializada, ou uma posição fora de alcance em uma STRING ou LIST.
 Também são usados para representar uma situação de erro, como uma operação inválida.
 
-There is no reserved word or symbol to represent it in an expression, it can only be achieved as a result for an evaluation.
+Não há palavra reservada ou simbolo especial para representar NIL em uma expressão, ele apenas é resultado de uma avaliação.
 
-The Length operator `#` evaluates to `0` when used before a NIL value.
+O operador de comprimento `#` resulta em `0` quando usado antes de um valor NIL.
 
-The Comparison operators equals `==` always evaluates to BOOLEAN False, and not equals `~=` always evaluates to BOOLEAN True. This may change in the near future.
+O operador de comparação igual `==` sempre resulta em BOOLEAN Falso, e diferente `~=` sempre resulta em BOOLEAN Verdadeiro. Isso pode mudar em breve.
 
-Any other operation with NIL will be evaluated to NIL. 
+Qualquer outra operação com NIL resulta em NIL.
 
 ### BOOLEAN
 
-The regular old True or False.
+O bom e velho Verdadeiro ou Falso.
 
-There is no reserved word or symbol to represent them in an expression, they can only be achieved as a result for an evaluation.
+Não há palavras reservadas ou simbolos especiais para representá-los em uma expressão, eles apenas são resultados de uma avaliação.
 
-BOOLEAN values can be compared against each other using `==` and `~=`. The value can be inverted using `~` or by multiplying it by `-1`. 
-Any other operation will result in NIL.
+Valores BOOLEAN pode ser comparados entre si usando operador igual `==` e operador diferente `~=`. O valor pode ser invertido usando um inversor `~` or multiplicando por `-1`.
+Qualquer outra operação resulta em NIL.
 
-The Length operator `#` evaluates to `1` when used with BOOLEAN True, and evaluates to `0` when used with BOOLEAN False.
+O operador de comprimento `#` resulta em `1` quando usado com BOOLEAN Verdadeiro, e resulta em `0` quando usado com BOOLEAN Falso.
 
 ### NUMBER
 
-Numerical value. Long double value as defined in C++.
+Valor numérico. `long double` como definido em C++11.
 
-You can type a integer value like this: `25`. Or a decimal value with the decimal portion separated by a dot like this: `2.5`. 
-If the number only has a decimal part you need to preceed with zero, like this: `0.25`.
+O valor numérico pode ser um inteiro: `25`. Ou um decimal, com a parte decimal separada por um ponto: `2.5`.
+Se o número possuir apenas parte decimal é necessário colocar um zero na frente: `0.25`.
+Um número inteiro também pode ser digitado em hexadecimal precedido de `0x`, as letras que fazem parte do numero pode estar maiúsculas ou minúsculas: `0x123F`.
 
 Between two NUMBER values the following operations can be performed:
 - Addition `+`;
