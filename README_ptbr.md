@@ -279,6 +279,16 @@ i=0
 
 Perceba que para repetir tanto o incremento quanto a comparação, foi necessário colocá-los em um Sequenciador.
 
+Caso o limite seja especificado, o Repetidor irá repetir no máximo essa quantidade de vezes:
+
+```
+i=0
+\9\(i+=1; 1>100)
+```
+
+No script acima o Repetidor não terá sucesso, pois a variável `i` precisa passar de `100`, mas o limite do repetidor é `9`. Neste caso o resultado será NIL.
+
+
 ### Operador Se
 
 A barra vertical `|` entre duas expressões é chamado de Operador Se, e é usado para avaliar a expressão da esquerda somente se a expressão da direita resultar em valor _verdadeiril_. O resultado é NIL caso contrário.
@@ -314,71 +324,70 @@ coloca-se a sub expressão dentro de um Opcional:
 
 No script acima, ambas as sub expressões do Sequenciador serão avaliadas, independente do resultado da primeira sub expressão.
 
-### Negator
+### Inversor
 
-The Negator is denoted by the tilde `~` followed by a single Expression.
+O Inversor é denotado pelo simbolo til `~` seguido de um valor.
 
-The Negator is used to convert truthy values into BOOLEAN False, and falsy values into BOOLEAN True.
+O Inversor é usado para converter valores _verdadeiril_ em BOOLEAN Falso, e valores _falsil_ em BOOLEAN Verdadeiro.
 
-In another words, if the child Node evaluates to NIL or to BOOLEAN False, the Negator evaluates to BOOLEAN True. 
-Otherwise it evaluates to BOOLEAN False.
+Em outras palavras, se o valor for NIL ou BOOLEAN Falso, o Inversor terá como resultado BOOLEAN Verdadeiro.
+Caso contrário, o resultado será BOOLEAN Falso.
 
-For example, the following script has a Negator followed by a Expression that evaluates to BOOLEAN False. 
-The Negator then evaluates to BOOLEAN True:
+Por exemplo, o script a seguir tem um Inversor seguido de um Sequenciador com uma comparação que resulta em BOOLEAN Falso.
+O Inversor então resultará em BOOLEAN Verdadeiro.
 
 `~(1>2)`
 
-In this case we have to use the parentheses to make sure the Negator is negating the evaluation of the whole comparison, 
-and not the value of the number `1` (which would result in BOOLEAN False, and when compared to `2` would result in NIL)
+Neste caso é necessário usar o Sequenciador para envolver a comparação, pois o Inversor age em cima do valor imediatamente a seguir (que seria o número `1` se não houvesse parêntese). O Sequenciador garante que a comparação seja avaliada primeiro, então o Inversor age em cima do resultado da comparação.
 
+## Referenciando Nós
 
-## Node Referencing
+Em Behaviour, Referenciamento de Nós é equivalente a funções na maioria das linguagens.
 
-in Behaviour, Node Referencing is the equivalent of functions in most languages.
+Com referenciamento é possível colocar um Nó dentro de uma variável para ser avaliado em outro momento.
 
-With Node Referencing you can put a Node inside a Variable to be evaluated later.
+Para extrair um nó de uma expressão usa-se o E comercial `&` seguido de uma única sub expressão.
 
-To extract the Node from an Expression use the ampersand `&` followed by a single Expression.
+Por exemplo, o script a seguir criará uma referência a um nó que soma o valor de `a` com o valor de `b`:
 
-For example, the following script will create a reference for a Node that adds the values of `a` and `b`:
+`soma = &a+b`
 
-`sum = &a+b`
+Agora a variável `soma` contém uma referência a um nó que soma `a` e `b`.
+Para avaliar o nó referenciado usa-se o ponto de exclamação `!` seguido da variável que contém a referência:
 
-Now the Variable `sum` has a reference to a NODE that adds `a` and `b`. 
-To then evaluate the referenced node use the exclamation mark `!` followed by the variable that contains the Node:
+`resultado = !soma`
 
-`result = !sum`
-
-Note that the Referenced Node expects a value for the Variable `a` and `b`, so we need to define them before evaluating the Node:
+Observe que o nó referenciado espera um valor para as variáveis `a` e `b`, então precisamos defini-las antes de executar o nó:
 
 ```
 a = 2
 b = 3
-result = !sum
+resultado = !soma
 ```
 
-For convenience you can assign the values like this:
+Para conveniência pode-se atribuir os valores assim:
 
-`result = !sum:a=2,b=3`
+`resultado = !soma:a=2,b=3`
 
-Or like this:
+Ou assim:
 
-`result = !sum:2,3`
+`resultado = !soma:2,3`
 
-The last example works because when passing values to a Node evaluation, if you don't specify which variable you want to put them on, 
-it's assumed to be the Variables `a`, `b`, `c`, `d` and `e`, in that order.
+O último exemplo funciona por que quando são passados valores para a execução de uma referência, se as variáveis recipientes não forem especificadas,
+assume-se que serão as variáveis `a`, `b`, `c`, `d` e `e`, nesta ordem.
 
-You can also ommit the exclamation point if you are passing values, like this:
+Também pode-se omitir o ponto de exclamação se estiver passando valores:
 
-`result = sum:2,3`
+`resultado = soma:2,3`
 
 
-## Example Algorithms
+## Exemplos
 
 ### FizzBuzz
 
-The fizz-buzz algorithm is good to demonstrate simple looping and conditionals,
-in this example I will print the fizz buzz results from 1 to 50:
+O FizzBuzz é um jogo onde os participantes devem contar os números de forma crescente, substituindo os números múltiplos de 3 por fizz, e os números múltiplos de 5 por buzz. Se o número for múltiplo de 3 e 5 ao mesmo tempo, fica fizzbuzz.
+
+Neste exemplo vamos imprimir os resultados do jogo do número 1 até 50:
 
 ```
 i = 1
@@ -396,30 +405,27 @@ i = 1
 )
 ```
 
-Explanation:
+Explicação:
 
-First initialize `i` to `1` and enter a Repeater Sequencer. Inside the Sequencer, assigns `mod3` with the info for if the Variable `i` is divisible by `3`, 
-and `mod5` if the Variable `i` is divisible by `5`. Since said assigns can result in BOOLEAN False, they can stop the Sequencer, so we preceed the assign with `?` 
-to make the Sequencer ignore the assign evaluation.
+Primeiro inicializa `i` com `1` e entra num Repetidor com Sequenciador. Dentro do Sequenciador, atribui `mod3` com a informação se a variável `i` é divisível por `3`, e `mod5` se `i` é divisível por `5`. Já que essas atribuições podem resultar em BOOLEAN Falso, elas podem parar o Sequenciador, então colocamos cada uma dentro de um Opcional com o ponto de interrogação `?`, que faz o Sequenciador ignorar o resultado das atribuições.
 
-Then a Selector tests each of the possibilities and prints accordingly.
+Então o Seletor testa as possibilidades e imprime de acordo.
 
-Finnaly we increment `i` by `1` and test if `i` is bigger than `50`. When this final test evaluates BOOLEAN True, the Sequencer ends in BOOLEAN True, 
-allowing the Repeater to stop repeating.
+Por fim, incrementa a variável `i` e testa se `i` é maior que `50`. Quando este teste final resultar em verdadeiro, o Sequenciador irá resultar em verdadeiro e permitirá que o Repetidor pare de repetir.
 
-### Factorial
+### Fatorial
 
-The factorial algorithm is a good example for demonstrating recursion:
+O algoritmo de fatorial é um bom exemplo para demonstrar recursão:
 
 ```
-factorial = &[
-  (a < 2; 1)
-  a * factorial:a-1
+fatorial = &[
+  1 | a<2
+  a * fatorial:a-1
 ]
 ```
 
-Explanation: 
+Explicação: 
 
-The main Selector will evaluate if the value passed `a` is less than `2`, if it is then it's evaluated to `1` and it's done.
+O Seletor principal tem duas sub expressões. Na primeira, testa se `a` é menor que `2`, caso seja resulta em `1` e pronto.
 
-Otherwise, it multiplies the value of `a` to the result of `factorial` when called with `a-1`.
+Na segunda sub expressão, multiplica o valor de `a` pelo resultado da execução de `fatorial` quando chamado com `a-1`.
