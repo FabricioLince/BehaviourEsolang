@@ -20,7 +20,7 @@ Disponível para experimentar no [Replit](https://replit.com/@fabriciorodrigues/
   - [Opcional](#opcional)
   - [Negador](#negator)
 - [Referenciamento de Nós](#node-referencing)
-- [Algoritmos de Exemplo](#example-algorithms)
+- [Exemplos](#exemplos)
   - [FizzBuzz](#fizzbuzz)
   - [Fatorial](#factorial)
 
@@ -382,6 +382,53 @@ Também pode-se omitir o ponto de exclamação se estiver passando valores:
 
 
 ## Exemplos
+
+### Manipulando Strings
+
+Considere uma variável `nome` que recebe o valor `"Lince criou a linguagem chamada Behaviour"`.
+
+`nome = "Lince criou a linguagem chamada Behaviour"`.
+
+Para separar as palavras, vamos dividir `nome` por `" "` (uma string com apenas um espaço).
+
+`palavras = nome/" "`
+
+A variável `palavras` irá conter a seguinte lista: `{"Lince" "criou" "a" "linguagem" "Behaviour"}`
+
+Para pegar os cinco primeiros caracteres, divide `nome` por `5`:
+
+`cincoPrimeiros = nome/5`
+
+A variável `cincoPrimeiros` irá conter a string `"Lince"`.
+
+Para pegar os nove últimos caracteres, divide `nome` por `-9`:
+
+`noveUltimos = nome/-9`
+
+A variável `noveUltimos` irá conter a string `"Behaviour"`.
+
+Para encontrar a posição da substring "Behaviour", usa-se:
+
+`pos = nome%"Behaviour"`
+
+A variável `pos` irá conter o valor `24`, que é o indice da primeira instância da string "Behaviour" dentro de `nome`.
+
+Agora considere o seguinte script:
+
+```
+vogais = "aeiou"
+isVogal = &~~(vogais%a)
+```
+
+Primeiro temos uma string com as vogais minusculas, depois um nó que testa se um caracter passado pertence a string `vogais`. `(vogais%a)` encontra o indice da variavél `a` dentro da string `vogais`, ou NIL se não encontrar. Ou seja, se o caracter passado não for uma vogal minúscula `(vogais%a)` resulta em NIL. Os dois inversores `~~` servem para converter NIL em falso, e um numero em verdadeiro.
+
+Pode-se usar o nó passando argumento para testar um único caracter assim: `isVogal:"a"` resultará em verdadeiro, `isVogal:"b"` resultará em falso.
+
+Também pode-se usar o nó em todos os caracteres de uma string e compilar os resultados numa lista assim: `"lince"*isVogal` que resultará na lista `{false true false false true}` indicando o resultado da execução para cada caractere da string.
+
+### Manipulando Listas
+
+
 
 ### FizzBuzz
 
