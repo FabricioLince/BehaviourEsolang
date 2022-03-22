@@ -21,6 +21,8 @@ Disponível para experimentar no [Replit](https://replit.com/@fabriciorodrigues/
   - [Negador](#negator)
 - [Referenciamento de Nós](#node-referencing)
 - [Exemplos](#exemplos)
+  - [Manipulando Strings](#manipulando-strings)
+  - [Manipulando Listas](#manipulando-listas)
   - [FizzBuzz](#fizzbuzz)
   - [Fatorial](#factorial)
 
@@ -389,6 +391,8 @@ Considere uma variável `nome` que recebe o valor `"Lince criou a linguagem cham
 
 `nome = "Lince criou a linguagem chamada Behaviour"`.
 
+Para pegar o caractere que está na posição `7`, por exemplo, usa-se `nome%7` que resulta na string `"r"`.
+
 Para separar as palavras, vamos dividir `nome` por `" "` (uma string com apenas um espaço).
 
 `palavras = nome/" "`
@@ -420,11 +424,17 @@ vogais = "aeiou"
 isVogal = &~~(vogais%a)
 ```
 
-Primeiro temos uma string com as vogais minusculas, depois um nó que testa se um caracter passado pertence a string `vogais`. `(vogais%a)` encontra o indice da variavél `a` dentro da string `vogais`, ou NIL se não encontrar. Ou seja, se o caracter passado não for uma vogal minúscula `(vogais%a)` resulta em NIL. Os dois inversores `~~` servem para converter NIL em falso, e um numero em verdadeiro.
+Primeiro temos uma string com as vogais minusculas, depois um nó que testa se um caractere passado pertence a string `vogais`. `(vogais%a)` encontra o indice da variavél `a` dentro da string `vogais`, ou NIL se não encontrar. Ou seja, se o caracter passado não for uma vogal minúscula `(vogais%a)` resulta em NIL. Os dois inversores `~~` servem para converter NIL em falso, e um número em verdadeiro.
 
 Pode-se usar o nó passando argumento para testar um único caracter assim: `isVogal:"a"` resultará em verdadeiro, `isVogal:"b"` resultará em falso.
 
 Também pode-se usar o nó em todos os caracteres de uma string e compilar os resultados numa lista assim: `"lince"*isVogal` que resultará na lista `{false true false false true}` indicando o resultado da execução para cada caractere da string.
+
+Também é possível separar pedaços de uma string usando um nó como divisor. 
+
+`nome/isVogal`
+
+Considerando que a variável `nome` contém `"Lince criou a linguagem chamada Behaviour"`, o resultado dessa expressão será `{"L" "nc" " cr" " " " l" "ng" "g" "m B" "h" "v" "r"}`, Que é a string `nome` dividida nas vogais.
 
 ### Manipulando Listas
 
@@ -459,6 +469,32 @@ Primeiro inicializa `i` com `1` e entra num Repetidor com Sequenciador. Dentro d
 Então o Seletor testa as possibilidades e imprime de acordo.
 
 Por fim, incrementa a variável `i` e testa se `i` é maior que `50`. Quando este teste final resultar em verdadeiro, o Sequenciador irá resultar em verdadeiro e permitirá que o Repetidor pare de repetir.
+
+Essa versão do Fizzbuzz está OK, mas não estamos usando as capacidades de Behaviour que poderiamos.
+
+```
+fizzbuzz = &(
+  str = ""
+  ?(a%3==0; str+="fizz")
+  ?(a%5==0; str+="buzz")
+  [str|#str>0; a] // resulta em str se o tamanho de str for maior que zero, caso contrário resulta no valor de 'a'
+  // lembre-se que, neste contexto, 'a' é a variavel contendo o argumento passado
+)
+```
+
+Este script cria um nó que avalia a resposta do jogo para um único número. Então podemos usar numa lista assim:
+
+```
+(1..20)*fizzbuzz
+```
+
+Aqui temos uma lista dos números de 1 a 20 inclusivo, que é passada um a um para o nó na variável `fizzbuzz`. Para imprimir a lista resultante com um item em cada linha podemos multiplicar por um nó que faça essa impressão.
+
+```
+(1..20)*fizzbuzz * &@a
+```
+
+Resumindo, `(1..20)` cria uma lista com os números de 1 a 20 inclusivo. Multiplicando uma lista por um nó executa o nó para cada item da lista e retorna uma lista com os resultados, então multiplicar a lista dos números por `fizzbuzz` executa `fizzbuzz` para cada número e retorna a lista dos resultados de fizzbuzz. Então multiplicamos esse resultado por um nó que imprime cada valor em uma linha.
 
 ### Fatorial
 
