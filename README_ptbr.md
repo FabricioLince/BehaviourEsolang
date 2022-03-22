@@ -149,7 +149,7 @@ O operador de comprimento `#` pode ser usado para resultar na quantidade de cara
 
 O Inversor `~` converte uma string em BOOLEAN Falso.
 
-O Executar `!` pode ser usado para testar se a string é vazia, resulta em BOOLEAN Falso com string vazia, BOOLEAN Verdadeiro com string não vazia.
+O Executar `!` pode ser usado para testar se a string tem conteúdo, resulta em BOOLEAN Falso com string vazia, BOOLEAN Verdadeiro com string não vazia.
 
 ### LIST
 
@@ -194,122 +194,125 @@ O Executar `!` pode ser usado para testar se a lista possui itens, resulta em BO
 
 ### NODE
 
-A NODE is a reference to a parsed Expression that can be evaluated later. More at [Node Referencing](#node-referencing).
+Um NODE (nó) é uma referência a uma expressão que foi analisada e pode ser avaliada em outro momento. Mais em [Referenciando Nós](#node-referencing).
 
-This works essencially as a first class function, since it can be stored in Variable and used in Expression like any other value.
+Funciona basicamente como uma função de primeira classe, já que pode ser guardada em variáveis e usada em expressões como qualquer outro valor.
 
-A function defined in C++ Engine, and injected in the Datatable works pretty much exactly like a NODE value, 
-the only difference being if you inspect its type or print it, you're gonna see "CFUNC" instead of "NODE".
+Uma função definida na Engine C++, e injetada na Datatable funciona exatamente como um valor de nó.
+A única diferença será quando o valor for inspecionado ou impresso, onde aparecerá "CFUNC" ao invés de "NODE".
 
-Other than the operators already specified that accepts NODE values, the following operators are valid:
+Além dos operadores já especificados que aceitam valores de nó, as seguintes operações são validas:
 
-- Comparison `==` and `~=`:
-  - Checks if the two NODES are the same or not.
+- Comparação `==` e `~=`:
+  - Checa se os dois nós passados são o mesmo, i.e. apontam para o mesmo lugar na memória.
 
-The Length operator `#` always evaluates to `0` when used before a NODE value. 
+O operador de comprimento sempre resulta em `0` quando usado com valor de nó. Isso pode mudar em breve.
 
-The Negator `~` evaluates to a inverted NODE value. This value can be used and executed like a regular NODE value, 
-the difference being that it evaluates to the negated version of the original NODE result.
+O Inversor `~` resulta em um nó cujo resultado será invertido em relação ao original. 
 
-## Control Nodes
+## Nós de Controle
 
-There are Sequencers, Selectors, Repeaters and the If Operator, these are the control Nodes.
+Nós de controle são nós que ditam como suas sub expressões são avaliadas.
 
-We also have the Optional and the Negator, which modify the resulting evaluation of a Node.
+Existem Sequenciadores, Seletores, Repetidores e o Operador Se.
 
+Também há o Opcional e o Inversor, que modificam o resultado de avaliação da sub expressão.
 
-### Sequencer
+### Sequenciador
 
-The Sequencer is denoted by a list of zero or more Expressions inside parentheses `()`.
+O Sequenciador é denotado por uma lista de zero ou mais expressões entre parênteses `()`.
 
-When evaluated the Sequencer will evaluate each of its _child Nodes_ in order, 
-this evaluation will stop if:
-- A child Node is evaluated falsy,
-- Or all children were evaluated truthy.
+Quando avaliado, o Sequenciador irá avaliar cada uma das sub expressões na ordem que estiverem.
+Esta avaliação irá parar se:
+- Uma sub expressão tem como resultado um valor _falsil_;
+- Ou todas as sub expressões resultaram em valor _verdadeiril_.
 
-The Sequencer Node assumes the value of its last evaluated child Node. 
+O Sequenciador assume o valor da última sub expressão que foi avaliada.
 
-In another words, the Sequencer will be succesfull if all of its children are evaluated successfully, in order.
+Em outras palavras, o Sequenciador terá sucesso se todos as sub expressões tiverem sucesso, em ordem.
 
-For example, the following Sequencer will evaluate each addition and finally assume the value of the final addition:
+Por exemplo, o Sequenciador a seguir irá avaliar cada adição e por fim asumirá o valor da adição final:
 
 `seq = (2+3; 5+9; 6+13)`
 
-Since none of those addition will cause any problems, by the end, the value of `seq` will be `19`, the value of the last addition in the Sequencer.
+Considerando que nenhuma dessas adições causará problemas, no fim da execução o valor de `seq` será `19`, que é o valor da última sub expressão `6+13;`.
 
-An empty Sequencer will be evaluated to NIL.
+Um Sequenciador vazio terá como resultado o valor NIL.
 
-### Selector
+### Seletor
 
-The Selector is denoted by a list of zero or more Expressions inside square brackets `[]`.
+Um Seletor é denotado por uma lista de zero ou mais expressões entre colchetes `[]`.
 
-When evaluated the Selector will evaluate each of its _child Nodes_ in order,
-this evaluation will stop on the first _child Node_ that is evaluated truthy.
-The Selector assumes the value of the first child that evaluated truthy, or NIL if none of them did.
+Quando avaliado, o Seletor irá avaliar cada uma das sub expressões em ordem,
+essa avalição irá parar na primeira sub expressão que tiver como resultado um valor _verdadeiril_.
+O Seletor então assume o valor da primeira sub expressão que resultou em _verdadeiril_, 
+ou NIL se todas as sub expressões resultaram em _falsil_.
 
-In another words, the Selector "selects" the value of the first child that evaluated succesfully.
+Em outras palavras, o Seletor "seleciona" o valor da primeira expressão que tiver sucesso na avaliação.
 
-For example, the following Selector will evaluate its children and stop when the second one is evaluated:
+Por exemplo, o Seletor a seguir irá avaliar as sub expressões e parar quando a segunda for avaliada:
 
-`sel = [name; 2+2; 10*3]`
+`sel = [nome; 2+2; 10*3]`
 
-Since `name` is not defined its value is NIL, then the selector evaluates the addition `2+2` and stops. 
-By the end, the value of `sel` will be `4`.
-The multiplication `10*3` is never evaluated.
+Já que `nome` não foi definido seu valor é NIL, então o Seletor avalia a adição `2+2;` e para.
+No fim da execução o valor de `sel` será  `4`.
+A multiplicação `10*3;` nunca será avaliada.
 
-An empty Selector will be evaluated to NIL.
+Um Seletor vazio terá como resultado o valor NIL.
 
-### Repeater
+### Repetidor
 
-The Repeater is denoted by the back-slash `\` followed by a single Expression.
+Um Repetidor é denotado por uma barra invertida `\` seguida de uma única sub expressão.
+Ou uma barra invertida `\`, seguida de uma variável ou número, seguida de outra barra invertida e por fim uma única sub expressão. 
+Neste caso a variável ou número é o limite do repetidor.
 
-When evaluated the Repeater will evaluate its child node repeatedly until the child evaluates truthy.
-When this happens the Repeater stops and assumes the value BOOLEAN True.
+Quando avaliado, o Repetidor irá avaliar a sub expressão repetidamente até que essa sub expressão resulte em valor _verdadeiril_.
+Quando isso acontecer o Repetidor para e assume o valor da sub expressão.
 
-For example, the following script will initialize a Variable `i` with the value `0`, then repeat a Sequencer that increments `i` by `1` and tests if `i` is bigger than `9`.
-It will stop when `i` equals `10`:
+Por exemplo, o script a seguir irá inicializar a variável `i` com o valor `0`, então irá repetir um sequenciador que incrementa `i` e testa se `i` é maior que `9`.
+Para quando o valor de `i` for `10`:
 
 ```
 i=0
 \(i+=1; i>9)
 ```
 
-Note that to repeat both the increment and the comparison each time I have to put them inside a Sequencer.
+Perceba que para repetir tanto o incremento quanto a comparação, foi necessário colocá-los em um Sequenciador.
 
-### If Operator
+### Operador Se
 
-The pipe symbol `|` between two Expressions is called the If Operator, and its used to evaluate to the left hand side Expression value if the test on the right evaluates truthy, the If Operator evaluates to NIL otherwise. 
+A barra vertical `|` entre duas expressões é chamado de Operador Se, e é usado para avaliar a expressão da esquerda somente se a expressão da direita resultar em valor _verdadeiril_. O resultado é NIL caso contrário.
 
-There are two main cases:
+São dois casos de uso:
 
-- With a NODE on the right hand side
-  - In this case the NODE is evaluated using the left hand side value as argument.
-- With anything else on the right hand side
-  - The truthy value of the rhs is used as a condition.
+- Com um nó no lado direito:
+  - Neste caso o nó é executado usando o valor do lado esquerdo como argumento.
+- Com qualquer outro valor no lado direito:
+  - O lado esquerdo será avaliado apenas se a expressão do lado direito for _verdadeiril_.
 
-It's often used as an alternative to the Selector, on in conjunction to the Selector Node.
+Normalmente é usado como alternativa para o Seletor, ou em conjunto com o Seletor.
 
-For example, the following pairs of lines are equivalent:
+Por exemplo, os seguintes pares de linhas são equivalentes, considere que `func` é uma referência a um nó definido anteriormente:
 ```
-[(func:a; a)]
+(func:a; a)
 a|func
 
 [(func:a; a) b]
 [a|func b]
 ```
 
-### Optional
+### Opcional
 
-The Optional is denoted by the interrogation mark `?` followed by a single Expression.
+O Opcional é denotado por um ponto de interrogação `?` seguido de uma única sub expressão.
 
-The Optional is used to ignore a falsy evaluation of the child Node. Making it always evaluate to BOOLEAN True.
+O Opcional é usado para ignorar um possível resultado _falsil_ da sub expressão. Fazendo sempre resultar em BOOLEAN Verdadeiro.
 
-For example, if you have a Sequencer with an Expression that may evaluate falsy, but you don't want the Sequencer to stop because of it, 
-you put child Expression inside a Optional:
+Por exemplo, se houver uma expressão dentro de um Sequenciador que pode resultar em _falsil_, mas esse resultado não deve parar o Sequenciador, 
+coloca-se a sub expressão dentro de um Opcional:
 
-`(?mayEvaluateFalsy; needsToBeEvaluatedRegardless)`
+`(?podeResultarEmFalsil; precisaSerAvaliadoMesmoAssim)`
 
-In this script, all the two children Expressions will be evaluated.
+No script acima, ambas as sub expressões do Sequenciador serão avaliadas, independente do resultado da primeira sub expressão.
 
 ### Negator
 
