@@ -12,22 +12,24 @@ Disponível para experimentar no [Replit](https://replit.com/@fabriciorodrigues/
   - [STRING](#string)
   - [LIST](#list)
   - [NODE](#node)
+- [Atribuição](#atribuição)
 - [Nós de controle](#nós-de-controle)
   - [Sequenciador](#sequenciador)
   - [Selecionador](#seletor)
   - [Repetidor](#repetidor)
   - [Operador Se](#operador-se)
   - [Opcional](#opcional)
-  - [Negador](#negator)
-- [Referenciamento de Nós](#node-referencing)
+  - [Inversor](#inversor)
+- [Referenciando Nós](#referenciando-nós)
 - [Exemplos](#exemplos)
   - [Manipulando Strings](#manipulando-strings)
   - [Manipulando Listas](#manipulando-listas)
   - [FizzBuzz](#fizzbuzz)
-  - [Fatorial](#factorial)
+  - [Fatorial](#fatorial)
 
 
 ## Introdução
+###### [topo](#behaviouresolang)
 
 A sintaxe de Behaviour é inspirada na [Árvore Comportamental](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control))
 
@@ -51,6 +53,7 @@ Colocar ponto-e-virgula `;` no fim das Expressões não é necessário, mas pode
 
 
 ## Tipos
+###### [topo](#behaviouresolang)
 
 Os tipos básicos para valores em Behaviour são:
 - NIL
@@ -202,7 +205,7 @@ Mais em [Manipulando Listas](#manipulando-listas).
 
 ### NODE
 
-Um NODE (nó) é uma referência a uma expressão que foi analisada e pode ser avaliada em outro momento. Mais em [Referenciando Nós](#node-referencing).
+Um NODE (nó) é uma referência a uma expressão que foi analisada e pode ser avaliada em outro momento. Mais em [Referenciando Nós](#referenciando-nós).
 
 Funciona basicamente como uma função de primeira classe, já que pode ser guardada em variáveis e usada em expressões como qualquer outro valor.
 
@@ -218,7 +221,25 @@ O operador de comprimento sempre resulta em `0` quando usado com valor de nó. I
 
 O Inversor `~` resulta em um nó cujo resultado será invertido em relação ao original. 
 
+## Atribuição
+###### [topo](#behaviouresolang)
+
+Uma atribuição é uma expressão que associa uma variável a um valor. É a única forma de mudar o conteúdo de uma variável.
+
+A forma mais simples de atribuição é no formato `variavel = valor`, onde `variavel` obedece a seguinte expressão regular `/[a-zA-Z][0-9a-zA-Z]*/`, ou seja, começa com uma letra e pode ter qualquer combinação de letras e números após. Não pode ter espaços, símbolos, nem caracteres especiais.
+
+Também existem atribuições com os símbolos `+=`, `-=`, `*=`, `/=` e `%=`, onde `var += value` é equivalente a `var = var + value`, `var -= value` é equivalente a `var = var - value` e assim por diante.
+
+Por ser uma expresão, um atribuição também resulta em um valor quando avaliada. O resultado de uma atribuição é igual ao resultado da expressão usada na atribuição:
+
+`tamanho = 12` é uma expressão que resulta em `12` além de atribuir o valor `12` à variável `tamanho`.
+
+Portanto a expressão `a = b = c = 10` é válida e coloca o valor `10` nas variáveis `a`, `b`e `c`.
+
+Vale ressaltar que as variáveis são independentes entre si, atribuir uma para outra apenas cria uma cópia, assim, modificar a original não modifica a cópia e vice-versa.
+
 ## Nós de Controle
+###### [topo](#behaviouresolang)
 
 Nós de controle são nós que ditam como suas sub expressões são avaliadas.
 
@@ -349,6 +370,7 @@ O Inversor então resultará em BOOLEAN Verdadeiro.
 Neste caso é necessário usar o Sequenciador para envolver a comparação, pois o Inversor age em cima do valor imediatamente a seguir (que seria o número `1` se não houvesse parêntese). O Sequenciador garante que a comparação seja avaliada primeiro, então o Inversor age em cima do resultado da comparação.
 
 ## Referenciando Nós
+###### [topo](#behaviouresolang)
 
 Em Behaviour, Referenciamento de Nós é equivalente a funções na maioria das linguagens.
 
@@ -390,7 +412,7 @@ Também pode-se omitir o ponto de exclamação se estiver passando valores:
 
 
 ## Exemplos
-
+###### [topo](#behaviouresolang)
 ### Manipulando Strings
 
 Considere uma variável `nome` que recebe o valor `"Lince criou a linguagem chamada Behaviour"`.
@@ -403,8 +425,16 @@ Observe que para pegar o primeiro caractere usa-se `nome%0`, pois indices começ
 Para pegar o último caractere usa-se `nome%-1`, para pegar o penúltimo `nome%-2` e assim por diante.
 
 Ao adicionar qualquer valor a uma string o resultado é a concatenação dessa string com a representação string do valor passado.
-`nome+" uau!"` resulta em `"Lince criou a linguagem chamada Behaviour uau"`.
-`"Meu numero preferido é " + 12` 
+`nome+" uau!"` resulta em `"Lince criou a linguagem chamada Behaviour uau"`. 
+`"Meu número preferido é " + 12` resulta em `Meu número preferido é 12"`.
+
+Observe que o script `nome+" uau!"` **não** modifica o conteúdo da variável `nome`, apenas acessa seu valor e usa na concatenação. Para modificar o valor de uma variável é necessário usar uma expressão de atribuição, assim: `nome+=" uau!"` essa expressão resulta em `"Lince criou a linguagem chamada Behaviour uau"` além de modifica o conteúdo da variável `nome` para esse valor.
+
+Para retirar a primeira ocorrência de uma string de dentro da outra usamos subtração: `nome - "chamada"` resulta na string `"Lince criou a linguagem Behaviour"`. Lembre-se que essa operação **não** modifica o conteúdo da variável `nome`, para modificar use `nome -= "chamada"`.
+
+Ao subtrair um valor numérico de uma string o caractere naquela posição é retirado. Então `"Lince" - 0` resulta na string `"ince"` pois foi retirado o primeiro caractere (posição zero).
+
+Podemos repetir uma string usando multiplicação: `"Lince" * 3` que resulta na string `"LinceLinceLince"`.
 
 Para separar as palavras, vamos dividir `nome` por `" "` (uma string com apenas um espaço).
 
@@ -451,12 +481,21 @@ Considerando que a variável `nome` contém `"Lince criou a linguagem chamada Be
 
 ### Manipulando Listas
 
-Considere uma lista `numeros` contendo os números de 1 até 10:
+Considere uma lista `numeros` contendo os números de 1 até 5:
 
-`numeros = (1..10)`
+`numeros = (1..5)`
 
 A mesma lógica de indice dos strings vale aqui `numeros%2` para pegar o item na posição `2` (que é o número 3 pois indices começam do zero!). `numeros%-1` pega o último item, `numeros%-2` o penúltimo e assim por diante.
 
+Semelhante a manipulação de strings, também é possível adicionar itens no fim da lista com `numeros + 20` que resulta na lista `{1 2 3 4 5 20}`, remover itens pela posição com `numeros - 2` que resulta na lista `{1 2 4 5}`. Concatenar duas listas com multiplicação: `numeros * {6 7 8}` que resulta na lista `{1 2 3 4 5 6 7 8}`, ou repetir uma lista uma quantidade de vezes com multiplicação `{1 2} * 3` resulta em `{1 2 1 2 1 2}`. Cortar uma lista para um tamanho máximo dado com `numeros / 3` resulta na lista `{1 2 3}` pois pega os três primeiro itens, e `numeros / -3` resulta na lista `{3 4 5}` pois pega os três últimos itens.  Lembre-se que essas operação **não** modifica o conteúdo das variáveis usadas.
+
+Além disso, assim como com strings, é possível executar um nó passando os itens de uma lista um por vez e juntando os resultados em uma lista. Considere o seguinte script:
+
+```
+isPar = &a%2==0
+```
+
+`isPar` contem um nó que testa se o número passado é divisível por `2`. Ao multiplicar `numeros * isPar`
 
 
 
