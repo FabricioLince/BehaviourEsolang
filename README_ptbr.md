@@ -70,6 +70,8 @@ Um valor é _verdadeiril_ quando é qualquer valor exceto NIL ou BOOLEAN Falso.
 
 Um valor é _falsil_ quando é NIL ou BOOLEAN Falso.
 
+Observe que o número `0` (zero) é _verdadeiril_, portanto é equivalente a BOOLEAN Verdadeiro.
+
 ### NIL
 
 NIL pode representar um valor vazio, como uma Variável não inicializada, ou uma posição fora de alcance em uma STRING ou LIST.
@@ -153,6 +155,8 @@ O Inversor `~` converte uma string em BOOLEAN Falso.
 
 O Executar `!` pode ser usado para testar se a string tem conteúdo, resulta em BOOLEAN Falso com string vazia, BOOLEAN Verdadeiro com string não vazia.
 
+Mais em [Manipulando String](#manipulando-string).
+
 ### LIST
 
 Uma lista é uma coleção de valores armazenados de forma consecutiva, como um array na maioria das linguagens.
@@ -193,6 +197,8 @@ O operador de comprimento `#` pode ser usado para avaliar a quantidade de itens 
 O Inversor `~` resulta em BOOLEAN Falso.
 
 O Executar `!` pode ser usado para testar se a lista possui itens, resulta em BOOLEAN Falso com lista vazia, BOOLEAN Verdadeiro com lista não vazia.
+
+Mais em [Manipulando Listas](#manipulando-listas).
 
 ### NODE
 
@@ -391,7 +397,14 @@ Considere uma variável `nome` que recebe o valor `"Lince criou a linguagem cham
 
 `nome = "Lince criou a linguagem chamada Behaviour"`.
 
-Para pegar o caractere que está na posição `7`, por exemplo, usa-se `nome%7` que resulta na string `"r"`.
+Para pegar o caractere que está na posição `7`, por exemplo, usa-se `nome%7` que resulta na string `"r"`. 
+Observe que para pegar o primeiro caractere usa-se `nome%0`, pois indices começam do zero.
+
+Para pegar o último caractere usa-se `nome%-1`, para pegar o penúltimo `nome%-2` e assim por diante.
+
+Ao adicionar qualquer valor a uma string o resultado é a concatenação dessa string com a representação string do valor passado.
+`nome+" uau!"` resulta em `"Lince criou a linguagem chamada Behaviour uau"`.
+`"Meu numero preferido é " + 12` 
 
 Para separar as palavras, vamos dividir `nome` por `" "` (uma string com apenas um espaço).
 
@@ -437,6 +450,13 @@ Também é possível separar pedaços de uma string usando um nó como divisor.
 Considerando que a variável `nome` contém `"Lince criou a linguagem chamada Behaviour"`, o resultado dessa expressão será `{"L" "nc" " cr" " " " l" "ng" "g" "m B" "h" "v" "r"}`, Que é a string `nome` dividida nas vogais.
 
 ### Manipulando Listas
+
+Considere uma lista `numeros` contendo os números de 1 até 10:
+
+`numeros = (1..10)`
+
+A mesma lógica de indice dos strings vale aqui `numeros%2` para pegar o item na posição `2` (que é o número 3 pois indices começam do zero!). `numeros%-1` pega o último item, `numeros%-2` o penúltimo e assim por diante.
+
 
 
 
