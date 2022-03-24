@@ -21,7 +21,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [Repeater](#repeater)
   - [If Operator](#if-operator)
   - [Optional](#optional)
-  - [Negator](#negator)
+  - [Inverter](#inverter)
 - [Node Referencing](#node-referencing)
 - [Example Algorithms](#example-algorithms)
   - [FizzBuzz](#fizzbuzz)
@@ -117,7 +117,7 @@ Between two NUMBER values the following operations can be performed:
 
 The NUMBER can be converted to integer (i.e. discard the decimal part) using Length operator `#` before it.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+It can be evaluated to BOOLEAN False with Inverter `~` before it.
 
 It can be evaluated as non-zero with Execute `!` before it, this evaluates to BOOLEAN False when zero, BOOLEAN True otherwise.
 
@@ -145,7 +145,7 @@ The following operations can be performed on STRING values:
 
 The Length operator `#` can be used to evaluate the amount of characters in the STRING.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+It can be evaluated to BOOLEAN False with Inverter `~` before it.
 
 The Execute `!` can be use to test a non-empty STRING, evaluating to BOOLEAN False on a empty STRING, BOOLEAN True otherwise.
 
@@ -186,7 +186,7 @@ The following operations can be performed on LIST values:
 
 The Length operator `#` can be used to evaluate the amount of items in the LIST.
 
-It can be evaluated to BOOLEAN False with Negator `~` before it.
+It can be evaluated to BOOLEAN False with Inverter `~` before it.
 
 The Execute `!` can be use to test a non-empty LIST, evaluating to BOOLEAN False on a empty LIST, BOOLEAN True otherwise.
 
@@ -206,7 +206,7 @@ Other than the operators already specified that accepts NODE values, the followi
 
 The Length operator `#` always evaluates to `0` when used before a NODE value. 
 
-The Negator `~` evaluates to a inverted NODE value. This value can be used and executed like a regular NODE value, 
+The Inverter `~` evaluates to a inverted NODE value. This value can be used and executed like a regular NODE value, 
 the difference being that it evaluates to the negated version of the original NODE result.
 
 
@@ -230,7 +230,7 @@ It's worth noting that the variables are independent between each other, assigni
 
 There are Sequencers, Selectors, Repeaters and the If Operator, these are the control Nodes.
 
-We also have the Optional and the Negator, which modify the resulting evaluation of a Node.
+We also have the Optional and the Inverter, which modify the resulting evaluation of a Node.
 
 
 ### Sequencer
@@ -326,21 +326,25 @@ you put child Expression inside a Optional:
 
 In this script, all the two children Expressions will be evaluated.
 
-### Negator
+The Optional is also used to not overwrite the result of a Sequencer evaluation, for example:
 
-The Negator is denoted by the tilde `~` followed by a single Expression.
+`(12; ?var=15; ?c=a+b)` The result of this Sequencer is `12`, the result of the second and third sub expressions are ignored.
 
-The Negator is used to convert truthy values into BOOLEAN False, and falsy values into BOOLEAN True.
+### Inverter
 
-In another words, if the child Node evaluates to NIL or to BOOLEAN False, the Negator evaluates to BOOLEAN True. 
+The Inverter is denoted by the tilde `~` followed by a single Expression.
+
+The Inverter is used to convert truthy values into BOOLEAN False, and falsy values into BOOLEAN True.
+
+In another words, if the child Node evaluates to NIL or to BOOLEAN False, the Inverter evaluates to BOOLEAN True. 
 Otherwise it evaluates to BOOLEAN False.
 
-For example, the following script has a Negator followed by a Expression that evaluates to BOOLEAN False. 
-The Negator then evaluates to BOOLEAN True:
+For example, the following script has a Inverter followed by a Expression that evaluates to BOOLEAN False. 
+The Inverter then evaluates to BOOLEAN True:
 
 `~(1>2)`
 
-In this case we have to use the parentheses to make sure the Negator is negating the evaluation of the whole comparison, 
+In this case we have to use the parentheses to make sure the Inverter is negating the evaluation of the whole comparison, 
 and not the value of the number `1` (which would result in BOOLEAN False, and when compared to `2` would result in NIL)
 
 
@@ -386,6 +390,53 @@ You can also ommit the exclamation point if you are passing values, like this:
 
 
 ## Example Algorithms
+
+### Handling String
+
+Consider a variable `text` that receives the value `"Lince created the language called Behaviour"`.
+
+`text = "Lince created the language called Behaviour"`
+
+To get the character on index `7`, for example, we use `text%7` which results in the string `"r"`.
+Note that to get the first character we use `text%0`, for indices starts at zero.
+
+To get the last character use `text%-1`, to get the second to last `text%-2` and so on.
+
+Use the plus symbol `+` on a string to concatenate a string on the left to the string representation of the value on the right.
+`text+"wow!"` results in the string `"Lince created the language called Behaviour wow!"`. 
+`"My favorite number is " + 12` results in `"My favorite number is 12"`.
+
+Note that the script `text+" wow!"` does **not** modify the content of the variable `text`, it just access its value to use on the concatenation. To modify the value of a variable it's necessary to use an Assignment Expression, like: `text+=" wow!"` this expression results in `"Lince created the language called Behaviour wow!"` and modifies the content of the variable `text` to this value.
+
+To remove the first occurrence of a string from inside another we use the minus symbol `-`: `text - "called"` results in the string `"Lince create the language Behaviour"`. Remember that this operation does **not** modify the content of `text`, to modify it use `text -= "called"`.
+
+Subtracting a number from a string the character on that position is removed. So `"Lince" - 0` result in the string `"ince"` since the first character (position zero) was removed.
+
+We can repeat a string using the star symbol `*`: `"Lince" * 3` results in the string `"LinceLinceLince"`.
+
+To split the words, we divide `text` by `" "` (a string with a single space).
+
+`words = text/" "`
+
+The variable `words` will contain the list: `{"Lince" "created" "the" "language" "Behaviour"}`
+
+To get the first five characters, divide `text` by `5`:
+
+`firstFive = text/5`
+
+The variable `firstFive` is gonnna contain the string `"Lince"`.
+
+To get the last nine characters, divide `text` by `-9`:
+
+`nineLast = text/-9`
+
+The variable `nineLast` is gonna contain the string `"Behaviour"`.
+
+To find the position of the substring "Behaviour", use:
+
+`pos = text%"Behaviour"`
+
+The variable `pos` is gonna contain the value `34`, which is the index of the first instance of the string "Behaviour" inside of `text`.
 
 ### FizzBuzz
 
