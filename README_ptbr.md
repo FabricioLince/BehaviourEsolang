@@ -234,7 +234,7 @@ Por ser uma expresão, um atribuição também resulta em um valor quando avalia
 
 `tamanho = 12` é uma expressão que resulta em `12` além de atribuir o valor `12` à variável `tamanho`.
 
-Portanto a expressão `a = b = c = 10` é válida e coloca o valor `10` nas variáveis `a`, `b`e `c`.
+Portanto a expressão `a = b = c = 10` é válida e coloca o valor `10` nas variáveis `a`, `b` e `c`.
 
 Vale ressaltar que as variáveis são independentes entre si, atribuir uma para outra apenas cria uma cópia, assim, modificar a original não modifica a cópia e vice-versa.
 
@@ -353,6 +353,10 @@ coloca-se a sub expressão dentro de um Opcional:
 
 No script acima, ambas as sub expressões do Sequenciador serão avaliadas, independente do resultado da primeira sub expressão.
 
+O Opcional também é usado para não sobreescrever o resultado da avaliação de um Sequenciador, por exemplo:
+
+`(12; ?var=15; ?c=a+b)` O resultado desse Sequenciador será `12`, pois as duas outras expressões tem seu resultado ignorado.
+
 ### Inversor
 
 O Inversor é denotado pelo simbolo til `~` seguido de um valor.
@@ -415,50 +419,50 @@ Também pode-se omitir o ponto de exclamação se estiver passando valores:
 ###### [topo](#behaviouresolang)
 ### Manipulando Strings
 
-Considere uma variável `nome` que recebe o valor `"Lince criou a linguagem chamada Behaviour"`.
+Considere uma variável `texto` que recebe o valor `"Lince criou a linguagem chamada Behaviour"`.
 
-`nome = "Lince criou a linguagem chamada Behaviour"`.
+`texto = "Lince criou a linguagem chamada Behaviour"`.
 
-Para pegar o caractere que está na posição `7`, por exemplo, usa-se `nome%7` que resulta na string `"r"`. 
-Observe que para pegar o primeiro caractere usa-se `nome%0`, pois indices começam do zero.
+Para pegar o caractere que está na posição `7`, por exemplo, usa-se `texto%7` que resulta na string `"r"`. 
+Observe que para pegar o primeiro caractere usa-se `texto%0`, pois indices começam do zero.
 
-Para pegar o último caractere usa-se `nome%-1`, para pegar o penúltimo `nome%-2` e assim por diante.
+Para pegar o último caractere usa-se `texto%-1`, para pegar o penúltimo `nome%-2` e assim por diante.
 
 Ao adicionar qualquer valor a uma string o resultado é a concatenação dessa string com a representação string do valor passado.
-`nome+" uau!"` resulta em `"Lince criou a linguagem chamada Behaviour uau"`. 
+`texto+" uau!"` resulta em `"Lince criou a linguagem chamada Behaviour uau"`. 
 `"Meu número preferido é " + 12` resulta em `Meu número preferido é 12"`.
 
-Observe que o script `nome+" uau!"` **não** modifica o conteúdo da variável `nome`, apenas acessa seu valor e usa na concatenação. Para modificar o valor de uma variável é necessário usar uma expressão de atribuição, assim: `nome+=" uau!"` essa expressão resulta em `"Lince criou a linguagem chamada Behaviour uau"` além de modifica o conteúdo da variável `nome` para esse valor.
+Observe que o script `texto+" uau!"` **não** modifica o conteúdo da variável `texto`, apenas acessa seu valor e usa na concatenação. Para modificar o valor de uma variável é necessário usar uma expressão de atribuição, assim: `texto+=" uau!"` essa expressão resulta em `"Lince criou a linguagem chamada Behaviour uau"` além de modifica o conteúdo da variável `texto` para esse valor.
 
-Para retirar a primeira ocorrência de uma string de dentro da outra usamos subtração: `nome - "chamada"` resulta na string `"Lince criou a linguagem Behaviour"`. Lembre-se que essa operação **não** modifica o conteúdo da variável `nome`, para modificar use `nome -= "chamada"`.
+Para retirar a primeira ocorrência de uma string de dentro da outra usamos subtração: `texto - "chamada"` resulta na string `"Lince criou a linguagem Behaviour"`. Lembre-se que essa operação **não** modifica o conteúdo da variável `texto`, para modificar use `texto -= "chamada"`.
 
 Ao subtrair um valor numérico de uma string o caractere naquela posição é retirado. Então `"Lince" - 0` resulta na string `"ince"` pois foi retirado o primeiro caractere (posição zero).
 
 Podemos repetir uma string usando multiplicação: `"Lince" * 3` que resulta na string `"LinceLinceLince"`.
 
-Para separar as palavras, vamos dividir `nome` por `" "` (uma string com apenas um espaço).
+Para separar as palavras, vamos dividir `texto` por `" "` (uma string com apenas um espaço).
 
-`palavras = nome/" "`
+`palavras = texto/" "`
 
 A variável `palavras` irá conter a seguinte lista: `{"Lince" "criou" "a" "linguagem" "Behaviour"}`
 
-Para pegar os cinco primeiros caracteres, divide `nome` por `5`:
+Para pegar os cinco primeiros caracteres, divide `texto` por `5`:
 
-`cincoPrimeiros = nome/5`
+`cincoPrimeiros = texto/5`
 
 A variável `cincoPrimeiros` irá conter a string `"Lince"`.
 
-Para pegar os nove últimos caracteres, divide `nome` por `-9`:
+Para pegar os nove últimos caracteres, divide `texto` por `-9`:
 
-`noveUltimos = nome/-9`
+`noveUltimos = texto/-9`
 
 A variável `noveUltimos` irá conter a string `"Behaviour"`.
 
 Para encontrar a posição da substring "Behaviour", usa-se:
 
-`pos = nome%"Behaviour"`
+`pos = texto%"Behaviour"`
 
-A variável `pos` irá conter o valor `24`, que é o indice da primeira instância da string "Behaviour" dentro de `nome`.
+A variável `pos` irá conter o valor `24`, que é o indice da primeira instância da string "Behaviour" dentro de `texto`.
 
 Agora considere o seguinte script:
 
@@ -475,9 +479,9 @@ Também pode-se usar o nó em todos os caracteres de uma string e compilar os re
 
 Também é possível separar pedaços de uma string usando um nó como divisor. 
 
-`nome/isVogal`
+`texto/isVogal`
 
-Considerando que a variável `nome` contém `"Lince criou a linguagem chamada Behaviour"`, o resultado dessa expressão será `{"L" "nc" " cr" " " " l" "ng" "g" "m B" "h" "v" "r"}`, Que é a string `nome` dividida nas vogais.
+Considerando que a variável `texto` contém `"Lince criou a linguagem chamada Behaviour"`, o resultado dessa expressão será `{"L" "nc" " cr" " " " l" "ng" "g" "m B" "h" "v" "r"}`, Que é a string `texto` dividida nas vogais.
 
 ### Manipulando Listas
 
@@ -495,7 +499,7 @@ Além disso, assim como com strings, é possível executar um nó passando os it
 isPar = &a%2==0
 ```
 
-`isPar` contem um nó que testa se o número passado é divisível por `2`. Ao multiplicar `numeros * isPar`
+`isPar` contem um nó que testa se o número passado é divisível por `2`. Ao multiplicar `numeros * isPar` recebemos a lista `{false true false true false}` que é o resultado de `isPar` para cada número da lista `numeros` (os números de 1 a 5 inclusivo).
 
 
 
