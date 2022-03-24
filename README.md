@@ -3,6 +3,8 @@ My Esolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
+[Ver esta documentação em pt-br 🇧🇷](https://github.com/FabricioLince/BehaviourEsolang/blob/main/README_ptbr.md#behaviouresolang)
+
 ## Table of Contents
 - [The Basics](#the-basics)
 - [Types](#types)
@@ -12,6 +14,7 @@ Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
   - [STRING](#string)
   - [LIST](#list)
   - [NODE](#node)
+- [Assignment](#assignment)
 - [Control Nodes](#control-nodes)
   - [Sequencer](#sequencer)
   - [Selector](#selector)
@@ -205,6 +208,23 @@ The Length operator `#` always evaluates to `0` when used before a NODE value.
 
 The Negator `~` evaluates to a inverted NODE value. This value can be used and executed like a regular NODE value, 
 the difference being that it evaluates to the negated version of the original NODE result.
+
+
+## Assignment
+
+An Assignment is an Expression that associates a variable to a value. It is the only way to change the content of a variable.
+
+The simplest way to use an Assignment expresion is `variable = value`, where `variable` must be in the shape of the regular expression `/[a-zA-Z][0-9a-zA-Z]*/`, i.e. starts with a letter and can have any combination of letter and numbers after that. Must not have any white spaces, simbols or special characters.
+
+There are also Assignment with the simbols `+=`, `-=`, `*=`, `/=` e `%=`, where `var += value` is sintatic sugar for `var = var + value`, `var -= value` for `var = var - value`, and so on.
+
+Since it is an Expression, an Assignment must result in a value when evaluated. The result of an Assignment is the same asthe result of the Expression used in the Assignment:
+
+`size = 12` is an Expression that results in `12` after assigning the value `12` to the variable `size`.
+
+For that, the Expression `a = b = c = 10` is valid e puts the value `10` in all the the variables `a`, `b` and `c`.
+
+It's worth noting that the variables are independent between each other, assigning one to another just creates a copy, so modifying the original does not modify the coopy and vice-versa.
 
 ## Control Nodes
 
