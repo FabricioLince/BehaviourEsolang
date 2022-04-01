@@ -3,6 +3,8 @@ My Esolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
+You can also download the [Environment](https://github.com/FabricioLince/BehaviourEsolang/blob/65cfd6869c74086082c89a2acf44871abfa5bbf3/env.exe) to run scripts on your machine.
+
 [Ver esta documentação em pt-br 🇧🇷](https://github.com/FabricioLince/BehaviourEsolang/blob/main/README_ptbr.md#behaviouresolang)
 
 ## Table of Contents
@@ -224,7 +226,7 @@ Since it is an Expression, an Assignment must result in a value when evaluated. 
 
 For that, the Expression `a = b = c = 10` is valid e puts the value `10` in all the the variables `a`, `b` and `c`.
 
-It's worth noting that the variables are independent between each other, assigning one to another just creates a copy, so modifying the original does not modify the coopy and vice-versa.
+It's worth noting that the variables are independent between each other, assigning one to another just creates a copy, so modifying the original does not modify the copy and vice-versa.
 
 ## Control Nodes
 
