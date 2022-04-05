@@ -1,0 +1,16 @@
+
+${
+  print = !&(
+    old = print
+    &&[
+      (
+        (type:a) == "tuple" 
+        (type:a:tostring) == "node" 
+        old:(a:!tostring)
+      )
+      old:a
+    ]
+  )
+
+  println = &&(print:a print:"\n")
+}

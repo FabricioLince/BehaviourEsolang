@@ -17,7 +17,8 @@ class Variable {
     static const int BOOL = 3;
     static const int NODE = 4;
     static const int LIST = 5;
-    static const int CFUNC  = 6;
+    static const int CFUNC = 6;
+    static const int TUPLE = 7;
     
     typedef std::vector<Variable> VarList;
     Variable() {
@@ -63,6 +64,12 @@ class Variable {
       this->type = CFUNC;
       this->context = context;
     }
+
+    Variable(Datatable* table) {
+      this->type = TUPLE;
+      this->context = table;
+    }
+
     bool toBool() const {
       if (this->type == BOOL) {
         return number != 0;
@@ -95,7 +102,14 @@ class Variable {
         case Variable::NODE:
         {
           std::stringstream ss;
-          ss << ("Node:") << node->name << "@0x" << std::hex << reinterpret_cast<uintptr_t>(node);
+          ss << ("Node:");
+          if (context == NULL) {
+            ss << "orphan";
+          }
+          else {
+            ss << "full";
+          }
+          ss << "@0x" << std::hex << reinterpret_cast<uintptr_t>(node);
           return ss.str();
         }
         case Variable::LIST:
@@ -113,6 +127,16 @@ class Variable {
           return s;
         case Variable::CFUNC:
           return std::string("CFUNC");
+        case Variable::TUPLE:
+          {
+            s = "{";
+            std::stringstream ss;
+            ss << context;
+            std::string str;
+            ss >> str;
+            s += str + "}";
+            return s;
+          }
       }
       return ("");
     }

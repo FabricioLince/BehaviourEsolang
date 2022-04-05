@@ -1,6 +1,21 @@
+@"start"
+n=0
+\(
+  n+=1
+  n>9
+)
+@n
+n=0
+\5\(
+  n+=1
+  n>9
+)
+@n
 
-
-list = load:"lib/list.bhv"
-numbers = 10*&(!rand)%100
-@numbers
-@list:sort:numbers
+n=0
+max=(3+4)
+\max\(
+  n+=1
+  n>9
+)
+@n

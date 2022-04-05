@@ -1,11 +1,23 @@
-  
-  
-  &!(&&(
-    itens = [itens {}]
-    push = &&(itens+=a)
-    pop = &&(v=itens%0 itens-=0 v)
-    peek = &&(itens%0)
-    empty = &&(#itens == 0)
-    &&a
-  ))
-  
+
+${
+
+PushBackContainer = &${
+  itens = {}
+  push = &&itens+=a
+  empty = &#itens==0
+  clear = &&(items = {})
+}
+
+Queue = &(
+  queue = !PushBackContainer
+  queue:pop = &&(v=itens%0 itens-=0 v)
+  queue
+)
+
+Heap = &(
+  heap = !PushBackContainer
+  heap:pop = &&(v=itens%-1 itens-=-1 v)
+  heap
+)
+
+}

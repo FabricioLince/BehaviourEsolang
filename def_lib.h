@@ -57,6 +57,8 @@ Variable type(Datatable* data) {
       return "list";
     case Variable::CFUNC:
       return "cfunc";
+    case Variable::TUPLE:
+      return "tuple";
   }
   return Variable();
 }

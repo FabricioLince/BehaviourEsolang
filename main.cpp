@@ -8,7 +8,7 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE false
+#define RUN_FILE true
 
 Environment env; 
 
@@ -73,7 +73,7 @@ Variable loadfile_cfunc(Datatable* data) {
 Variable exec_cfunc(Datatable* data) {
   Variable expression = data->get("a");
   if (expression.type == Variable::STRING) {
-    return env.execute(expression.string, data);
+    return env.execute(expression.string, data->context);
   }
   return Variable();
 }

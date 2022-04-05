@@ -1,8 +1,10 @@
 
-  !&&(
+  ${
   
     // is the number a prime
     isprime = &(a>1 i=1 \(i+=1 a%i==0) a==i)
+    // other version 
+    //isprime = &(n=a #((a*&n%a)/&a==0)==1)
     
     // list of prime numbers that multiply to a
     primedivs = &(a>1 l={} d=2 \([(a%d==0 l+=d a/=d) d+=1] a==1) l)
@@ -37,5 +39,4 @@
     ]
     
     
-    &&a
-  )
+  }

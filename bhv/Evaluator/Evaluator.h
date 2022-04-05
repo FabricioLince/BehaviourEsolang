@@ -20,6 +20,7 @@ class Evaluator {
   Variable select(Tree* tree, Datatable* data);
   Variable repeat(Tree* tree, Datatable* data);
   Variable ifcond(Tree* tree, Datatable* data);
+  Variable match(Tree* tree, Datatable* data);
   
   Variable negate(Tree* tree, Datatable* data);
   Variable optional(Tree* tree, Datatable* data);
@@ -36,6 +37,7 @@ class Evaluator {
   Variable var(Node* node, Datatable* data);
   Variable list(Tree* tree, Datatable* data);
   Variable string(Node* node, Datatable* data);
+  Variable tuple(Tree* tree, Datatable* data);
   
   Variable execute(Tree* tree, Datatable* data);
   Variable getTree(Tree* tree, Datatable* data);
@@ -56,6 +58,8 @@ class Evaluator {
   
   std::hash<std::string> hasher;
   const int assign_id = hasher("assign");
+  const int print_id = hasher("print");
+  const int optional_id = hasher("optional");
   
   std::map<int, Variable(Evaluator::*)(Node*, Datatable*)> evaluatorsNode;
   std::map<int, Variable(Evaluator::*)(Tree*, Datatable*)> evaluatorsTree;
@@ -71,6 +75,7 @@ class Evaluator {
       evaluatorsTree[hasher("select")] = &Evaluator::select;
       evaluatorsTree[hasher("repeat")] = &Evaluator::repeat;
       evaluatorsTree[hasher("ifcond")] = &Evaluator::ifcond;
+      evaluatorsTree[hasher("match")] = &Evaluator::match;
       
       evaluatorsTree[hasher("print")] = &Evaluator::print;
       evaluatorsTree[hasher("negate")] = &Evaluator::negate;
@@ -86,6 +91,7 @@ class Evaluator {
       evaluatorsNode[hasher("string")] = &Evaluator::string;
       evaluatorsNode[hasher("word")] = &Evaluator::var;
       evaluatorsTree[hasher("list")] = &Evaluator::list;
+      evaluatorsTree[hasher("tuple")] = &Evaluator::tuple;
       
       evaluatorsTree[hasher("execute")] = &Evaluator::execute;
       evaluatorsTree[hasher("getTree")] = &Evaluator::getTree;
@@ -123,7 +129,7 @@ Variable Evaluator::main(Tree* tree, Datatable* data) {
 
 Variable Evaluator::list(Tree* tree, Datatable* data) {
   std::vector<Variable> v;
-  Tree* values = tree->children.at(0)->asTree();
+  Tree* values = tree->subTree(0);
   for (unsigned int i = 0; i < values->children.size(); ++i) {
     v.push_back(evaluate(values->children.at(i), data));
   }

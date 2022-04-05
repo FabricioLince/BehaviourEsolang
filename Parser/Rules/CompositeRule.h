@@ -18,8 +18,23 @@ class BaseCompositeRule : public BaseRule {
 
 class SequenceRule : public BaseCompositeRule {
   public:
+    bool dangerous = false;
+    int lastPos = -1;
 
     Node* execute(TokenStream* stream) {
+
+      if (stream->ended()){
+        return NULL;
+      }
+
+      if (dangerous && stream->index == lastPos) {
+        //std::cout << this->name << " repeating on " << stream->currentToken().toString() << std::endl;
+        lastPos = -1;
+        return NULL;
+      }
+      lastPos = stream->index;
+      
+      
       int previousIndex = stream->index;
       Tree* tree = new Tree(this->name);
       CheckpointRule* cp = NULL;
@@ -57,7 +72,7 @@ class SequenceRule : public BaseCompositeRule {
                   }
                 }
               }
-              err += " @(" + std::to_string(stream->lineNumber()) + ", " + std::to_string(stream->colNumber()) +")";
+              //err += " @(" + std::to_string(stream->lineNumber()) + ", " + std::to_string(stream->colNumber()) +")";
               throw ParsingError(err);
             }
             else {
@@ -98,6 +113,15 @@ SelectRule* Select(RuleList rules) {
   SelectRule* rule = new SelectRule();
   rule->name = "select";
   rule->rules = rules;
+  return rule;
+}
+
+// Dangerous Sequence is one that can cause infinite loops, so its one that stops preemptively if it's called again but the stream didn't move
+SequenceRule* DangerousSequence(std::string name, RuleList rules) {
+  SequenceRule* rule = new SequenceRule();
+  rule->name = name;
+  rule->rules = rules;
+  rule->dangerous = true;
   return rule;
 }
 

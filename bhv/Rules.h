@@ -11,10 +11,6 @@ void Bhv::constructRules() {
   
 
   BaseCompositeRule* value = Select({
-    GetToken("decimal"),
-    GetToken("integer"),
-    GetToken("string"),
-    GetToken("word"),
   });
 
   Rule unary = Sequence("unary", {
@@ -69,13 +65,25 @@ void Bhv::constructRules() {
       })
     )
   });
-
-  Rule expression = Sequence("expression", {
+  
+  BaseCompositeRule* expression = Sequence("expression", {});
+  
+  Rule matchCase = Sequence("case", {
+    expression,
+    Discard(GetToken("case")),
+    expression,
+  });
+  Rule match = Sequence("match", {
     ifcond,
-    Discard(Optional(GetToken("semicolon")))
+    Optional("cases", Sequence("cases", {
+      Discard(GetToken("match")),
+      Checkpoint("match needs at least one case"),
+      Multiple("cases", 1, matchCase),
+    }))
   });
   
-
+  expression->rules.push_back(match);
+  expression->rules.push_back(Discard(Optional(GetToken("semicolon"))));
   
   Rule list = Sequence("list", {
     Discard(Capture("{")),
@@ -86,7 +94,12 @@ void Bhv::constructRules() {
   value->rules.push_back(list);
   
   BaseCompositeRule* cmd = Select({});
-  value->rules.insert(value->rules.end()-3, cmd);
+  value->rules.push_back(cmd);
+
+  value->rules.push_back(GetToken("decimal"));
+  value->rules.push_back(GetToken("integer"));
+  value->rules.push_back(GetToken("string"));
+  value->rules.push_back(GetToken("word"));
   
   Rule print = Sequence("print", {
     Discard(GetToken("print")),
@@ -98,10 +111,18 @@ void Bhv::constructRules() {
   Rule assign = Sequence("assign", {
     GetToken("word"), 
     GetToken("assign"),
-    //Checkpoint("expression expected after $token for assign"),
+    Checkpoint("expression expected after $token for assign"),
     expression
   });
   cmd->rules.push_back(assign);
+
+  Rule tuple = Sequence("tuple", {
+    GetToken("tuple"),
+    Multiple("entries", assign),
+    Checkpoint("} expected"),
+    Discard(Capture("}")),
+  });
+  value->rules.push_back(tuple);
 
   Rule args = Sequence("args", {
     Discard(GetToken("colon")),
@@ -162,6 +183,13 @@ void Bhv::constructRules() {
   cmd->rules.push_back(getTree);
   
   Rule repeat = Sequence("repeat", {
+    Optional(Sequence("max", {
+      Discard(GetToken("repeater")),
+      Select({
+        GetToken("integer"),
+        GetToken("word"),
+      })
+    })),
     Discard(GetToken("repeater")),
     Checkpoint("expression expected"),
     expression

@@ -26,7 +26,7 @@ void Evaluator::evaluateArgs(Tree* tree, Datatable* data, Datatable* childData) 
   if (argTree->children.size() > 0) {
     argTree = argTree->subTree(0);
     //std::cout << "args:\n";
-    evaluateArg(argTree->children.at(0), childData, childData);
+    evaluateArg(argTree->children.at(0), data, childData);
 
     Tree* args = argTree->subTree("args");
     for (unsigned int i = 0; i < args->children.size(); ++i) {
@@ -53,14 +53,65 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
   Variable bt = evaluate(tree->children.at(0), data);
   switch (bt.type) {
     case Variable::STRING:
-      return bt.string.size() > 0;
+    {
+      Tree* argTree = tree->subTree(1);
+      if (argTree->children.size() > 0) {
+        //std::cout << argTree << std::endl;
+        Node* arg1 = argTree->subTree(0)->children.at(0);
+        Variable index = evaluate(arg1, data);
+        if (argTree->subTree(0)->subTree(1)->children.size() > 0) {
+          if (index.type == Variable::NUMBER) {
+            Node* arg2 = argTree->subTree(0)->subTree(1)->children.at(0);
+            Variable end = evaluate(arg2, data);
+            if (end.type == Variable::NUMBER) {
+              int start = int(index.number);
+              int len = int(end.number)-start+1;
+              return bt.string.substr(start, len);
+            }
+          }
+          return Variable();
+        }
+        //std::cout << "first arg" << arg << std::endl;
+        
+        return bt%index;
+      }
+      return bt.list.size() > 0;
       break;
+    }
     case Variable::NUMBER:
       return int(bt.number) != 0;
       break;
     case Variable::LIST:
+    {
+      Tree* argTree = tree->subTree(1);
+      if (argTree->children.size() > 0) {
+        Node* arg = argTree->subTree(0)->children.at(0);
+        //std::cout << "first arg" << arg << std::endl;
+        Variable index = evaluate(arg, data);
+        return bt%index;
+      }
       return bt.list.size() > 0;
       break;
+    }
+    case Variable::TUPLE:
+    {
+      //std::cout << tree << std::endl;
+      Tree* argTree = tree->subTree(1);
+      if (argTree->children.size() > 0) {
+        //std::cout << bt.context << std::endl;
+        //std::cout << "argTree:\n" << argTree << std::endl;
+        Node* arg = argTree->subTree(0)->children.at(0);
+        //std::cout << "first arg" << arg << std::endl;
+        bt.context->context = data;
+        Variable result = evaluate(arg, bt.context);
+        bt.context->context = NULL;
+        return result;
+      }
+      return ! bt.context->memory.empty();
+      
+      break;
+    }
+      
     case Variable::NODE:
     case Variable::CFUNC:
     {

@@ -1,32 +1,52 @@
-
+${
 // get the maximum value of list
-max = &a > &[(a>b a) b]
+max = &a > &[a|a>b b]
 
 // get the minimum value of list
-min = &a > &[(a<b a) b]
+min = &a > &[a|a<b b]
 
 // insert the value in the given index
 insert = &[(i>=#a a+v) (i<=0 {v}*a) (a/i+v)*(a/-(#a-i))]
 
 // split the list of the given index
-split = &[(i<0 {{} a}) (i>#a {a {}}) {a/i a/-(#a-i)}]
+split = &[(i<0 {{} a}) (i>#a {a {}}) {a/i a/i-#a}]
     
-    // quick sort
-    sort = &[
-      (#a<2 a)
-      (
-        pivot = a%0
-        c = l = r = {}
-        a*&&[(a==pivot c+=a) (a<pivot l+=a) r+=a]
-        (sort:l) * c * (sort:r)
+// quick sort
+sort = &[
+  (#a<2 a)
+  (
+    pivot = a%0
+    c = l = r = {}
+    a*&&[(a==pivot c+=a) (a<pivot l+=a) r+=a]
+    (sort:l) * c * (sort:r)
+  )
+]
+
+find = &a<b
+any = &~~(a<b)
+all = &~(a<~b)
+count = &#(a/b)
+    
+// combine values from 'a' into lists of 'b' size
+// a : LIST
+// b : NUMBER
+comb = &[
+  {{}} | b==0
+  (
+    values = a
+    amount = b
+    r1 = comb:values,amount-1
+    r = values*&(
+      value = a
+      r1*&(
+        {value} * a
       )
-    ]
-    
-    find = &a<b
-    any = &~~(a<b)
-    all = &~(a<~b)
-    count = &#(a/b)
-    
-    &&(?r=a ?a=() r)
-    
+    )
+    r>&a*b
+  )
+]
+// golfed version of comb
+//comb = &[{{}}|b<1(t=f:a,b-1a*&(v=a t*&{v}*a))>&a*b]
+
+}  
   

@@ -9,3 +9,5 @@ class Evaluator;
 #include "Evaluator/Print.h"
 #include "Evaluator/Control.h"
 #include "Evaluator/Execute.h"
+#include "Evaluator/Tuple.h"
+#include "Evaluator/Match.h"
