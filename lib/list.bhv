@@ -1,3 +1,5 @@
+// Package with various helper functions that act on Lists
+
 ${
 // get the maximum value of list
 max = &a > &[a|a>b b]

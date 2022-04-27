@@ -22,6 +22,8 @@ Variable fromAscii(Datatable* data);
 Variable ascii(Datatable* data);
 Variable time(Datatable* data);
 Variable wait(Datatable* data);
+Variable removeFromDatatable(Datatable* data);
+Variable execSystemFunc(Datatable* data);
 
 void addToDatatable(Datatable* data) {
   
@@ -31,35 +33,20 @@ void addToDatatable(Datatable* data) {
   data->setCFunc("data", &showdata);
   data->setOrphanCFunc("datakeys", &datakeys);
   data->setOrphanCFunc("print", &printvar);
+  data->setOrphanCFunc("remove", &removeFromDatatable);
   
   data->setOrphanCFunc("int", &parseInt);
   data->setOrphanCFunc("ascii", &ascii);
   data->setOrphanCFunc("time", &time);
   data->setOrphanCFunc("wait", &wait);
+  data->setOrphanCFunc("sys", &execSystemFunc);
 }
 
 
 
 Variable type(Datatable* data) {
   Variable arg = data->get("a");
-  switch (arg.type) {
-    case Variable::NIL:
-      return "nil";
-    case Variable::NUMBER:
-      return "number";
-    case Variable::STRING:
-      return "string";
-    case Variable::BOOL:
-      return "bool";
-    case Variable::NODE:
-      return "node";
-    case Variable::LIST:
-      return "list";
-    case Variable::CFUNC:
-      return "cfunc";
-    case Variable::TUPLE:
-      return "tuple";
-  }
+  return Variable::typeName(arg);
   return Variable();
 }
 Variable rand(Datatable* data) {
@@ -191,5 +178,26 @@ Variable wait(Datatable* data) {
     #else
         usleep(arg.number * 1000);
     #endif // _WIN32
+  return true;
+}
+
+
+Variable removeFromDatatable(Datatable* data) {
+  Variable alv = data->getLocal("al");
+  if (alv.type == Variable::LIST) {
+    for (Variable v : alv.list) {
+      if (v.type == Variable::STRING) {
+        data->context->removeLocal(v.string);
+      }
+    }
+  }
+  return true;
+}
+
+Variable execSystemFunc(Datatable* data) {
+  Variable f = data->get("a");
+  if (f.type == Variable::STRING) {
+    system(f.string.c_str());
+  }
   return true;
 }

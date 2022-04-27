@@ -21,7 +21,7 @@ Variable Evaluator::match(Tree* tree, Datatable* data) {
       }
     }
   }
-  return Variable();
+  return Variable::error("Did not match any option");
 }
 
 #endif

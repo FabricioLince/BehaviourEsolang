@@ -32,7 +32,10 @@ Variable Evaluator::assign(Node* node, Datatable* dataFrom, Datatable* dataTo) {
       value = applyTreeOnString(lhs, value, dataFrom);
     }
     else if (lhs.type == Variable::LIST && value.type == Variable::CFUNC) {
-      value = applyCFuncOnList(lhs, value, dataFrom);
+      value = applyTreeOnList(lhs, value, dataFrom);
+    }
+    else if (lhs.type == Variable::STRING && value.type == Variable::CFUNC) {
+      value = applyTreeOnString(lhs, value, dataFrom);
     }
     else {
       value = dataFrom->get(varName) * value;

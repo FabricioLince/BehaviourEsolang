@@ -1,4 +1,4 @@
-#ifndef EVALRESULT_H
+  #ifndef EVALRESULT_H
 #define EVALRESULT_H
 
 #include <ostream>
@@ -70,6 +70,13 @@ class Variable {
       this->context = table;
     }
 
+    static Variable error(std::string descr) {
+      Variable v;
+      v.type = NIL;
+      v.string = descr;
+      return v;
+    }
+
     bool toBool() const {
       if (this->type == BOOL) {
         return number != 0;
@@ -80,6 +87,9 @@ class Variable {
       return true;
     }
     std::string toString() const {
+      if (isError()) {
+        return std::string("error:") + string;
+      }
       std::string s;
       switch (type) {
         case Variable::NIL:
@@ -141,202 +151,265 @@ class Variable {
       return ("");
     }
 
-    Variable operator+(const Variable& other) {
-      if (type == NUMBER && other.type == NUMBER)
-        return Variable(number + other.number);
-      if (type == LIST) {
-        list.push_back(other);
-        return *this;
+    static Variable errorInvalidOp(const char* opSymbol, Variable a, Variable b) {
+      std::string descr =
+        std::string("invalid operation")
+        + " (" + typeName(a) + opSymbol + typeName(b) + ")";
+      if (a.isError()) {
+        descr += "; " + a.string;
       }
-      if (type == STRING || other.type == STRING)
+      if (b.isError()) {
+        descr += "; " + b.string;
+      }
+      return error(descr);
+    }
+ Variable errorInvalidOp(const char* opSymbol, Variable other) const {
+   return errorInvalidOp(opSymbol, *this, other);
+ }
+
+    Variable operator+(const Variable& other) {
+      switch (type) {
+        case NUMBER:
+          if (other.type == NUMBER)
+            return Variable(number + other.number);
+          break;
+        case LIST:
+          list.push_back(other);
+          return *this;
+        case STRING:
+          return Variable(toString() + other.toString());
+      }
+      if (other.type == STRING)
         return Variable(toString() + other.toString());
-      return Variable();
+      return errorInvalidOp("+", other);
     }
 
     Variable operator-(const Variable& other) {
-      if (type == NUMBER && other.type == NUMBER)
-        return Variable(number - other.number);
-      if (type == STRING) {
-        int index;
-        switch (other.type) {
-          case NUMBER:
-            index = int(other.number);
-            if (index >= 0 && index < int(string.size())) {
-              string.erase(index, 1);
+      switch (type) {
+        case NUMBER: {
+          if (other.type == NUMBER)
+            return Variable(number - other.number);
+          break;
+        }
+        case STRING: {
+          int index;
+          switch (other.type) {
+            case NUMBER:
+              index = int(other.number);
+              if (index >= 0 && index < int(string.size())) {
+                string.erase(index, 1);
+              }
+              return *this;
+              break;
+            case STRING:
+              index = string.find(other.string);
+              if (index >= 0 && index < int(string.size())) {
+                string.erase(index, other.string.size());
+              }
+              return *this;
+              break;
+          }
+          break;
+        }
+        case LIST: {
+          if (other.type == NUMBER) {
+            int index = int(other.number);
+            if (index < 0) {
+              index = list.size() + index;
+            }
+            if (index >= 0 && index < int(list.size())) {
+              list.erase(list.begin()+index);
             }
             return *this;
-            break;
-          case STRING:
-            index = string.find(other.string);
-            if (index >= 0 && index < int(string.size())) {
-              string.erase(index, other.string.size());
-            }
-            return *this;
-            break;
+          }
+          break;
         }
       }
-      if (type == LIST) {
-        if (other.type == NUMBER) {
-          int index = int(other.number);
-          if (index < 0) {
-            index = list.size() + index;
-          }
-          if (index >= 0 && index < int(list.size())) {
-            list.erase(list.begin()+index);
-          }
-          return *this;
-        }
-      }
-      return Variable();
+      return errorInvalidOp("-", other);
     }
 
     Variable operator*(const Variable& other) {
-      if (type == NUMBER) {
-        if (other.type == NUMBER) {
-          return Variable(number * other.number);
+      switch (type) {
+        case NUMBER: {
+          if (other.type == NUMBER) {
+            return Variable(number * other.number);
+          }
+          break;
         }
-      }
-      if (type == STRING && other.type == NUMBER) {
-        std::string s = "";
-        for (int i = 0; i < other.number; ++i) {
-          s += string;
+        case STRING: {
+          if (other.type == NUMBER) {
+            std::string s = "";
+            for (int i = 0; i < other.number; ++i) {
+              s += string;
+            }
+            return Variable(s);
+          }
+          break;
         }
-        return Variable(s);
-      }
-      if (type == BOOL && other.type == NUMBER && other.number == -1) {
-        return !toBool();
-      }
-      if (type == LIST) {
-        if (other.type == LIST) {
-          for (Variable v : other.list) {
-            list.push_back(v);
+        case BOOL: {
+          if (other.type == NUMBER && other.number == -1) {
+            return !toBool();
+          }
+          break;
+        }
+        case LIST: {
+          switch (other.type) {
+            case LIST: {
+              VarList l;
+              l.insert(l.end(), list.begin(), list.end());
+              l.insert(l.end(), other.list.begin(), other.list.end());
+              return l;
+            }
+            case NUMBER:  {
+              if (list.size() == 0) {
+                return VarList();
+              }
+              else if (list.size() == 1) {
+                return std::vector<Variable>(static_cast<unsigned int>(other.number), list.at(0));
+              }
+              VarList l;
+              for (int i = 0; i < other.number; ++i) {
+                l.insert(l.end(), list.begin(), list.end());
+              }
+              return l;
+            }
           }
         }
-        else if (other.type == NUMBER) {
-          VarList l;
-          for (int i = 0; i < other.number; ++i) {
-            l.insert(l.begin(), list.begin(), list.end());
-          }
-          return l;
-        }
-        return *this;
       }
-      return Variable();
+      return errorInvalidOp("*", other);
     }
 
     Variable operator/(const Variable& other) {
-      if (type == NUMBER && other.type == NUMBER)
-        return Variable(number / other.number);
-      if (type == LIST && other.type == NUMBER) {
-        Variable r = VarList();
-        if (other.number > 0) {
-          for (unsigned int i = 0; i < other.number; ++i) {
-            if (i < list.size())
-              r.list.push_back(list.at(i));
+      switch (type) {
+        case NUMBER: {
+          if (other.type == NUMBER)
+            return Variable(number / other.number);
+          break;
+        }
+        case LIST: {
+          if (other.type == NUMBER) {
+            Variable r = VarList();
+            if (other.number > 0) {
+              for (unsigned int i = 0; i < other.number; ++i) {
+                if (i < list.size())
+                  r.list.push_back(list.at(i));
+              }
+            }
+            else if(other.number < 0) {
+              for (int i = 0; i < -other.number; ++i) {
+                int j = (list.size()-1-i);
+                if (j >= 0)
+                  r.list.insert(r.list.begin(), list.at(j));
+              }
+            }
+            return r;
+          }
+          break;
+        }
+        case STRING: {
+          if (other.type == NUMBER) {
+            Variable r = std::string("");
+            if (other.number > 0) {
+              for (unsigned int i = 0; i < other.number; ++i) {
+                if (i < string.size())
+                  r.string += string.at(i);
+              }
+            }
+            else if(other.number < 0) {
+              for (int i = 0; i < -other.number; ++i) {
+                int j = (string.size()-1-i);
+                if (j >= 0)
+                  r.string  = string.at(j) + r.string;
+              }
+            }
+            return r;
           }
         }
-        else if(other.number < 0) {
-          for (int i = 0; i < -other.number; ++i) {
-            int j = (list.size()-1-i);
-            if (j >= 0)
-              r.list.insert(r.list.begin(), list.at(j));
-          }
-        }
-        return r;
-      }
-      if (type == STRING && other.type == NUMBER) {
-        Variable r = std::string("");
-        if (other.number > 0) {
-          for (unsigned int i = 0; i < other.number; ++i) {
-            if (i < string.size())
-              r.string += string.at(i);
-          }
-        }
-        else if(other.number < 0) {
-          for (int i = 0; i < -other.number; ++i) {
-            int j = (string.size()-1-i);
-            if (j >= 0)
-              r.string  = string.at(j) + r.string;
-          }
-        }
-        return r;
-      }
-        
-      return Variable();
-    }
-
-    Variable operator%(const Variable& other) {
-      if (type == NUMBER && other.type == NUMBER) {
-        if (other.number != 0) {
-          return Variable(static_cast<long double>(fmod(number, other.number)));
-        }
-        return Variable();
       } 
-      //printf("%s %% %s\n", toString().c_str(), other.toString().c_str());
-      if (type == STRING) {
-        if (other.type == NUMBER) {
-          int index = int(other.number);
-          if (index < 0) {
-            index = string.size() + index;
-          }
-          if (index >= 0 && index < int(string.size())) {
-            return std::string(1, string.at(index));
-          }
-        }
-        else if (other.type == STRING) {
-          int index = string.find(other.string);
-          if (index == std::string::npos) {
-            return Variable();
-          }
-          return index;
-        }
-      }
-      if (type == LIST) {
-        if (other.type == NUMBER) {
-          int index = int(other.number);
-          if (index < 0) {
-            index = list.size() + index;
-          }
-          if (index >= 0 && index < int(list.size())) {
-            return list.at(index);
-          }
-        }
-      }
-      return Variable();
+      return errorInvalidOp("/", other);
     }
 
-    Variable operator>(const Variable& other) {
+    Variable operator%(const Variable& other) const {
+      switch (type) {
+        case NUMBER: {
+          if (other.type == NUMBER) {
+            if (other.number != 0) {
+              return Variable(static_cast<long double>(fmod(number, other.number)));
+            }
+            return error("Divison by zero");
+          }
+          break;
+        }
+        case STRING: {
+          switch (other.type) {
+            case NUMBER: {
+              int index = int(other.number);
+              if (index < 0) {
+                index = string.size() + index;
+              }
+              if (index >= 0 && index < int(string.size())) {
+                return std::string(1, string.at(index));
+              }
+              return error("Out of range");
+            }
+            case STRING: {
+              int index = string.find(other.string);
+              if (index == std::string::npos) {
+                return error("Inexistent substring");
+              }
+              return index;
+            }
+          }
+          break;
+        }
+        case LIST: {
+          if (other.type == NUMBER) {
+            int index = int(other.number);
+            if (index < 0) {
+              index = list.size() + index;
+            }
+            if (index >= 0 && index < int(list.size())) {
+              return list.at(index);
+            }
+            return error("Out of range");
+          }
+          break;
+        }
+      }
+      return errorInvalidOp("%", other);
+    }
+
+    Variable operator>(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return Variable(number > other.number);
       if (type == STRING && other.type == STRING) {
         return string.compare(other.string) > 0;
       }
-      return Variable();
+      return errorInvalidOp(">", other);
     }
-    Variable operator<(const Variable& other) {
+    Variable operator<(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return Variable(number < other.number);
       if (type == STRING && other.type == STRING) {
         return string.compare(other.string) < 0;
       }
-      return Variable();
+      return errorInvalidOp("<", other);
     }
-    Variable operator>=(const Variable& other) {
+    Variable operator>=(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return Variable(number >= other.number);
       if (type == STRING && other.type == STRING) {
         return string.compare(other.string) >= 0;
       }
-      
-      return Variable();
+      return errorInvalidOp(">=", other);
     }
-    Variable operator<=(const Variable& other) {
+    Variable operator<=(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return Variable(number <= other.number);
-      if (type == STRING && other.type == STRING) {
+      else if (type == STRING && other.type == STRING) {
         return string.compare(other.string) <= 0;
       }
-      if (type == LIST) {
+      else if (type == LIST) {
         int index = 0;
         for (Variable v : list) {
           if (v.equals(other)) {
@@ -344,18 +417,18 @@ class Variable {
           }
           index++;
         }
-        return Variable();
+        return error("Value not found");
       }
-      return Variable();
+      return errorInvalidOp("<=", other);
     }
-    Variable operator==(const Variable& other) {
+    Variable operator==(const Variable& other) const {
       return equals(other);
     }
 
-    Variable operator!=(const Variable& other) {
+    Variable operator!=(const Variable& other) const {
       return !equals(other);
     }
-    bool equals(const Variable& other) {
+    bool equals(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return (number == other.number);
       if (type == STRING && other.type == STRING)
@@ -366,7 +439,7 @@ class Variable {
         if (list.size() != other.list.size())
           return false;
         for (unsigned int i = 0; i < list.size(); ++i) {
-          if (!(list.at(i) == other.list.at(i)).toBool()) {
+          if (! list.at(i).equals(other.list.at(i))) {
             return false;
           }
         }
@@ -381,7 +454,7 @@ class Variable {
       return (false);
     }
 
-    int length() {
+    int length() const {
       switch (type) {
         case Variable::NIL:
           return 0;
@@ -399,6 +472,32 @@ class Variable {
           return 0;
       }
       return 0;
+    }
+
+    static const char* typeName(Variable v) {
+      switch (v.type) {
+        case Variable::NIL:
+          return "nil";
+        case Variable::NUMBER:
+          return "number";
+        case Variable::STRING:
+          return "string";
+        case Variable::BOOL:
+          return "bool";
+        case Variable::NODE:
+          return "node";
+        case Variable::LIST:
+          return "list";
+        case Variable::CFUNC:
+          return "cfunc";
+        case Variable::TUPLE:
+          return "tuple";
+      }
+      return "";
+    }
+
+    bool isError() const {
+      return type == NIL && string.size() > 0;
     }
 
     int type = 0;

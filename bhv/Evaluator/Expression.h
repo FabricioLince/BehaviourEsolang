@@ -19,27 +19,32 @@ Variable Evaluator::unary(Tree* tree, Datatable* data) {
   std::string symbol = tree->getToken(0)->string;
   if (symbol == "~") {
     if (value.type == Variable::NIL) {
-      value = true;
+      return true;
     }
     else if (value.type == Variable::NODE or value.type == Variable::CFUNC) {
       value.invert = !value.invert;
+      return value;
     }
     else {
-      value = !value.toBool();
+      return !value.toBool();
     }
   }
   else if (symbol == "-") {
-    value = value * -1;
+    return value * -1;
   }
   else if (symbol == "#") {
-    value = value.length();
+    return value.length();
   }
 
   return value;
 }
 
 Variable Evaluator::var(Node* node, Datatable* data) {
-  return data->get(node->asToken()->string);
+  Variable r = data->get(node->asToken()->string);
+  if (r.isError()) {
+    r.string += node->asToken()->position();
+  }
+  return r;
 }
 
 Variable Evaluator::addition(Tree* tree, Datatable* data) {
@@ -94,7 +99,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
           value = applyTreeOnString(value, other, data);
         }
         else if (value.type == Variable::LIST && other.type == Variable::CFUNC) {
-          value = applyCFuncOnList(value, other, data);
+          value = applyTreeOnList(value, other, data);
         }
         else if (value.type == Variable::STRING && other.type == Variable::CFUNC) {
           value = applyTreeOnString(value, other, data);
@@ -152,21 +157,15 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
             case Variable::STRING:
             {
               Variable::VarList list = Variable::VarList();
-              std::string item = "";
-              for (unsigned int i = 0; i < value.string.size(); ++i) {
-                std::string c = std::string(1, value.string.at(i));
-                if (c == other.string) {
-                  if (item.size() > 0) {
-                    list.push_back(item);
-                    item = "";
-                  }
-                }
-                else {
-                  item += c;
-                }
-              }
-              if (item.size() > 0) {
-                list.push_back(item);
+              int left = 0;
+              int right = value.string.find(other.string);
+              list.push_back(value.string.substr(left, right-left));
+              while (right != std::string::npos) {
+                left = right + other.string.size();
+                right = value.string.find(other.string, left+1);
+                std::string sub = value.string.substr(left, right-left);
+                if (sub.size() > 0)
+                  list.push_back(sub);
               }
               value = list;
               break;
@@ -205,6 +204,8 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
         if (value.type == Variable::NUMBER && other.type == Variable::NUMBER) {
           value = static_cast<long double>(pow(value.number, other.number));
         }
+        else
+          return Variable::errorInvalidOp("^", value, other);
       }
     }
   }
@@ -276,12 +277,12 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
 
 Variable Evaluator::applyTreeOnList(Variable list, Variable tree, Datatable* data) {
   //std::cout << "applying " << tree << " on " << list << "\n";
-  Variable rlist = (Variable::VarList());
+  Variable::VarList rlist;
   //std::cout << r.type << "\n";
-  for (Variable v : list.list) {
-    Variable r = executeAny(tree, data, v);
-    if (r.type != Variable::NIL) 
-      rlist.list.push_back(r);
+  for (unsigned int i = 0; i < list.list.size(); ++i) {
+    rlist.push_back(
+      executeAny(tree, data, list.list.at(i), int(i))
+    );
   }
   return rlist;
 }
@@ -291,22 +292,12 @@ Variable Evaluator::applyTreeOnString(Variable string, Variable tree, Datatable*
   Variable::VarList list;
   //std::cout << r.type << "\n";
   for (unsigned int i = 0; i < string.string.size(); ++i) {
-    list.push_back(executeAny(tree, data, std::string(1, string.string.at(i))));
+    list.push_back(
+      executeAny(tree, data, std::string(1, string.string.at(i)), int(i))
+    );
   }
   return list;
 }
 
-Variable Evaluator::applyCFuncOnList(Variable list, Variable cfunc, Datatable* data) {
-  Variable rlist = (Variable::VarList());
-  //std::cout << r.type << "\n";
-  
-  for (Variable v : list.list) {
-    Variable r = executeAny(cfunc, data, v);
-    if (r.type != Variable::NIL) 
-      rlist.list.push_back(r);
-  }
-  
-  return rlist;
-}
 
 #endif

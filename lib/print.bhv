@@ -1,16 +1,32 @@
 
 ${
-  print = !&(
-    old = print
-    &&[
-      (
-        (type:a) == "tuple" 
-        (type:a:tostring) == "node" 
-        old:(a:!tostring)
+  old = print
+  
+  basep = &&[
+    (
+      (type:a) == "tuple" 
+      (type:a:tostring) == "node" 
+      old:(a:!tostring)
+    )
+    old:a
+  ]
+  
+  print = &&(
+    sep = [sep " "]
+    end = [end ""]
+    (#al)*&(
+      basep:(al%a)
+      ?(
+        a < #al-1 
+        old:sep
       )
-      old:a
-    ]
+    )
+    old:end
+
+    remove:"sep","end"
   )
 
-  println = &&(print:a print:"\n")
+  
+
+  println = &&(!print:end="\n" remove:"sep")
 }

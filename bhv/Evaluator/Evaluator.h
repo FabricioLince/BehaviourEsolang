@@ -48,7 +48,6 @@ class Evaluator {
   
   Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
   Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);
-  Variable applyCFuncOnList(Variable list, Variable cfunc, Datatable* data);
   
   Variable executeChildTree(Node* tree, Datatable* data);
   Variable executeCFunc(Variable cfunc, Datatable* data);
@@ -99,18 +98,19 @@ class Evaluator {
     
     Variable evaluate(Node* node, Datatable* data) {
       //std::cout << "evaluating:" << node << std::endl;
+      
       if (evaluatorsNode.count(node->id)) {
         return (this->*evaluatorsNode[node->id])(node, data);
       }
-      if (evaluatorsTree.count(node->id)) {
+      else if (evaluatorsTree.count(node->id)) {
         return (this->*evaluatorsTree[node->id])(node->asTree(), data);
       }
       
-      if (node->id == assign_id) {
+      else if (node->id == assign_id) {
         return assign(node, data, data);
       }
       
-      printf("no evaluator for <%s>\n", node->name.c_str());
+      //printf("no evaluator for <%s>\n", node->name.c_str());
       return Variable();
     }
 };

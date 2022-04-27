@@ -1,4 +1,8 @@
 
+// Class-like Tuple that stores associations between keys and values
+// keys can be integers or strings
+
+
 Map = &${
   itens = ${}
 

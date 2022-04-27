@@ -73,7 +73,10 @@ class Token {
     int line = 0;
     int col = 0;
     std::string toString() {
-      return std::string("[") + std::to_string(line) + "," + std::to_string(col) + "]" + ruleName + ":" + capture;
+      return position() + ruleName + ":" + capture;
+    }
+    std::string position() {
+      return std::string("[") + std::to_string(line) + "," + std::to_string(col) + "]";
     }
 };
 
@@ -159,7 +162,7 @@ class Tokenizer {
             // how many characters deep are we in the current line
             int rfind = result.str().rfind("\n");
             if (rfind != std::string::npos) {
-              colCount = result.str().length() - rfind - 1;
+              colCount = result.str().length() - rfind;
             }
             else {
               colCount += result.str().length();

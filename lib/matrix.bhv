@@ -1,6 +1,6 @@
   
   
-  &(
+  ${
     rows = {}
     default = 0
     insert = &[(i>=#a a--1+v) (i<=0 {v}*a-1) (a/i+v)*(a/-(#a-i-1))]
@@ -19,5 +19,4 @@
       rows = insert:rows,i=y,v=row
       !eqlens
     )
-    &&a
-  )
+  }

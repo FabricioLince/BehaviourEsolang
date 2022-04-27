@@ -38,7 +38,7 @@ class Datatable {
     /// set a cfunc with an orphan context
     void setOrphanCFunc(std::string varName, Variable cfunc) {
       cfunc.context = NULL;
-      set(varName, cfunc); 
+      set(varName, cfunc);
     }
     
     /// get value for varName on the first parent to have it
@@ -50,7 +50,7 @@ class Datatable {
       if (context && context != this) {
         return context->get(varName);
       }
-      return Variable();
+      return Variable::error(varName + " has no value");
     }
     
     /// get value locally for varName

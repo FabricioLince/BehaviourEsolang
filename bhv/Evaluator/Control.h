@@ -10,7 +10,7 @@ Variable Evaluator::sequence(Tree* tree, Datatable* data) {
   if (children->size() == 1) {
     return evaluate(children->at(0), childData);
   }
-  Variable r;
+  Variable r = Variable::error("Empty Sequencer");
   for (Node* child : *children) {
     Variable temp = evaluate(child, childData);
     if (child->id == print_id || child->id == optional_id) {
@@ -35,7 +35,7 @@ Variable Evaluator::select(Tree* tree, Datatable* data) {
       return r;
     }
   }
-  return Variable();
+  return Variable::error("No children succeeded");
 }
 
 Variable Evaluator::repeat(Tree* tree, Datatable* data) {
@@ -79,7 +79,7 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
   
   Variable other = evaluate(cond, data);
       
-  if (other.type == Variable::NODE or other.type == Variable::CFUNC) {
+  if (other.type == Variable::NODE || other.type == Variable::CFUNC) {
     Variable value = evaluate(tree->children.at(0), data);
     other = executeAny(other, data, value);
   }
@@ -88,7 +88,7 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
     return evaluate(tree->children.at(0), data);
   }
   
-  return Variable();
+  return Variable::error("Failed condition");
 }
 
 #endif

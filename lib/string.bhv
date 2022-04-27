@@ -1,3 +1,4 @@
+// Package with various functions that operate on strings
 
 ${
   upalpha  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -6,7 +7,8 @@ ${
   toupper = &&(a*&[upalpha%(lowalpha%a) a])>&a+b
   tolower = &&(a*&[lowalpha%(upalpha%a) a])>&a+b
 
-  // usage:substr:"subject",index=2,size=3
+  // usage:
+  // substr:"subject",index=2,size=3
   substr = &a/(index-#a)/size
   
   format = &(

@@ -1,0 +1,19 @@
+// Class-like Tuple to encapsulate a list and allow change on specific index
+
+Array = &${
+  v = {}
+  set = &&(
+    index = a
+    v = (#v)*&[
+      b|index == a
+      v%a
+    ]
+  )
+  get = &(
+    v%a
+  )
+  append = &&(
+    v+=a
+  )
+  tostring = &""+v
+}
