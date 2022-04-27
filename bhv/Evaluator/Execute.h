@@ -76,11 +76,11 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
         return bt%index;
       }
       return bt.list.size() > 0;
-      break;
+      
     }
     case Variable::NUMBER:
       return int(bt.number) != 0;
-      break;
+      
     case Variable::LIST:
     {
       Tree* argTree = tree->subTree(1);
@@ -91,7 +91,6 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
         return bt%index;
       }
       return bt.list.size() > 0;
-      break;
     }
     case Variable::TUPLE:
     {
@@ -108,8 +107,6 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
         return result;
       }
       return ! bt.context->memory.empty();
-      
-      break;
     }
       
     case Variable::NODE:
@@ -131,9 +128,10 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       
       return result;
     }
+    case Variable::BOOL:
+      return bt;
   }
-  
-  return bt.toBool();
+  return Variable::error("Can not execute nil", bt);
 }
 
 
