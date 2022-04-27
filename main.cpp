@@ -8,7 +8,7 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE true
+#define RUN_FILE false
 
 Environment env; 
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
       env.console();
     }
   }
-  catch (std::exception e) {
+  catch (std::exception& e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
   }
 	return 0;
