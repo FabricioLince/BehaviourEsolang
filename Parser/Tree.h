@@ -18,6 +18,7 @@ class Node : public Printable {
   public:
     std::string name;
     int id = -1;
+    std::string pos; // position on script (line,col)
     virtual ~Node() {}
     Tree* asTree(); 
     Token* asToken();
@@ -32,12 +33,13 @@ class Leaf : public Node {
       this->name = token.ruleName;
       this->id = hasher(name);
       this->token = token;
+      this->pos = token.position();
     }
     std::string toString() {
       if (this->name.size() == 0) {
         return std::to_string(this->token.ruleId) + ":'" + this->token.capture + "'";
       }
-      return this->token.ruleName + ":'" + this->token.capture + "'";//("+       std::to_string(this->pos)+")";
+      return this->token.ruleName + ":'" + this->token.capture + "'";
     }
 };
 
@@ -54,7 +56,7 @@ class Tree : public Node {
     }
     return s;
   }
-  std::hash<std::string> hasher;
+  std::hash<std::string> hasher; // could be static
   
   public:
     NodeList children;
@@ -128,7 +130,7 @@ class Tree : public Node {
     }
 
     std::string toString() {
-      std::string s = name;
+      std::string s = name + "@" + pos;
       t(1);
       if (children.size() == 0) {
         s += "\n" + tab() + "EMPTY";
@@ -166,26 +168,26 @@ class Tree : public Node {
           }
         }
       }
-      for (std::vector<NodeList::iterator>::reverse_iterator rit = toRemove.rbegin(); rit != toRemove.rend(); ++rit) {
-        this->children.erase(*rit);
+      for (int i = toRemove.size()-1; i >= 0; --i) {
+        this->children.erase(toRemove.at(i));
+        delete (*toRemove.at(i));
       }
     }
-    
+
     void subsOnlyChild(std::set<std::string> names) {
-      std::vector<NodeList::iterator> toRemove;
-      for (NodeList::iterator it = this->children.begin(); it != this->children.end(); ++it) {
-        Tree* ctree = (*it)->asTree();
+      for (unsigned int i = 0; i < children.size(); ++i) {
+        Tree* ctree = children.at(i)->asTree();
         if (ctree) {
           ctree->subsOnlyChild(names);
-          if (ctree->children.size() == 1) {
-            //printf("%s has only 1 child\n", ctree->name.c_str());
-            if (names.count(ctree->name)>0)
-              (*it) = *ctree->children.begin();
+          if (ctree->children.size() == 1 &&
+            names.count(ctree->name) > 0) {
+            children[i] = ctree->children.at(0);
+            if (ctree->name == children.at(i)->name)
+              children[i]->pos = ctree->pos;
+            ctree->children.clear();
+            delete ctree;
           }
         }
-      }
-      for (std::vector<NodeList::iterator>::reverse_iterator rit = toRemove.rbegin(); rit != toRemove.rend(); ++rit) {
-        this->children.erase(*rit);
       }
     }
 

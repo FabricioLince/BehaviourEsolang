@@ -7,45 +7,53 @@
 Variable Evaluator::assign(Node* node, Datatable* dataFrom, Datatable* dataTo) {
   Tree* tree = node->asTree();
   //std::cout << tree << "\n";
-  std::string varName = tree->getToken("word")->capture;
+  std::string varName = tree->getToken(0)->capture;
   std::string symbol = tree->getToken(1)->capture;
   
   Variable value = evaluate(tree->children.at(2), dataFrom);
-  //std::cout << "assigning " << varName << " " << symbol << " " << value << "\n";
-  //std::cout << std::hex << static_cast<void*>(dataFrom) << " -> " << static_cast<void*>(dataTo) << std::dec << "\n";
-  //std::cout << "From: "; dataFrom->printFamily();
-  //std::cout << "To: "; dataTo->printFamily();
-  
-  
-  if (symbol == "+=") {
-    value = dataFrom->get(varName) + value;
+
+  if (symbol == "=") {
+    if (value.isError()) {
+      value.string += node->pos;
+    }
   }
-  else if (symbol == "-=") {
-    value = dataFrom->get(varName) - value;
-  }
-  else if (symbol == "*=") {
+  else {
     Variable lhs = dataFrom->get(varName);
-    if (lhs.type == Variable::LIST && value.type == Variable::NODE) {
-      value = applyTreeOnList(lhs, value, dataFrom);
+
+    if (lhs.isError()) {
+      lhs.string += node->pos;
+      return lhs;
     }
-    else if (lhs.type == Variable::STRING && value.type == Variable::NODE) {
-      value = applyTreeOnString(lhs, value, dataFrom);
+    
+    if (symbol == "+=") {
+      value = lhs + value;
     }
-    else if (lhs.type == Variable::LIST && value.type == Variable::CFUNC) {
-      value = applyTreeOnList(lhs, value, dataFrom);
+    else if (symbol == "-=") {
+      value = lhs - value;
     }
-    else if (lhs.type == Variable::STRING && value.type == Variable::CFUNC) {
-      value = applyTreeOnString(lhs, value, dataFrom);
+    else if (symbol == "*=") {
+      if (lhs.type == Variable::LIST && value.type == Variable::NODE) {
+        value = applyTreeOnList(lhs, value, dataFrom);
+      }
+      else if (lhs.type == Variable::STRING && value.type == Variable::NODE) {
+        value = applyTreeOnString(lhs, value, dataFrom);
+      }
+      else if (lhs.type == Variable::LIST && value.type == Variable::CFUNC) {
+        value = applyTreeOnList(lhs, value, dataFrom);
+      }
+      else if (lhs.type == Variable::STRING && value.type == Variable::CFUNC) {
+        value = applyTreeOnString(lhs, value, dataFrom);
+      }
+      else {
+        value = lhs * value;
+      }
     }
-    else {
-      value = dataFrom->get(varName) * value;
+    else if (symbol == "/=") {
+      value = lhs / value;
     }
-  }
-  else if (symbol == "/=") {
-    value = dataFrom->get(varName) / value;
-  }
-  else if (symbol == "%=") {
-    value = dataFrom->get(varName) % value;
+    else if (symbol == "%=") {
+      value = lhs % value;
+    }
   }
 
   dataTo->set(varName, value);

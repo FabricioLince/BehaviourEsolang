@@ -29,6 +29,8 @@ class MultipleRule : public BaseDecoratorRule {
       Node* result = this->child->execute(stream);
       while (result) {
         tree->children.push_back(result);
+        if (tree->pos.size() == 0)
+          tree->pos = result->pos;
         result = this->child->execute(stream);
       }
       if (tree->children.size() >= this->min) {
@@ -54,6 +56,7 @@ class OptionalRule : public BaseDecoratorRule {
       Node* result = this->child->execute(stream);
       if (result) {
         tree->children.push_back(result);
+        tree->pos = result->pos;
       }
       return tree;
     }

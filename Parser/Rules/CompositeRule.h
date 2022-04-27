@@ -39,8 +39,7 @@ class SequenceRule : public BaseCompositeRule {
       Tree* tree = new Tree(this->name);
       CheckpointRule* cp = NULL;
 
-      for (iterator it = rules.begin(); it != rules.end(); ++it) {
-        BaseRule* rule = (*it);
+      for (BaseRule* rule : rules) {
         if(dynamic_cast<CheckpointRule*>(rule)) {
           // hit a checkpoint, save it as current cp and move on to next rule
           cp = dynamic_cast<CheckpointRule*>(rule);
@@ -48,9 +47,17 @@ class SequenceRule : public BaseCompositeRule {
         else {
           Node* result = rule->execute(stream);
           if (result) {
+            //std::cout << this->name << std::endl;
+            //std::cout << "@" << result->pos << std::endl;
+            //std::cout << "HIT: " << result << std::endl;
+            
             if (!rule->discard)
               tree->children.push_back(result);
-            //std::cout << "current tree:\n" << tree << std::endl;
+            if (tree->pos.size() == 0) {
+              tree->pos = (result->pos);
+              //std::cout << "setting pos for " << this->name << " = " << tree->pos << std::endl;
+            }
+            //std::cout << this->name << "->pos = " << tree->pos << std::endl;
           }
           else {
             if (cp) {

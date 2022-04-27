@@ -7,6 +7,7 @@
 Variable Evaluator::match(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* cases = tree->subTree(1)->subTree(0)->subTree(0);
+  Variable::VarList errors;
   for (unsigned int i = 0; i < cases->children.size(); ++i) {
     Tree* cas = cases->subTree(i);
     Variable test = evaluate(cas->children.at(0), data);
@@ -15,13 +16,15 @@ Variable Evaluator::match(Tree* tree, Datatable* data) {
       if (ok.toBool()) {
         return evaluate(cas->children.at(1), data);
       }
+      else if (ok.isError())
+        errors.push_back(ok);
     } else {
       if (value.equals(test)) {
         return evaluate(cas->children.at(1), data);
       }
     }
   }
-  return Variable::error("Did not match any option");
+  return Variable::error("Did not match any option", errors);
 }
 
 #endif

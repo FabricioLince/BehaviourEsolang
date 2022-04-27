@@ -1,0 +1,78 @@
+@"loading board.bhv..."
+Array = [Array load:"lib/array.bhv"]
+
+Board = ${
+  
+  State = ${EMPTY=0 X=1 O=-1}
+  
+  stateToString = &a ?= 
+    State:EMPTY -> "_"
+    State:X -> "X"
+    State:O -> "O"
+    
+  calcWinner = &&(
+    h = {
+      // 3 horizontals
+      (a/3)
+      (a/6/-3)
+      (a/-3)
+      
+      // 3 verticals
+      ({a:0 a:3 a:6})
+      ({a:1 a:4 a:7})
+      ({a:2 a:5 a:8})
+      
+      // 2 diagonals
+      ({a:0 a:4 a:8})
+      ({a:2 a:4 a:6})
+    }
+    
+    h*=&a>&a+b
+    
+    [
+      (h>&[a|[a==3 a==-3] b]) ?=
+        3*State:X -> State:X
+        3*State:O -> State:O
+    
+      (calcIsFull:a State:EMPTY)
+    ]
+  )
+  calcEmptySlots = &&(
+    v=a (0..#v)*&a|(v:a)==State:EMPTY
+  )
+  calcIsFull = &#(a*&[a==State:EMPTY]) == 0
+  
+  oppositeFor = &(a*-1)
+  
+  new = &&(
+  
+    $${
+      slots = (ar=!Array {State:EMPTY}*9*ar:append ar)
+      tostring = &&(
+        str = ""
+        c = 0
+        (slots:v)*&&(
+          str += stateToString:a
+          c+=1
+          ?(c%3==0 str+="\n")
+        )
+        str/(#str-1)
+      )
+      set = &&(
+        slots:!set
+      )
+      get = &&(
+        slots:!get
+      )
+      winner = &&(
+        calcWinner:slots:v
+      )
+      isfull = &(
+        calcIsFull:slots:v
+      )
+      emptyslots = &(
+        calcEmptySlots:slots:v
+      )
+    }
+  )
+}

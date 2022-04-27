@@ -14,14 +14,17 @@ ${
   print = &&(
     sep = [sep " "]
     end = [end ""]
-    (#al)*&(
-      basep:(al%a)
-      ?(
-        a < #al-1 
-        old:sep
+    [
+      (al)*&(
+        basep:a
+        ?(
+          b < #al-1 
+          basep:sep
+        )
       )
-    )
-    old:end
+      basep:a
+    ]
+    basep:end
 
     remove:"sep","end"
   )

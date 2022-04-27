@@ -70,13 +70,6 @@ class Variable {
       this->context = table;
     }
 
-    static Variable error(std::string descr) {
-      Variable v;
-      v.type = NIL;
-      v.string = descr;
-      return v;
-    }
-
     bool toBool() const {
       if (this->type == BOOL) {
         return number != 0;
@@ -510,6 +503,32 @@ class Variable {
     
     bool invert = false; // invert boolean result for node/cfunc ?
 
+
+    // ERRORS
+
+
+    static Variable error(std::string descr) {
+      Variable v;
+      v.type = NIL;
+      v.string = descr;
+      return v;
+    }
+
+    static Variable error(std::string descr, VarList errors) {
+      Variable err = error(descr);
+      for (Variable r : errors) {
+        err.string += "; " + r.string;
+      }
+      return err;
+    }
+
+    static Variable error(std::string descr, Variable back) {
+      Variable err = error(
+        descr +
+        "; " + back.string
+      );
+      return err;
+    }
 };
 
 std::ostream& operator<<(std::ostream& out, Variable& r) {

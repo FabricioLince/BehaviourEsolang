@@ -1,0 +1,62 @@
+@"loading TicTacToe.bhv..."
+println = [println !(load:"lib/print.bhv"):println]
+Array = [Array load:"lib/array.bhv"]
+Board = [Board load:"TicTacToe/board.bhv"]
+bot = [bot load:"TicTacToe/bot.bhv"]
+!read:init
+
+X = Board:State:X
+O = Board:State:O
+E = Board:State:EMPTY
+
+humanPlay = && \(
+  @"Type in your move:"
+  pos = read:0
+  pos >= 0
+  pos < 9
+  (board:get:pos)==E
+  pos
+)
+
+randPlay = && \(
+  pos = (!rand)%9
+  (board:get:pos)==E
+  pos
+)
+
+botPlay = &bot:!getMove:(board=board:slots)
+
+
+game = &&(
+  board = Board:!new
+  token = X
+
+  winner = \10\(
+    println:board
+    @(board:stateToString:token) + "'s turn"
+    pos = token ?= 
+      X -> !humanPlay
+      O -> !botPlay
+    @"Played on " + pos
+    board:set:pos,token
+    token = Board:oppositeFor:token
+    board:!winner
+  )
+
+  println:board
+
+  winner ?=
+    X -> @"X wins"
+    O -> @"O wins"
+    E -> @"It's a tie"
+)
+
+\(
+  !game
+  @"Play again? 1/0"
+  pa = read:0
+  pa ?= 
+    1 -> !0
+    &1 -> !1
+)
+

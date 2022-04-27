@@ -6,11 +6,11 @@
 
 Variable Evaluator::sequence(Tree* tree, Datatable* data) {
   NodeList* children = &tree->children;
-  Datatable* childData = data;//->makeChild();
+  Datatable* childData = data;
   if (children->size() == 1) {
     return evaluate(children->at(0), childData);
   }
-  Variable r = Variable::error("Empty Sequencer");
+  Variable r = Variable::error(std::string("Empty Sequencer")+tree->pos);
   for (Node* child : *children) {
     Variable temp = evaluate(child, childData);
     if (child->id == print_id || child->id == optional_id) {
@@ -22,20 +22,29 @@ Variable Evaluator::sequence(Tree* tree, Datatable* data) {
       r = temp;
     }
     if (!r.toBool()) {
-      return r;
+      return Variable::error(
+        std::string("Sequencer Failed")+tree->pos, 
+        r
+      );
     }
   }
   return r;
 }
 
 Variable Evaluator::select(Tree* tree, Datatable* data) {
+  Variable::VarList errors;
   for (Node* child : tree->subTree(0)->children) {
     Variable r = evaluate(child, data);
     if (r.toBool()) {
       return r;
     }
+    if (r.isError())
+      errors.push_back(r);
   }
-  return Variable::error("No children succeeded");
+  return Variable::error(
+    std::string("No children succeeded") + tree->pos, 
+    errors
+  );
 }
 
 Variable Evaluator::repeat(Tree* tree, Datatable* data) {
@@ -50,7 +59,10 @@ Variable Evaluator::repeat(Tree* tree, Datatable* data) {
           return r;
         }
       }
-      return r;
+      return Variable::error(
+        std::string("Repeater exceeded max tries")+tree->pos, 
+        r
+      );
     }
   }
   Node* child = tree->children.at(1);
@@ -88,7 +100,7 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
     return evaluate(tree->children.at(0), data);
   }
   
-  return Variable::error("Failed condition");
+  return Variable::error("Failed condition", other);
 }
 
 #endif
