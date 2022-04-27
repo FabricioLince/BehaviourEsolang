@@ -15,6 +15,7 @@ You can also download the [Environment](https://github.com/FabricioLince/Behavio
   - [NUMBER](#number)
   - [STRING](#string)
   - [LIST](#list)
+  - [TUPLE](#tuple)
   - [NODE](#node)
 - [Assignment](#assignment)
 - [Control Nodes](#control-nodes)
@@ -64,6 +65,8 @@ The basic value types in Behaviour are:
   - Regular string of characters
 - LIST
   - An array of Variables of any type
+- TUPLE
+  - A reference to a Datatable
 - NODE
   - A reference to a Node
 
@@ -191,6 +194,37 @@ The Length operator `#` can be used to evaluate the amount of items in the LIST.
 It can be evaluated to BOOLEAN False with Inverter `~` before it.
 
 The Execute `!` can be use to test a non-empty LIST, evaluating to BOOLEAN False on a empty LIST, BOOLEAN True otherwise.
+
+
+### TUPLE
+
+A TUPLE is a reference to a Datatable. It can contain in itself Variables with assigned values.
+
+The TUPLE can be used to emulate structs, associative maps, or even classes.
+
+It is define by a dollar sign `$` followed by a LIST of zero or more assignments. Like this:
+
+```
+object = ${
+	name = "Lince"
+	language = "Behaviour"
+	year = 2022
+}
+```
+
+Each of those variables (`name`, `language` and `year`) are defined inside the Datatable referenced by 
+the TUPLE `object`.
+
+To access any variable inside a TUPLE use:
+
+```
+str = object:name
+```
+
+The variable `str` will now contain the value of `name` as defined inside of `object`.
+
+Technically this syntax means: evaluate `name` using the Datatable referenced by `object` as context.
+
 
 ### NODE
 
