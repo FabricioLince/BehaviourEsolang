@@ -79,7 +79,11 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       
     }
     case Variable::NUMBER:
-      return int(bt.number) != 0;
+      if (tree->subTree(1)->children.size() == 0) {
+        return int(bt.number) != 0;
+      }
+      return Variable::error(std::string("Can not execute number with args")+tree->pos);
+      
       
     case Variable::LIST:
     {
@@ -129,9 +133,14 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       return result;
     }
     case Variable::BOOL:
-      return bt;
+      if (tree->subTree(1)->children.size() == 0) {
+        return bt;
+      }
+      return Variable::error(std::string("Can not execute bool with args")+tree->pos);
   }
-  return Variable::error("Can not execute nil", bt);
+  return Variable::error(
+    std::string("Can not execute nil") + tree->pos, 
+    bt);
 }
 
 

@@ -1,4 +1,12 @@
 
+#ifndef HEADER_H
+#define HEADER_H
+
+
+#include <vector>
+#include <map>
+
+class Variable;
 class Datatable;
 class Evaluator;
 
@@ -11,3 +19,5 @@ class Evaluator;
 #include "Evaluator/Execute.h"
 #include "Evaluator/Tuple.h"
 #include "Evaluator/Match.h"
+
+#endif

@@ -49,9 +49,13 @@ Variable Evaluator::var(Node* node, Datatable* data) {
 
 Variable Evaluator::addition(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
-  Node* ops = tree->get("ops");
+  Tree* ops = tree->subTree("ops");
   if (ops) {
-    for (Node* op : ops->asTree()->children) {
+    for (Node* op : ops->children) {
+      
+      if (value.type == Variable::NIL)
+        break;
+      
       Tree* top = op->asTree();
       std::string symbol = top->getToken("addop")->string;
       Variable other = evaluate(top->children.at(1), data);
@@ -71,6 +75,10 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
   Tree* ops = tree->subTree("ops");
   if (ops) {
     for (Node* op : ops->children) {
+      
+      if (value.type == Variable::NIL)
+        break;
+      
       Tree* top = op->asTree();
       std::string symbol = top->getToken("mulop")->string;
       Variable other = evaluate(top->children.at(1), data);

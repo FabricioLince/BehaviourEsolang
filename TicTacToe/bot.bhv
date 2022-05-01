@@ -21,7 +21,7 @@ bot = $${
   winner = Board:calcWinner
 
   scorePossibleMoves = &(
-    sc = (emptySlots:board:v)*&(
+    (emptySlots:board:v)*&(
       pos = a
       tempBoard = !Array
       tempBoard:v = board:v
@@ -37,21 +37,21 @@ bot = $${
   memo = !Map
   
   test = (
-  0 1 2
-  3 4 5
-  6 7 8
-  // reflect X
-  2 1 0
-  5 4 3
-  8 7 6
-  // reflect Y
-  6 7 8
-  3 4 5
-  0 1 2
-  // rotate
-  6 3 0
-  7 4 1
-  8 5 2
+    0 1 2
+    3 4 5
+    6 7 8
+    // reflect X
+    2 1 0
+    5 4 3
+    8 7 6
+    // reflect Y
+    6 7 8
+    3 4 5
+    0 1 2
+    // rotate
+    6 3 0
+    7 4 1
+    8 5 2
   )
   rotate = &{
     a:6 a:3 a:0
@@ -75,7 +75,7 @@ bot = $${
   scoreBoard = &[
     (
       i = -1
-      \maxTries\(
+      \10\(
         i += 1
         v1 = board:v
         ?(combs%i%0>0 v1 = rotate:v1)
@@ -86,11 +86,13 @@ bot = $${
         //println:b1
         key = hash:slots=v1
         memo:get:key
+        //?@[dep+1 1]
       )
     )
     //~?(p:"calculating for "+(board:v)+" "+token+": "+(key) )
     //~?(p:"winner:"+(winner:board:v))
     (
+      //?(?dep = [dep+1 1] @dep)
       m = [
         (winner:board:v) ?=
           token -> 10
@@ -111,9 +113,9 @@ bot = $${
     )
   ]
 
-  getMove = &&(
+  getMove = &(
     
-    //@"getting move for " + board:v
+    //@("getting move for " + board:v) + #(emptySlots:board:v)
     //@emptySlots:board:v
     
     #(emptySlots:board:v) ?=
@@ -138,6 +140,7 @@ bot = $${
         
         moves = emptySlots:board:v
         moves = (0..#moves)*&(moves:a)|(scores:a)==maxScore
+        moves = moves/&a
         move = moves%((!rand)%#moves)
       )
   )

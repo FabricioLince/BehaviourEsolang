@@ -29,8 +29,8 @@ void addToDatatable(Datatable* data) {
   
   data->setOrphanCFunc("type", &type);
   data->setCFunc("rand", &rand);
-  data->setCFunc("read", &input);
-  data->setCFunc("data", &showdata);
+  data->setOrphanCFunc("read", &input);
+  data->setOrphanCFunc("data", &showdata);
   data->setOrphanCFunc("datakeys", &datakeys);
   data->setOrphanCFunc("print", &printvar);
   data->setOrphanCFunc("remove", &removeFromDatatable);

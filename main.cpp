@@ -8,7 +8,7 @@
 #include "def_lib.h"
 #include "environment.h"
 
-#define RUN_FILE true
+#define RUN_FILE false
 
 Environment env; 
 
@@ -16,6 +16,9 @@ bool anyarg(int argc, char** argv, const char* arg);
 Variable loadfile_cfunc(Datatable* data);
 Variable exec_cfunc(Datatable* data);
 Variable parse_cfunc(Datatable* data);
+
+Variable cleanDatatable(Datatable*data);
+Variable checkRefs(Datatable*data);
 
 int main(int argc, char** argv) {
   
@@ -30,7 +33,9 @@ int main(int argc, char** argv) {
   env.getDatatable()->setOrphanCFunc("load", &loadfile_cfunc);
   env.getDatatable()->setOrphanCFunc("exec", &exec_cfunc);
   env.getDatatable()->setOrphanCFunc("parse", &parse_cfunc);
-
+  env.getDatatable()->setOrphanCFunc("clean", &cleanDatatable);
+  env.getDatatable()->setOrphanCFunc("check", &checkRefs);
+  
   try {
     if (RUN_FILE) {
       std::string fileName = "test.bhv";
@@ -87,4 +92,13 @@ Variable parse_cfunc(Datatable* data) {
   }
   return Variable();
 }
-  
+
+Variable cleanDatatable(Datatable*data) {
+  data->context->clean(false);
+  return true;
+}
+
+Variable checkRefs(Datatable*data) {
+  data->context->checkRefs();
+  return true;
+}

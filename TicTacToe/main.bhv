@@ -34,8 +34,8 @@ game = &&(
   winner = \10\(
     println:board
     @(board:stateToString:token) + "'s turn"
-    pos = token ?= 
-      X -> !humanPlay
+    ?pos = token ?= 
+      X -> !botPlay
       O -> !botPlay
     @"Played on " + pos
     board:set:pos,token
@@ -52,11 +52,17 @@ game = &&(
 )
 
 \(
-  !game
+  [ 
+    err = !game
+    ((""+err)/"; ")*&@a
+  ]
+  !clean
+  !check
   @"Play again? 1/0"
   pa = read:0
   pa ?= 
-    1 -> !0
-    &1 -> !1
+    1 -> (@"OK" !0)
+    &1 -> (@"BYE" !1)
 )
 
+ 

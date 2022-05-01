@@ -1,39 +1,33 @@
 
-println = !(load:"lib/print.bhv"):println
 
-sign = &a ?= 
-  0 -> 0
-  &a>0 -> 1
-  &a<0 -> -1
-abs = &[-a|a<0 a]
 
-n = (-5..5)
-@n
-@n*sign
-@n*abs
-@(5..0)*(1..5)
+fac = &&[
+  1 | a < 2
+  a * fac:(a-1)
+]
 
-User = ${
-  tostring = &""+name+"'s age is " + (!age)
-  new = &&(
-    ${
-      name=[name ""]
-      year=[year 1900]
-      age = &(2022-year)
-      tostring = tostring
-    }
-  )
+perr = &&((""+a)/";")*&&@a
+
+perr:fac:6
+
+!check
+
+
+
+$;
+
+
+
+
+Class = &${
+  method = &&a
+  field = ${}
 }
 
-users = {
-  User:new:name="Lince",year=1995
-  User:new:name="Cacatua",year=1995
-  User:new:name="Cigarra",year=2000
-  User:new:name="Bode",year=1998
-}
-users*println
 
+2*&!Class
 
-println:(users%0)
-
-users:0
+!check
+!clean
+@"\nCLEANED"
+!check

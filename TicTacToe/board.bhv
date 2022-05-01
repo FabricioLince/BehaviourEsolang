@@ -1,7 +1,7 @@
 @"loading board.bhv..."
 Array = [Array load:"lib/array.bhv"]
 
-Board = ${
+Board = $${
   
   State = ${EMPTY=0 X=1 O=-1}
   
@@ -38,38 +38,54 @@ Board = ${
     ]
   )
   calcEmptySlots = &&(
-    v=a (0..#v)*&a|(v:a)==State:EMPTY
+    v=a 
+    (0..#v)/&a|(v:a)==State:EMPTY
   )
-  calcIsFull = &#(a*&[a==State:EMPTY]) == 0
+  calcIsFull = &#(a/&a==State:EMPTY) == 0
   
   oppositeFor = &(a*-1)
   
   new = &&(
-  
+    ?(
+      (type:Array)~="node"
+      @"Array was not loaded " + Array
+    )
     $${
-      slots = (ar=!Array {State:EMPTY}*9*ar:append ar)
-      tostring = &&(
-        str = ""
-        c = 0
-        (slots:v)*&&(
-          str += stateToString:a
-          c+=1
-          ?(c%3==0 str+="\n")
-        )
-        str/(#str-1)
+    
+      clear = &&(
+        slots:v = {State:EMPTY}*9
       )
+      
+      slots = (slots=!Array !clear slots)
+      
+      
+      tostring = &(
+        (slots:v)*&(
+          (stateToString:a)
+          +
+          [
+            "\n" | b%3 == 2
+            " "
+          ]
+        )
+      )>&a+b
+      
       set = &&(
         slots:!set
       )
+      
       get = &&(
         slots:!get
       )
+      
       winner = &&(
         calcWinner:slots:v
       )
+      
       isfull = &(
         calcIsFull:slots:v
       )
+      
       emptyslots = &(
         calcEmptySlots:slots:v
       )

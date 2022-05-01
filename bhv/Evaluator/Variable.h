@@ -32,7 +32,7 @@ class Variable {
       this->number = db;
       this->type = NUMBER;
     }
-    Variable(std::string string) {
+    Variable(const std::string& string) {
       this->string = string;
       this->type = STRING;
     }
@@ -55,7 +55,7 @@ class Variable {
         this->number = false;
       }
     }
-    Variable(VarList list) {
+    Variable(const VarList& list) {
       this->type = LIST;
       this->list = list;
     }
@@ -69,6 +69,42 @@ class Variable {
       this->type = TUPLE;
       this->context = table;
     }
+    
+    /// copy constructor, NOT USED
+    Variable (const Variable&other, int u) {
+      type = other.type;
+      switch (type) {
+        case NIL:
+          string = other.string;
+          break;
+        case NUMBER:
+          number = other.number;
+          break;
+        case BOOL:
+          number = other.number;
+          break;
+        case STRING:
+          string = other.string;
+          break;
+        case LIST:
+          list = other.list;
+          break;
+        case NODE:
+          node = other.node;
+          context = other.context;
+          invert = other.invert;
+          break;
+        case CFUNC:
+          cfunc = other.cfunc;
+          context = other.context;
+          invert = other.invert;
+          break;
+        case TUPLE:
+          context = other.context;
+          break;
+      }
+    }
+    
 
     bool toBool() const {
       if (this->type == BOOL) {
@@ -143,22 +179,10 @@ class Variable {
       }
       return ("");
     }
-
-    static Variable errorInvalidOp(const char* opSymbol, Variable a, Variable b) {
-      std::string descr =
-        std::string("invalid operation")
-        + " (" + typeName(a) + opSymbol + typeName(b) + ")";
-      if (a.isError()) {
-        descr += "; " + a.string;
-      }
-      if (b.isError()) {
-        descr += "; " + b.string;
-      }
-      return error(descr);
+ 
+    Variable errorInvalidOp(const char* opSymbol, Variable other) const {
+     return errorInvalidOp(opSymbol, *this, other);
     }
- Variable errorInvalidOp(const char* opSymbol, Variable other) const {
-   return errorInvalidOp(opSymbol, *this, other);
- }
 
     Variable operator+(const Variable& other) {
       switch (type) {
@@ -414,13 +438,21 @@ class Variable {
       }
       return errorInvalidOp("<=", other);
     }
+    
     Variable operator==(const Variable& other) const {
+      if (type == NIL || other.type == NIL) {
+        return errorInvalidOp("==", other);
+      }
       return equals(other);
     }
 
     Variable operator!=(const Variable& other) const {
+      if (type == NIL || other.type == NIL) {
+        return errorInvalidOp("~=", other);
+      }
       return !equals(other);
     }
+    
     bool equals(const Variable& other) const {
       if (type == NUMBER && other.type == NUMBER)
         return (number == other.number);
@@ -467,7 +499,7 @@ class Variable {
       return 0;
     }
 
-    static const char* typeName(Variable v) {
+    static const char* typeName(const Variable& v) {
       switch (v.type) {
         case Variable::NIL:
           return "nil";
@@ -503,35 +535,47 @@ class Variable {
     
     bool invert = false; // invert boolean result for node/cfunc ?
 
-
     // ERRORS
 
 
-    static Variable error(std::string descr) {
+    static Variable error(const std::string& descr) {
       Variable v;
       v.type = NIL;
       v.string = descr;
       return v;
     }
 
-    static Variable error(std::string descr, VarList errors) {
+    static Variable error(const std::string& descr, const VarList& errors) {
       Variable err = error(descr);
       for (Variable r : errors) {
-        err.string += "; " + r.string;
+        err.string += ";" + r.string;
       }
       return err;
     }
 
-    static Variable error(std::string descr, Variable back) {
+    static Variable error(const std::string& descr, const Variable& back) {
       Variable err = error(
-        descr +
-        "; " + back.string
+        descr + ";" + back.string
       );
       return err;
     }
+    
+    static Variable errorInvalidOp(const char* opSymbol, Variable a, Variable b) {
+      std::string descr =
+        std::string("Invalid operation")
+        + "(" + typeName(a) + opSymbol + typeName(b) + ")";
+      if (a.isError()) {
+        descr += ";" + a.string;
+      }
+      if (b.isError()) {
+        descr += ";" + b.string;
+      }
+      return error(descr);
+    }
+    
 };
 
-std::ostream& operator<<(std::ostream& out, Variable& r) {
+std::ostream& operator<<(std::ostream& out, const Variable& r) {
   return out << r.toString();
 }
 

@@ -99,8 +99,12 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
   if (other.toBool()) {
     return evaluate(tree->children.at(0), data);
   }
-  
-  return Variable::error("Failed condition", other);
+  if (other.isError())
+    return Variable::error(
+      std::string("Failed condition")+cond->pos,
+     other);
+  return Variable::error(
+    std::string("Failed condition") + cond->pos);
 }
 
 #endif
