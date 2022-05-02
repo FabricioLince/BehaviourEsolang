@@ -126,11 +126,7 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
       
       evaluateArgs(tree, data, childData);
       
-      Variable result = justExecute(bt, childData);
-      
-      childData->context = NULL;
-      
-      return result;
+      return justExecute(bt, childData);
     }
     case Variable::BOOL:
       if (tree->subTree(1)->children.size() == 0) {
@@ -147,11 +143,11 @@ Variable Evaluator::execute(Tree* tree, Datatable* data) {
 Variable Evaluator::executeChildTree(Node* node, Datatable* data) {
   return evaluate(node, data);
 }
-Variable Evaluator::executeCFunc(Variable cfunc, Datatable* data) {
+Variable Evaluator::executeCFunc(const Variable& cfunc, Datatable* data) {
   return (*cfunc.cfunc)(data);
 }
 
-Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable arg, Variable b) {
+Variable Evaluator::executeAny(const Variable& nodeOrFunc, Datatable* data, Variable arg, Variable b) {
   Datatable* childData = nodeOrFunc.context;
   if (childData == NULL) {
     childData = data->makeOrphan();
@@ -168,8 +164,7 @@ Variable Evaluator::executeAny(Variable nodeOrFunc, Datatable* data, Variable ar
   return justExecute(nodeOrFunc, childData);
 }
 
-Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
-  Variable r = Variable();
+Variable Evaluator::justExecute(const Variable& nodeOrFunc, Datatable* data) {
   if (nodeOrFunc.type == Variable::NODE) {
     if (nodeOrFunc.invert) {
       return !executeChildTree(nodeOrFunc.node, data).toBool();
@@ -184,7 +179,9 @@ Variable Evaluator::justExecute(Variable nodeOrFunc, Datatable* data) {
     else
       return executeCFunc(nodeOrFunc, data);
   }
-  return r;
+  return Variable::error(
+    std::string("Runtime Error: Executing type ")
+    + Variable::typeName(nodeOrFunc));
 }
 
 Variable Evaluator::getTree(Tree* tree, Datatable* data) {

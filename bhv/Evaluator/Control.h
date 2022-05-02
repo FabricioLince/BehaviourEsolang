@@ -12,7 +12,7 @@ Variable Evaluator::sequence(Tree* tree, Datatable* data) {
   }
   Variable r = Variable::error(std::string("Empty Sequencer")+tree->pos);
   for (Node* child : *children) {
-    Variable temp = evaluate(child, childData);
+    const Variable& temp = evaluate(child, childData);
     if (child->id == print_id || child->id == optional_id) {
        if (r.type == Variable::NIL) {
          r = temp;
@@ -34,7 +34,7 @@ Variable Evaluator::sequence(Tree* tree, Datatable* data) {
 Variable Evaluator::select(Tree* tree, Datatable* data) {
   Variable::VarList errors;
   for (Node* child : tree->subTree(0)->children) {
-    Variable r = evaluate(child, data);
+    const Variable& r = evaluate(child, data);
     if (r.toBool()) {
       return r;
     }
@@ -49,11 +49,11 @@ Variable Evaluator::select(Tree* tree, Datatable* data) {
 
 Variable Evaluator::repeat(Tree* tree, Datatable* data) {
   if (tree->subTree(0)->children.size() > 0) {
-    Variable max = evaluate(tree->subTree(0)->subTree(0)->children.at(0), data);
+    const Variable& max = evaluate(tree->subTree(0)->subTree(0)->children.at(0), data);
     if (max.type == Variable::NUMBER) {
       Node* child = tree->children.at(1);
       Variable r;
-      for (int i = 0; i < max.number; ++i) {      
+      for (int i = 0; i < max.number; ++i) {
         r = evaluate(child, data);
         if (r.toBool()) {
           return r;
@@ -74,7 +74,7 @@ Variable Evaluator::repeat(Tree* tree, Datatable* data) {
 }
 
 Variable Evaluator::negate(Tree* tree, Datatable* data) {
-  Variable r = evaluate(tree->children.at(0), data);
+  const Variable& r = evaluate(tree->children.at(0), data);
   return Variable(!r.toBool());
 }
 
@@ -92,7 +92,7 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
   Variable other = evaluate(cond, data);
       
   if (other.type == Variable::NODE || other.type == Variable::CFUNC) {
-    Variable value = evaluate(tree->children.at(0), data);
+    const Variable& value = evaluate(tree->children.at(0), data);
     other = executeAny(other, data, value);
   }
   
@@ -101,8 +101,8 @@ Variable Evaluator::ifcond(Tree* tree, Datatable* data) {
   }
   if (other.isError())
     return Variable::error(
-      std::string("Failed condition")+cond->pos,
-     other);
+      std::string("Failed condition") + cond->pos,
+      other);
   return Variable::error(
     std::string("Failed condition") + cond->pos);
 }

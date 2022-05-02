@@ -6,7 +6,7 @@
 
 Variable Evaluator::print(Tree* tree, Datatable* data) {
   
-  Variable value = evaluate(tree->children.at(0), data);
+  const Variable& value = evaluate(tree->children.at(0), data);
   if (printLineNumber) {
     Token* t = tree->firstToken();
     if (t) {
@@ -20,7 +20,7 @@ Variable Evaluator::print(Tree* tree, Datatable* data) {
     std::cout << value;
   }
   std::cout << std::endl;
-  return Variable(true);
+  return true;
 }
 
 #endif

@@ -1,6 +1,4 @@
 
-
-
 fac = &&[
   1 | a < 2
   a * fac:(a-1)
@@ -8,26 +6,7 @@ fac = &&[
 
 perr = &&((""+a)/";")*&&@a
 
-perr:fac:6
-
-!check
+?(1..20)*&&(@a+"="+fac:a)
 
 
 
-$;
-
-
-
-
-Class = &${
-  method = &&a
-  field = ${}
-}
-
-
-2*&!Class
-
-!check
-!clean
-@"\nCLEANED"
-!check

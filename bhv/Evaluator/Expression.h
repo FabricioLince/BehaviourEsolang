@@ -15,15 +15,16 @@ Variable Evaluator::decimal(Node* node, Datatable* data) {
 }
 
 Variable Evaluator::unary(Tree* tree, Datatable* data) {
-  Variable value = evaluate(tree->children.at(1), data);
-  std::string symbol = tree->getToken(0)->string;
+  const Variable& value = evaluate(tree->children.at(1), data);
+  const std::string& symbol = tree->getToken(0)->string;
   if (symbol == "~") {
     if (value.type == Variable::NIL) {
       return true;
     }
     else if (value.type == Variable::NODE or value.type == Variable::CFUNC) {
-      value.invert = !value.invert;
-      return value;
+      Variable n = value;
+      n.invert = !n.invert;
+      return n;
     }
     else {
       return !value.toBool();
@@ -42,23 +43,25 @@ Variable Evaluator::unary(Tree* tree, Datatable* data) {
 Variable Evaluator::var(Node* node, Datatable* data) {
   Variable r = data->get(node->asToken()->string);
   if (r.isError()) {
-    r.string += node->asToken()->position();
+    r.string += node->pos;
   }
   return r;
 }
 
 Variable Evaluator::addition(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
-  Tree* ops = tree->subTree("ops");
-  if (ops) {
-    for (Node* op : ops->children) {
+  
+  if (tree->children.size() > 1) {
+    for (Node* op : tree->subTree(1)->children) {
       
-      if (value.type == Variable::NIL)
-        break;
+      if (value.type == Variable::NIL) {
+        return value;
+      }
       
       Tree* top = op->asTree();
-      std::string symbol = top->getToken("addop")->string;
-      Variable other = evaluate(top->children.at(1), data);
+      const std::string& symbol = top->getToken(0)->string;
+      
+      const Variable& other = evaluate(top->children.at(1), data);
       if (symbol == "+") {
         value = value + other;
       }
@@ -72,16 +75,15 @@ Variable Evaluator::addition(Tree* tree, Datatable* data) {
 
 Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
-  Tree* ops = tree->subTree("ops");
-  if (ops) {
-    for (Node* op : ops->children) {
+  if (tree->children.size() > 1) {
+    for (Node* op : tree->subTree(1)->children) {
       
       if (value.type == Variable::NIL)
-        break;
+        return value;
       
       Tree* top = op->asTree();
-      std::string symbol = top->getToken("mulop")->string;
-      Variable other = evaluate(top->children.at(1), data);
+      const std::string& symbol = top->getToken(0)->string;
+      const Variable& other = evaluate(top->children.at(1), data);
       if (symbol == "*") {
         if (value.type == Variable::NUMBER) {
           switch (other.type) {
@@ -100,16 +102,14 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
               break;
           }
         }
-        else if (value.type == Variable::LIST && other.type == Variable::NODE) {
+        else if (value.type == Variable::LIST && 
+          (other.type == Variable::NODE 
+          || other.type == Variable::CFUNC)) {
           value = applyTreeOnList(value, other, data);
         }
-        else if (value.type == Variable::STRING && other.type == Variable::NODE) {
-          value = applyTreeOnString(value, other, data);
-        }
-        else if (value.type == Variable::LIST && other.type == Variable::CFUNC) {
-          value = applyTreeOnList(value, other, data);
-        }
-        else if (value.type == Variable::STRING && other.type == Variable::CFUNC) {
+        else if (value.type == Variable::STRING && 
+          (other.type == Variable::NODE
+          || other.type == Variable::CFUNC)) {
           value = applyTreeOnString(value, other, data);
         }
         else {
@@ -145,7 +145,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
               std::string item = "";
               for (unsigned int i = 0; i < value.string.size(); ++i) {
                 std::string c = std::string(1, value.string.at(i));
-                Variable r = executeAny(other, data, c);
+                const Variable& r = executeAny(other, data, c);
                 if (r.toBool()) {
                   if (item.size() > 0) {
                     list.push_back(item);
@@ -189,7 +189,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
             {
               Variable rlist = Variable::VarList();
               //std::cout << r.type << "\n";
-              for (Variable v : value.list) {
+              for (const Variable& v : value.list) {
                 Variable r = executeAny(other, data, v);
                 if (r.toBool())
                   rlist.list.push_back(v);
@@ -225,12 +225,12 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* comp = tree->subTree("comp");
   if (comp) {
-    std::string symbol = comp->getToken("comparation")->string;
-    Variable other = evaluate(comp->children.at(1), data);
+    const std::string& symbol = comp->getToken("comparation")->string;
+    const Variable& other = evaluate(comp->children.at(1), data);
     if (symbol == ">") {
       if (value.type == Variable::LIST && (other.type == Variable::NODE or other.type == Variable::CFUNC)) {
         if (value.list.size() == 0) {
-          return Variable();
+          return Variable::error("Reduced empty list");
         }
         Variable r = value.list.at(0);
         for (unsigned int i = 1; i < value.list.size(); ++i) {
@@ -243,13 +243,13 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
     else if (symbol == "<") {
       if (value.type == Variable::LIST && (other.type == Variable::NODE or other.type == Variable::CFUNC)) {
         int index = 0;
-        for (Variable v : value.list) {
+        for (const Variable& v : value.list) {
           if (executeAny(other, data, v).toBool()) {
             return index;
           }
           index++;
         }
-        return Variable();
+        return Variable::error("Truthy value not found in list");
       }
       return value < other;
     }
@@ -265,25 +265,30 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
     else if (symbol == "~=") {
       return value != other;
     }
-    else if (symbol == ".." and value.type == Variable::NUMBER && other.type == Variable::NUMBER) {
-      Variable::VarList l;
-      if (value.number<other.number) {
-        for (int i = int(value.number); i <= int(other.number); ++i) {
-          l.push_back(i);
+    else if (symbol == "..") {
+      if (value.type == Variable::NUMBER && other.type == Variable::NUMBER) {
+        Variable::VarList l;
+        if (value.number < other.number) {
+          for (int i = int(value.number); i <= int(other.number); ++i) {
+            l.push_back(i);
+          }
         }
+        else {
+          for (int i = int(value.number); i >= int(other.number); --i) {
+            l.push_back(i);
+          }
+        }
+        return l;
       }
       else {
-        for (int i = int(value.number); i >= int(other.number); --i) {
-          l.push_back(i);
-        }
+        return Variable::errorInvalidOp("..", value, other);
       }
-      return l;
     }
   }
   return value;
 }
 
-Variable Evaluator::applyTreeOnList(Variable list, Variable tree, Datatable* data) {
+Variable Evaluator::applyTreeOnList(const Variable& list, const Variable& tree, Datatable* data) {
   //std::cout << "applying " << tree << " on " << list << "\n";
   Variable::VarList rlist;
   //std::cout << r.type << "\n";
@@ -295,7 +300,7 @@ Variable Evaluator::applyTreeOnList(Variable list, Variable tree, Datatable* dat
   return rlist;
 }
 
-Variable Evaluator::applyTreeOnString(Variable string, Variable tree, Datatable* data) {
+Variable Evaluator::applyTreeOnString(const Variable& string, const Variable& tree, Datatable* data) {
   //std::cout << "applying " << tree << " on " << list << "\n";
   Variable::VarList list;
   //std::cout << r.type << "\n";

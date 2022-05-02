@@ -26,23 +26,25 @@ randPlay = && \(
 
 botPlay = &bot:!getMove:(board=board:slots)
 
+token = X
 
 game = &&(
   board = Board:!new
-  token = X
-
+  
   winner = \10\(
+    sys:"cls"
     println:board
     @(board:stateToString:token) + "'s turn"
     ?pos = token ?= 
-      X -> !botPlay
+      X -> !humanPlay
       O -> !botPlay
     @"Played on " + pos
     board:set:pos,token
     token = Board:oppositeFor:token
     board:!winner
   )
-
+  
+  sys:"cls"
   println:board
 
   winner ?=
@@ -56,8 +58,6 @@ game = &&(
     err = !game
     ((""+err)/"; ")*&@a
   ]
-  !clean
-  !check
   @"Play again? 1/0"
   pa = read:0
   pa ?= 

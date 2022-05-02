@@ -70,8 +70,8 @@ class Variable {
       this->context = table;
     }
     
-    /// copy constructor, NOT USED
-    Variable (const Variable&other, int u) {
+    /// copy constructor
+    Variable (const Variable& other) {
       type = other.type;
       switch (type) {
         case NIL:
@@ -180,19 +180,22 @@ class Variable {
       return ("");
     }
  
-    Variable errorInvalidOp(const char* opSymbol, Variable other) const {
+    Variable errorInvalidOp(const char* opSymbol, const Variable& other) const {
      return errorInvalidOp(opSymbol, *this, other);
     }
 
-    Variable operator+(const Variable& other) {
+    Variable operator+(const Variable& other) const {
       switch (type) {
         case NUMBER:
           if (other.type == NUMBER)
             return Variable(number + other.number);
           break;
         case LIST:
-          list.push_back(other);
-          return *this;
+        {
+          Variable r = VarList(list);
+          r.list.push_back(other);
+          return r;
+        }
         case STRING:
           return Variable(toString() + other.toString());
       }
@@ -201,7 +204,7 @@ class Variable {
       return errorInvalidOp("+", other);
     }
 
-    Variable operator-(const Variable& other) {
+    Variable operator-(const Variable& other) const {
       switch (type) {
         case NUMBER: {
           if (other.type == NUMBER)
@@ -214,14 +217,18 @@ class Variable {
             case NUMBER:
               index = int(other.number);
               if (index >= 0 && index < int(string.size())) {
-                string.erase(index, 1);
+                Variable r = string;
+                r.string.erase(index, 1);
+                return r;
               }
               return *this;
               break;
             case STRING:
               index = string.find(other.string);
               if (index >= 0 && index < int(string.size())) {
-                string.erase(index, other.string.size());
+                Variable r = string;
+                r.string.erase(index, other.string.size());
+                return r;
               }
               return *this;
               break;
@@ -235,7 +242,9 @@ class Variable {
               index = list.size() + index;
             }
             if (index >= 0 && index < int(list.size())) {
-              list.erase(list.begin()+index);
+              Variable r = list;
+              r.list.erase(list.begin()+index);
+              return r;
             }
             return *this;
           }
@@ -245,7 +254,7 @@ class Variable {
       return errorInvalidOp("-", other);
     }
 
-    Variable operator*(const Variable& other) {
+    Variable operator*(const Variable& other) const {
       switch (type) {
         case NUMBER: {
           if (other.type == NUMBER) {
@@ -259,7 +268,7 @@ class Variable {
             for (int i = 0; i < other.number; ++i) {
               s += string;
             }
-            return Variable(s);
+            return s;
           }
           break;
         }
@@ -272,8 +281,7 @@ class Variable {
         case LIST: {
           switch (other.type) {
             case LIST: {
-              VarList l;
-              l.insert(l.end(), list.begin(), list.end());
+              VarList l(list.begin(), list.end());
               l.insert(l.end(), other.list.begin(), other.list.end());
               return l;
             }
@@ -282,7 +290,10 @@ class Variable {
                 return VarList();
               }
               else if (list.size() == 1) {
-                return std::vector<Variable>(static_cast<unsigned int>(other.number), list.at(0));
+                return VarList(
+                  static_cast<unsigned int>(other.number), 
+                  list.at(0)
+                );
               }
               VarList l;
               for (int i = 0; i < other.number; ++i) {
@@ -296,7 +307,7 @@ class Variable {
       return errorInvalidOp("*", other);
     }
 
-    Variable operator/(const Variable& other) {
+    Variable operator/(const Variable& other) const {
       switch (type) {
         case NUMBER: {
           if (other.type == NUMBER)
@@ -529,14 +540,14 @@ class Variable {
     long double number = 0;
     std::string string;
     Parser::Node* node;
-    Datatable* context; // creation context for the node/function
+    Datatable* context; // creation context for the node/function / Datatable referenced by tuple
     VarList list;
     Variable (*cfunc)(Datatable*);
     
-    bool invert = false; // invert boolean result for node/cfunc ?
+    bool invert = false; // invert result for node/cfunc ?
+
 
     // ERRORS
-
 
     static Variable error(const std::string& descr) {
       Variable v;
@@ -560,7 +571,7 @@ class Variable {
       return err;
     }
     
-    static Variable errorInvalidOp(const char* opSymbol, Variable a, Variable b) {
+    static Variable errorInvalidOp(const char* opSymbol, const Variable& a, const Variable& b) {
       std::string descr =
         std::string("Invalid operation")
         + "(" + typeName(a) + opSymbol + typeName(b) + ")";

@@ -46,13 +46,13 @@ class Evaluator {
   void evaluateArg(Node* arg, Datatable* data, Datatable* childData);
   
   
-  Variable applyTreeOnList(Variable list, Variable tree, Datatable* data);
-  Variable applyTreeOnString(Variable string, Variable tree, Datatable* data);
+  Variable applyTreeOnList(const Variable& list, const Variable& tree, Datatable* data);
+  Variable applyTreeOnString(const Variable& string, const Variable& tree, Datatable* data);
   
   Variable executeChildTree(Node* tree, Datatable* data);
-  Variable executeCFunc(Variable cfunc, Datatable* data);
-  Variable executeAny(Variable nodeOrFunc, Datatable* data, Variable arg = Variable(), Variable b = Variable());
-  Variable justExecute(Variable nodeOrFunc, Datatable* data);
+  Variable executeCFunc(const Variable& cfunc, Datatable* data);
+  Variable executeAny(const Variable& nodeOrFunc, Datatable* data, Variable arg = Variable(), Variable b = Variable());
+  Variable justExecute(const Variable& nodeOrFunc, Datatable* data);
   
   
   std::hash<std::string> hasher;
@@ -111,7 +111,9 @@ class Evaluator {
       }
       
       //printf("no evaluator for <%s>\n", node->name.c_str());
-      return Variable();
+      return Variable::error(
+        std::string("Runtime Error: No evaluator for ")
+        + node->name);
     }
 };
 

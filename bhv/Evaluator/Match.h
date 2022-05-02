@@ -5,12 +5,12 @@
 
 
 Variable Evaluator::match(Tree* tree, Datatable* data) {
-  Variable value = evaluate(tree->children.at(0), data);
+  const Variable& value = evaluate(tree->children.at(0), data);
   Tree* cases = tree->subTree(1)->subTree(0)->subTree(0);
   Variable::VarList errors;
   for (unsigned int i = 0; i < cases->children.size(); ++i) {
     Tree* cas = cases->subTree(i);
-    Variable test = evaluate(cas->children.at(0), data);
+    const Variable& test = evaluate(cas->children.at(0), data);
     if (test.type == Variable::NODE) {
       Variable ok = executeAny(test, data, value);
       if (ok.toBool()) {
@@ -24,7 +24,9 @@ Variable Evaluator::match(Tree* tree, Datatable* data) {
       }
     }
   }
-  return Variable::error("Did not match any option", errors);
+  return Variable::error(
+    std::string("Did not match any option")+tree->pos,
+    errors);
 }
 
 #endif
