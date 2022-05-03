@@ -41,11 +41,23 @@ Every _Expression_ is converted to a _Node_ when parsed.
 
 Every _Node_ can be evaluated.
 
+### How To Run
+
+Behaviour is meant to be an embedded language and run from inside other programs to modify its _Behaviour_, but there are currently two main ways of running Behaviour scripts:
+
+The `bhv` executable file, which can be used to run Behaviour files.
+Run `bhv` from the command line passing the file name as its first argument to execute the file's script.
+
+The `env` executable file is a "Runtime Environment" that can be used to run scripts on a line by line fashion.
+Run `env`, type Behaviour expressions on the command line and press `ENTER` to evaluate them.
+
+### Basic Expressions
+
 The following is an example of an Assign Expression, in which the Variable `count` receives the value of `12`:
 
 `count = 12`
 
-To print a value to the console we can use a Print Expression. The Print Expression can be used in the forms:
+To print a value to the console we can use a Print Expression:
 
 `@"Hello World!"` will print the string `Hello World!` **with** a trailing newline.
 
@@ -83,9 +95,9 @@ There is no reserved word or symbol to represent it in an expression, it can onl
 
 The Length operator `#` evaluates to `0` when used before a NIL value.
 
-The Comparison operators equals `==` always evaluates to BOOLEAN False, and not equals `~=` always evaluates to BOOLEAN True. This may change in the near future.
-
 Any other operation with NIL will be evaluated to NIL. 
+
+Note that, when printing a NIL value, you will see an error description, showing what operations went wrong for that NIL value to appear.
 
 ### BOOLEAN
 
@@ -169,7 +181,7 @@ The following operations can be performed on LIST values:
 - Multiplication `*`
   - When used with another LIST, concatenate the two LIST values;
   - When used with a NUMBER value, repeat the list the amount passed if the amount is >= 0;
-  - When used with a NODE value, executes the NODE for each item of the LIST, passing said item as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
+  - When used with a NODE value, executes the NODE for each item of the LIST, passing said item as argument each time, evaluates to a LIST with all the results.
 - Division `/`
   - Used with a NUMBER value, clips the LIST to a list with atmost NUMBER items, if number > 0 gets the first number items, if number < 0 gets the last number items;
   - Used with a NODE value, works as a filter, evaluates to a LIST with all the members of the original LIST that evaluated truthy when passed to the NODE.

@@ -11,6 +11,7 @@ Disponível para experimentar no [Replit](https://replit.com/@fabriciorodrigues/
   - [NUMBER](#number)
   - [STRING](#string)
   - [LIST](#list)
+  - [TUPLA](#tupla)
   - [NODE](#node)
 - [Atribuição](#atribuição)
 - [Nós de controle](#nós-de-controle)
@@ -41,6 +42,19 @@ Todo _Nó_ pode ser avaliado para retirar seu valor.
 
 Um script em Behaviour se torna uma árvore de expressões cuja execução imita uma árvore comportamental.
 
+
+### Como Usar
+
+Behaviour foi criada para ser usado como uma linguagem imbutida e ser executada de dentro de outros programas para modificar seu comportamento, mas no momento existem duas formas principais de executar scripts em Behaviour:
+
+O arquivo executável `bhv` pode ser usado para executar arquivos de script Behaviour. Execute `bhv` pela linha de comando passando o nome do arquivo a ser executado no primeiro parâmetro.
+
+O arquivo executável `env` é um "Ambiente de Execução" que pode ser usado para executar scripts linha por linha.
+Execute `env`, digite expressões em Behaviour na linha de comando e aperte `ENTER` para executá-las.
+
+
+### Expressões Básicas
+
 O script a seguir é um exemplo de uma Expressão de Atribuição, onde a Variável `count` recebe o valor `12`:
 
 `count = 12`
@@ -66,6 +80,8 @@ Os tipos básicos para valores em Behaviour são:
   - Cadeia de caracteres
 - LIST
   - Lista de valores de qualquer tipo
+- TUPLA
+  - Uma referência a um Datatable
 - NODE
   - Uma referência a um Nó
 
@@ -84,11 +100,11 @@ Não há palavra reservada ou simbolo especial para representar NIL em uma expre
 
 O operador de comprimento `#` resulta em `0` quando usado antes de um valor NIL.
 
-O operador de comparação igual `==` sempre resulta em BOOLEAN Falso, e diferente `~=` sempre resulta em BOOLEAN Verdadeiro. Isso pode mudar em breve.
-
 O Invsersor `~` transforma NIL em BOOLEAN Verdadeiro.
 
 Qualquer outra operação com NIL resulta em NIL.
+
+Observe que, ao imprimir um valor NIL, na maioria das vezes irá aparecer uma descrição de erro, mostrando que expressões deram errado para chegar naquele valor NIL.
 
 ### BOOLEAN
 
@@ -175,7 +191,7 @@ As seguintes operações podem ser realizadas em listas:
 - Multiplicação `*`
   - Quando usado com outra lista, concatena as duas listas;
   - Quando usado com um valor numérico, repete a lista a quantidade de vezes passada se o valor >= 0;
-  - Quando usado com um nó, executa o nó para cada item da lista, passando os itens como argumento um por vez, resulta em uma lista com os resultados exceto quando o resultado for NIL.
+  - Quando usado com um nó, executa o nó para cada item da lista, passando os itens como argumento um por vez, resulta em uma lista com os resultados.
 - Divisão `/`
   - Quando usado com um valor numérico, corta a lista e resulta em uma lista com, no máximo, essa quantidade de itens. Se o número > 0 pega os primeiros itens, se número < 0 pega os últimos itens;
   - Quando usado com um nó funciona como filtro, resulta em uma lista com todos os itens da lista original que, quando avaliado pelo nó, resultaram em _verdadeiril_.
@@ -202,6 +218,34 @@ O Inversor `~` resulta em BOOLEAN Falso.
 O Executar `!` pode ser usado para testar se a lista possui itens, resulta em BOOLEAN Falso com lista vazia, BOOLEAN Verdadeiro com lista não vazia.
 
 Mais em [Manipulando Listas](#manipulando-listas).
+
+### TUPLA
+
+Uma TUPLA é uma referência a um Datatable. Pode conter variáveis dentro de si com valores atribuidos.
+
+Uma Tupla pode ser usada para emular structs, mapas associativos ou até classes.
+
+A Tupla é definida pelo sinal de dinheiro `$` seguido por uma Lista de zero ou mais atribuições. Dessa forma:
+
+```
+objeto = ${
+	nome = "Lince"
+	linguagem = "Behaviour"
+	ano = 2022
+}
+```
+
+Cada uma dessa variáveis (`nome`, `linguagem`, e `ano`) são definidas dentro do Datatable referenciado pela Tupla `objeto`.
+
+Para acessar qualquer variável dentro da Tupla use:
+
+```
+str = objeto:nome
+```
+
+A variável `str` irá conter o valor de `nome` que está definido dentro de `objeto`.
+
+Tecnicamente essa sintaxe significa: avalie a expressão `nome` usando o Datatable referenciado por `objeto` como contexto.
 
 ### NODE
 
