@@ -1,14 +1,1 @@
 
-nums = 10*&(!rand)%10+1
-
-@nums
-
-@"sum = " + (nums>+)
-@"product = " + (nums>*)
-@"bigger = " + (nums>>)
-@"smaller = " + (nums><)
-
-@"bigger between the first two:"
-@(nums:0)|>(nums:1)
-@"smaller between the first two:"
-@(nums:0)|<(nums:1)

@@ -62,7 +62,7 @@ Variable Evaluator::assign(Node* node, Datatable* dataFrom, Datatable* dataTo) {
     }
   }
 
-  return value;
+  return dataTo->get(varName);
 }
 
 

@@ -352,7 +352,7 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
     }
     else {
       return Variable::error(
-        std::string("Can not reduce ") + Variable::typeName(value), 
+        std::string("Can not reduce ") + Variable::typeName(value) + tree->pos, 
         value
       );
     }   

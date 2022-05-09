@@ -12,7 +12,7 @@ const Variable nil;
 
 Variable type(Datatable* data);
 Variable rand(Datatable* data);
-Variable input(Datatable* data);
+Variable readLine(Datatable* data);
 Variable showdata(Datatable* data);
 Variable datakeys(Datatable* data);
 Variable printvar(Datatable* data);
@@ -24,30 +24,29 @@ Variable time(Datatable* data);
 Variable wait(Datatable* data);
 Variable removeFromDatatable(Datatable* data);
 Variable execSystemFunc(Datatable* data);
+Variable error(Datatable* data);
 
 void addToDatatable(Datatable* data) {
   
-  data->setOrphanCFunc("type", &type);
+  data->setCFunc("type", &type);
   data->setCFunc("rand", &rand);
-  data->setOrphanCFunc("read", &input);
-  data->setOrphanCFunc("data", &showdata);
-  data->setOrphanCFunc("datakeys", &datakeys);
-  data->setOrphanCFunc("print", &printvar);
-  data->setOrphanCFunc("remove", &removeFromDatatable);
+  data->setCFunc("read", &readLine);
+  data->setCFunc("data", &showdata);
+  data->setCFunc("datakeys", &datakeys);
+  data->setCFunc("print", &printvar);
+  data->setCFunc("remove", &removeFromDatatable);
   
-  data->setOrphanCFunc("int", &parseInt);
-  data->setOrphanCFunc("ascii", &ascii);
-  data->setOrphanCFunc("time", &time);
-  data->setOrphanCFunc("wait", &wait);
-  data->setOrphanCFunc("sys", &execSystemFunc);
+  data->setCFunc("int", &parseInt);
+  data->setCFunc("ascii", &ascii);
+  data->setCFunc("time", &time);
+  data->setCFunc("wait", &wait);
+  data->setCFunc("sys", &execSystemFunc);
+  data->setCFunc("error", &error);
+  
 }
 
-
-
 Variable type(Datatable* data) {
-  Variable arg = data->get("a");
-  return Variable::typeName(arg);
-  return Variable();
+  return Variable::typeName(data->get("a"));
 }
 Variable rand(Datatable* data) {
   if (!data->has("seed")) {
@@ -57,33 +56,14 @@ Variable rand(Datatable* data) {
   }
   return rand();
 }
-Variable input(Datatable* data) {
-  if (!data->has("number")) {
-    data->setLocal("number", 0);
-    data->setLocal("string", 1);
-  }
-  Variable arg = data->getLocal("a");
-  if (arg.type == Variable::NUMBER) {
-    switch ((int)arg.number) {
-      case 0:
-      {
-        int n = 0;
-        std::cin >> n;
-        return n;
-      }
-      case 1:
-      {
-        std::string s;
-        getline(std::cin, s);
-        return s;
-      }
-    }
-  }
-  return Variable();
+Variable readLine(Datatable* data) {
+  std::string s;
+  getline(std::cin, s);
+  return s;
 }
 
 Datatable* getDatatableByArgDepth(Datatable* data) {
-  Variable arg = data->getLocal("a");
+  const Variable& arg = data->getLocal("a");
   Datatable* show = data->context;
   int depth = 0;
   if (arg.type == Variable::NUMBER) depth = int(arg.number);
@@ -99,7 +79,7 @@ Datatable* getDatatableByArgDepth(Datatable* data) {
 
 Variable showdata(Datatable* data) {
   Datatable* show = getDatatableByArgDepth(data);
-  std::cout << "Data:\n" << show << "\n";
+  std::cout << "Data:\n" << show << std::endl;
   return true;
 }
 Variable datakeys(Datatable* data) {
@@ -113,27 +93,25 @@ Variable datakeys(Datatable* data) {
 }
 
 Variable printvar(Datatable* data) {
-  Variable arg = data->getLocal("a");
-  std::cout << arg.toString();
+  std::cout << data->getLocal("a").toString();
   return true;
 }
 
-
 Variable parseInt(Datatable* data) {
-  Variable arg = data->get("a");
+  const Variable& arg = data->get("a");
   if (arg.type == Variable::STRING) {
     try {
       return std::stoi(arg.string);
     }
     catch (std::invalid_argument& a) {
-      return nil;
+      return Variable::error("Could parse arg");
     }
   }
   return nil;
 }
 
 Variable toAscii(Datatable* data) {
-  Variable arg = data->get("a");
+  const Variable& arg = data->get("a");
   if (arg.type == Variable::STRING) {
     return static_cast<int>(arg.string[0]);
   }
@@ -141,11 +119,11 @@ Variable toAscii(Datatable* data) {
 }
 
 Variable fromAscii(Datatable* data) {
-  Variable arg = data->get("a");
+  const Variable& arg = data->get("a");
   if (arg.type == Variable::NUMBER) {
     return std::string(1, static_cast<char>(arg.number));
   }
-  return nil;  
+  return nil;
 }
 
 Variable ascii(Datatable* data) {
@@ -156,7 +134,7 @@ Variable ascii(Datatable* data) {
   if (arg.type == Variable::STRING) {
     return static_cast<int>(arg.string[0]);
   }
-  return nil;
+  return Variable::error("arg needs to be number or string");
 }
 
 Variable time(Datatable* data) {
@@ -172,7 +150,7 @@ Variable time(Datatable* data) {
 }
 
 Variable wait(Datatable* data) {
-  Variable arg = data->get("a");
+  const Variable& arg = data->get("a");
   #ifdef _WIN32
         Sleep(arg.number);
     #else
@@ -183,9 +161,9 @@ Variable wait(Datatable* data) {
 
 
 Variable removeFromDatatable(Datatable* data) {
-  Variable alv = data->getLocal("al");
+  const Variable& alv = data->getLocal("al");
   if (alv.type == Variable::LIST) {
-    for (Variable v : alv.list) {
+    for (const Variable& v : alv.list) {
       if (v.type == Variable::STRING) {
         data->context->removeLocal(v.string);
       }
@@ -195,9 +173,18 @@ Variable removeFromDatatable(Datatable* data) {
 }
 
 Variable execSystemFunc(Datatable* data) {
-  Variable f = data->get("a");
+  const Variable& f = data->get("a");
   if (f.type == Variable::STRING) {
     system(f.string.c_str());
   }
   return true;
+}
+
+Variable error(Datatable* data) {
+  if (data->has("b")) {
+    const Variable& b = data->get("b");
+    if (b.isError())
+      return Variable::error(data->get("a").toString(), b);
+  }
+  return Variable::error(data->get("a").toString());
 }

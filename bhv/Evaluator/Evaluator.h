@@ -114,7 +114,7 @@ class Evaluator {
       //printf("no evaluator for <%s>\n", node->name.c_str());
       return Variable::error(
         std::string("Runtime Error: No evaluator for ")
-        + node->name);
+        + node->name + node->pos);
     }
 };
 
