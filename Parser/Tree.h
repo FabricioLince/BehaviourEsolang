@@ -160,7 +160,7 @@ class Tree : public Node {
         if (ctree) {
           if (ctree->children.size() == 0) {
             //printf("%s is empty\n", ctree->name.c_str());
-            if (names.count(ctree->name)>0)
+            if (names.count(ctree->name) > 0)
               toRemove.push_back(it);
           }
           else {
@@ -168,9 +168,12 @@ class Tree : public Node {
           }
         }
       }
-      for (int i = toRemove.size()-1; i >= 0; --i) {
-        this->children.erase(toRemove.at(i));
+      // deleting and removing in reverse order to not mess up the iterators
+      for (int i = toRemove.size()-1; i>=0; --i) {
+        //std::cout << i << " removing " << (*toRemove.at(i))->name << " from " << name << std::endl;
         delete (*toRemove.at(i));
+        this->children.erase(toRemove.at(i));
+        //std::cout << this << std::endl;
       }
     }
 

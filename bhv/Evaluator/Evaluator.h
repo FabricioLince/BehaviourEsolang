@@ -29,6 +29,7 @@ class Evaluator {
   Variable assign(Node*node, Datatable* dataFrom, Datatable* dataTo);
   
   Variable comparation(Tree* tree, Datatable* data);
+  Variable doCompare(Tree* tree, Datatable* data);
   Variable addition(Tree* tree, Datatable* data);
   Variable multiplication(Tree* tree, Datatable* data);
   Variable unary(Tree* tree, Datatable* data);

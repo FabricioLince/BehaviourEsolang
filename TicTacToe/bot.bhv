@@ -1,7 +1,7 @@
 @"loading bot.bhv"
 println = [println !(load:"lib/print.bhv"):println]
 Array = [Array load:"lib/array.bhv"]
-Board = [Board load:"board.bhv"]
+Board = [Board load:"TicTacToe/board.bhv"]
 Map = [Map load:"lib/map.bhv"]
 list = [list load:"lib/list.bhv"]
 
@@ -13,7 +13,7 @@ bot = $${
     v=9*&(
       (1+slots:a)*(3^a)
     )
-    v=v>&a+b
+    v=v>+
     v+(1+token)*59049 //(3^10)
   )
 
@@ -75,35 +75,24 @@ bot = $${
   scoreBoard = &[
     (
       i = -1
-      \10\(
+      \maxTries\(
         i += 1
         v1 = board:v
         ?(combs%i%0>0 v1 = rotate:v1)
         ?(combs%i%1>0 v1 = reflectX:v1)
         ?(combs%i%2>0 v1 = reflectY:v1)
-        //b1:slots:v = v1
-        //@""+(combs%i)+":"
-        //println:b1
         key = hash:slots=v1
         memo:get:key
-        //?@[dep+1 1]
       )
     )
-    //~?(p:"calculating for "+(board:v)+" "+token+": "+(key) )
-    //~?(p:"winner:"+(winner:board:v))
     (
-      //?(?dep = [dep+1 1] @dep)
       m = [
         (winner:board:v) ?=
           token -> 10
           Board:oppositeFor:token -> -10
           Board:State:EMPTY -> 0
         (
-          //p:"vazios: "+(emptySlots:board:v)
-          //tabs+=1
           sc = !scorePossibleMoves:token=Board:oppositeFor:token
-          //tabs-=1
-          //p:sc
           sc = sc>max
           sc -= (sign:sc)*1
           (sc*-1)
@@ -126,7 +115,7 @@ bot = $${
           (4|moves<=4)
         
           \(
-            move = moves%((!rand)%#moves)
+            move = moves:((!rand)%#moves)
             move%2==0
             move
           )
@@ -141,7 +130,7 @@ bot = $${
         moves = emptySlots:board:v
         moves = (0..#moves)*&(moves:a)|(scores:a)==maxScore
         moves = moves/&a
-        move = moves%((!rand)%#moves)
+        move = moves:((!rand)%#moves)
       )
   )
 

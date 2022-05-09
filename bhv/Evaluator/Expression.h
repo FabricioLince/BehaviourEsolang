@@ -220,8 +220,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
   return value;
 }
 
-
-Variable Evaluator::comparation(Tree* tree, Datatable* data) {
+Variable Evaluator::doCompare(Tree* tree, Datatable* data) {
   Variable value = evaluate(tree->children.at(0), data);
   Tree* comp = tree->subTree("comp");
   if (comp) {
@@ -284,6 +283,79 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
         return Variable::errorInvalidOp("..", value, other);
       }
     }
+    else if (symbol == "|>") {
+      const Variable& comp = value > other;
+      if (comp.isError()) return comp;
+      if (comp.toBool())
+        return value;
+      return other;
+    }
+    else if (symbol == "|<") {
+      const Variable& comp = value < other;
+      if (comp.isError()) return comp;
+      if (comp.toBool())
+        return value;
+      return other;
+    }
+    
+  }
+  return value;
+}
+
+Variable Evaluator::comparation(Tree* tree, Datatable* data) {
+  const Variable& value = doCompare(tree, data);
+  Tree* postop = tree->subTree("postop");
+  if (postop) {
+    const std::string& symbol = postop->getToken("reduce")->string;
+    if (value.type == Variable::LIST) {
+      if (value.list.size() == 0) {
+        return Variable::error("Can not reduce empty list");
+      }
+      if (symbol == ">+") {
+        Variable sum = value.list.at(0);
+        for (unsigned int i = 1; i < value.list.size(); ++i) {
+          sum = sum + value.list.at(i);
+        }
+        return sum;
+      }
+      
+      if (symbol == ">*") {
+        Variable sum = value.list.at(0);
+        for (unsigned int i = 1; i < value.list.size(); ++i) {
+          sum = sum * value.list.at(i);
+        }
+        return sum;
+      }
+      
+      if (symbol == ">>") {
+        Variable chosen = value.list.at(0);
+        for (unsigned int i = 1; i < value.list.size(); ++i) {
+          const Variable& comp = value.list.at(i) > chosen;
+          if (comp.isError()) return comp;
+          if (comp.toBool())
+            chosen = value.list.at(i);
+        }
+        return chosen;
+      }
+      
+      if (symbol == "><") {
+        Variable chosen = value.list.at(0);
+        for (unsigned int i = 1; i < value.list.size(); ++i) {
+          const Variable& comp = value.list.at(i) < chosen;
+          if (comp.isError()) return comp;
+          if (comp.toBool())
+            chosen = value.list.at(i);
+        }
+        return chosen;
+      }
+      
+    }
+    else {
+      return Variable::error(
+        std::string("Can not reduce ") + Variable::typeName(value), 
+        value
+      );
+    }   
   }
   return value;
 }

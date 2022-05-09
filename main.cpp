@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
   
   try {
     if (RUN_FILE) {
-      std::string fileName = "test.bhv";
+      std::string fileName = "main.bhv";
       if (argc > 1) {
         fileName = argv[1];
       }

@@ -36,7 +36,7 @@ game = &&(
     println:board
     @(board:stateToString:token) + "'s turn"
     ?pos = token ?= 
-      X -> !humanPlay
+      X -> !botPlay
       O -> !botPlay
     @"Played on " + pos
     board:set:pos,token
@@ -54,15 +54,13 @@ game = &&(
 )
 
 \(
-  [ 
+  [
     err = !game
-    ((""+err)/"; ")*&@a
+    ((""+err)/";")*&@a
   ]
   @"Play again? 1/0"
-  pa = read:0
+  pa = 1
   pa ?= 
     1 -> (@"OK" !0)
     &1 -> (@"BYE" !1)
 )
-
- 

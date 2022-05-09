@@ -19,12 +19,15 @@ class Bhv {
     
     Parser::Node* extractTree(Parser::TokenStream* stream) {
       Node* node = main->execute(stream);
+      
       if (node) {
-        node->asTree()->removeEmpty({"ops", "comp", "cond", "cases"});
+        //std::cout <<node << std::endl;
+        node->asTree()->removeEmpty({"ops", "comp", "cond", "cases", "postop"});
         node->asTree()->subsOnlyChild({
           "expression", "comparation", "addition", "multiplication", 
           "comp", "parentheses", "arg", "sequence", "ifcond", "cond",
           "match"});
+        //std::cout <<node << std::endl;
       }
       return node;
     }

@@ -53,7 +53,8 @@ void Bhv::constructRules() {
         Checkpoint("expression expected after $token"),
         addition
       })
-    )
+    ),
+    Optional("postop", GetToken("reduce"))
   });
   
   Rule ifcond = Sequence("ifcond", {
