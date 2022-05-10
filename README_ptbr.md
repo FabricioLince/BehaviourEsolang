@@ -139,6 +139,8 @@ Entre dois valores numéricos as seguintes operações podem ser realizadas:
   - (menor ou igual) `<=`;
   - (igual) `==`;
   - (diferente) `~=`;
+  - (selecione maior) `|>`;
+  - (selecione menor) `|<`;
 
 O valor numérico pode ser convertido para inteiro (i.e. descartar a parte decimal) usando o operador de comprimento `#` antes do valor.
 
@@ -154,10 +156,11 @@ As seguintes operações podem ser realizadas em valores de STRING:
 - Concatenação `+`
   - Concatena a STRING do lado esquerdo (lhs) com a representação STRING do valor do lado direito (rhs).
 - Subtração `-`
-  - Remove a primeira ocorrência de rhs de lhs.
+  - Quando usado com um valor numérico, remove o caracter da posição passada;
+  - Quando usado com outra string, remove a primeira ocorrência de rhs de lhs.
 - Multiplicação `*`
   - Quando usado com um valor numérico, repete a string essa quantidade de vezes;
-  - Quando usado com uma referência a nó, executa o nó para cada caracter da string, passando os caracteres como argumento um por vez, resulta em uma lista com todos os resultados da execução, exceto quando esse resultado é NIL.
+  - Quando usado com uma referência a nó, executa o nó para cada caracter da string, passando os caracteres como argumento um por vez, resulta em uma lista com todos os resultados da execução.
 - Divisão `/`
   - Quando usado com um valor numérico, corta a string e resulta em uma string com no maximo esse numero de caracteres. Se o número > 0 pega os primeiros caracteres, se o número < 0 pega os últimos caracteres;
   - Quando usado com outra string, divide lhs usando rhs como divisor. Resulta em uma lista com os pedaços da string original;
@@ -206,6 +209,11 @@ As seguintes operações podem ser realizadas em listas:
   - Se a lista estiver vazia, resulta em NIL;
   - Se a lista só possuir um item, resulta neste item;
   - Nos outros casos, é feita uma varredura na lista aplicando o nó com o resultado da última iteração e o item atual como argumentos. Resulta no resultado final da varredura.
+- Reduzir especializados:
+  - `>+` Reduz a lista somando os itens;
+  - `>*` Reduz a lista multiplicando os itens;
+  - `>>` Reduz a lista selecionando o maior item da lista;
+  - `><` Reduz a lista selecionando o menor item da lista;
 - Comparação `==`, `~=`
   - Usado com outra lista, compara cada valor das duas listas de acordo com o indice:
     - para `==`, verdadeiro apenas se todos os itens forem iguais nos dois;
@@ -280,14 +288,14 @@ Por ser uma expresão, um atribuição também resulta em um valor quando avalia
 
 Portanto a expressão `a = b = c = 10` é válida e coloca o valor `10` nas variáveis `a`, `b` e `c`.
 
-Vale ressaltar que as variáveis são independentes entre si, atribuir uma para outra apenas cria uma cópia, assim, modificar a original não modifica a cópia e vice-versa.
+Vale ressaltar que as variáveis são independentes entre si, atribuir uma para outra apenas cria uma cópia, assim, modificar a original não modifica a cópia e vice-versa, EXCETO com tuplas, já que a tupla é uma referência a um Datatable, qualquer modificação nesse Datatable poderá ser vista por todas as tuplas que fazem referência.
 
 ## Nós de Controle
 ###### [topo](#behaviouresolang)
 
-Nós de controle são nós que ditam como suas sub expressões são avaliadas.
+Nós de controle são nós que ditam como suas sub expressões são avaliadas, controlam o fluxo de avaliação do script.
 
-Existem Sequenciadores, Seletores, Repetidores e o Operador Se.
+Existem Sequenciadores, Seletores, Repetidores, o Operador Se e o Match.
 
 Também há o Opcional e o Inversor, que modificam o resultado de avaliação da sub expressão.
 
@@ -352,7 +360,7 @@ i=0
 
 Perceba que para repetir tanto o incremento quanto a comparação, foi necessário colocá-los em um Sequenciador.
 
-Caso o limite seja especificado, o Repetidor irá repetir no máximo essa quantidade de vezes:
+Caso um limite seja especificado, o Repetidor irá repetir no máximo essa quantidade de vezes, o limite pode ser um literal numérico ou uma variável contendo um valor numérico:
 
 ```
 i=0
@@ -384,6 +392,35 @@ a|func
 [a|func b]
 ```
 
+
+### Match
+
+A Expressão Match é usada para testar um único valor com uma lista de possíveis correspondências, parando no primeiro teste que resultar _verdadeiril_ e avaliando sua expressão.
+
+Há duas partes principais para uma Expressão Match: o sujeito, que é uma Expressão seguida de `?=`; e os casos de teste, que são pares de expressões com `->` entre elas. Uma Expressão Match precisa de um sujeito e um ou mais casos de teste.
+
+Por exemplo:
+
+```
+num ?=
+  0 -> "num é zero"
+  1 -> "num é um"
+```
+
+Nesse script, primeiro o valor de `num` é testado se é igual a `0`, se for, a Expressão Mach resulta em `"num é zero"`, caso contrário, o próximo teste é se é igual a `1`, nesse caso a Expressão Match resulta em `"num é um"`, se nenhum teste passar a Expressão Match resulta em NIL.
+
+Existem dois tipos de caso de teste: Nó e Igualidade. Se o caso de teste é um Nó, o teste é feito executando o Nó passando o sujeito como argumento.
+Caso contrário, o teste é feito verificando a igualdade entre o sujeito e o caso de teste.
+
+Por exemplo, um script para testar se `num` é par ou impar:
+```
+num ?=
+  &a%2==0 -> "par"
+  &a%2==1 -> "impar"
+```
+
+
+
 ### Opcional
 
 O Opcional é denotado por um ponto de interrogação `?` seguido de uma única sub expressão.
@@ -399,7 +436,7 @@ No script acima, ambas as sub expressões do Sequenciador serão avaliadas, inde
 
 O Opcional também é usado para não sobreescrever o resultado da avaliação de um Sequenciador, por exemplo:
 
-`(12; ?var=15; ?c=a+b)` O resultado desse Sequenciador será `12`, pois as duas outras expressões tem seu resultado ignorado.
+`(12; ?var=15; ?c=a+b)` O resultado desse Sequenciador será `12`, pois as duas outras expressões são avaliadas, mas têm seu resultado ignorado.
 
 ### Inversor
 
