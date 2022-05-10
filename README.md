@@ -59,7 +59,7 @@ The following is an example of an Assign Expression, in which the Variable `coun
 
 To print a value to the console we can use a Print Expression:
 
-`@"Hello World!"` will print the string `Hello World!` **with** a trailing newline.
+`@"Hello World!"` will print the string `Hello World!` with a trailing newline.
 
 Ending Expressions with semicolon `;` is not necessary, but can be done to organize the code.
 
@@ -131,6 +131,9 @@ Between two NUMBER values the following operations can be performed:
   - (less equal than) `<=`;
   - (equals) `==`;
   - (not equals) `~=`;
+- Selection:
+  - (select bigger) `|>`;
+  - (select smaller) `|<`;
 
 The NUMBER can be converted to integer (i.e. discard the decimal part) using Length operator `#` before it.
 
@@ -146,10 +149,11 @@ The following operations can be performed on STRING values:
 - Concatenation `+`
   - Concatenate the lhs STRING with the string representation of the rhs value.
 - Subtraction `-`
-  - Remove the first occurence of rhs from lhs
+  - When used with another STRING value, remove the first occurence of rhs from lhs;
+  - When used with a NUMBER value, remove the character on the index from the string.
 - Multiplication `*`
   - When used with a NUMBER value, repeat the STRING value that number of times;
-  - When used with a NODE value, executes the NODE for each character of the STRING, passing said character as argument each time, evaluates to a LIST with all the results except when said result is NIL (so it can be used as a filter).
+  - When used with a NODE value, executes the NODE for each character of the STRING, passing said character as argument each time, evaluates to a LIST with all the results.
 - Division `/`
   - When used with a NUMBER value, clips the string to a string with atmost the number of characters, if rhs > 0 gets the first rhs characters, if rhs < 0 gets the last rhs characters;
   - When used with a STRING value, splits lhs by rhs, evaluates to a LIST with the resulting items;
@@ -196,6 +200,11 @@ The following operations can be performed on LIST values:
   - if the LIST is empty evaluates to NIL;
   - if lhs only has one item, evaluates to the first item;
   - otherwise loops through the list applying the NODE with the result of the last iteration and the current item as arguments
+- Specialized Reduce operators:
+  - `>+` Reduce by adding items;
+  - `>*` Reduce by multiplying items;
+  - `>>` Reduce by selecting the bigger value;
+  - `><` Reduce by selecting the smaller value;
 - Comparison `==`, `~=`
   - Used with another LIST, compares each value of lhs with the corresponding index of rhs:
     - for `==`, true only if every index are equals on both;
@@ -276,7 +285,8 @@ It's worth noting that the variables are independent between each other, assigni
 
 ## Control Nodes
 
-There are Sequencers, Selectors, Repeaters and the If Operator, these are the control Nodes.
+There are Sequencers, Selectors, Repeaters, the If Operator and Match, these are the control Nodes. 
+Control Nodes are used to control the flow of evaluation of the script.
 
 We also have the Optional and the Inverter, which modify the resulting evaluation of a Node.
 
@@ -339,6 +349,16 @@ i=0
 
 Note that to repeat both the increment and the comparison each time I have to put them inside a Sequencer.
 
+To avoid the risk of infinite loops you can set a limit for the Repeater, that can be a number literal or a Variable containing a number, like this:
+
+```
+i=0
+\10\(i+=1; i>99)
+```
+
+This script is similar to the last one, but the Repeater has a limit of `10` tries. If on the tenth repetition the _child Node_ evaluates _falsy_ the Repeater stops and evaluates to NIL.
+
+
 ### If Operator
 
 The pipe symbol `|` between two Expressions is called the If Operator, and its used to evaluate to the left hand side Expression value if the test on the right evaluates truthy, the If Operator evaluates to NIL otherwise. 
@@ -361,6 +381,32 @@ a|func
 [a|func b]
 ```
 
+### Match
+
+The Match Expression is used to test a single value against a list of possible matches, stopping on the first test that evaluates _truthy_ and evaluating its expression.
+
+There are two main parts to a Match Expression: The subject, which is an Expression followed by `?=`; and the test cases, which are pair of expressions with `->` between them. A Match Expression needs one subject and one or more test cases.
+
+For example:
+
+```
+num ?=
+  0 -> "num is zero"
+  1 -> "num is one"
+```
+
+In this script, first the value of num is tested if equals to `0`, if it does, the Match Expression evaluates to `"num is zero"`, if it doesn't the next test is if equals to `1`, in which case the Match Expression is evaluated to `"num is one"`, if no test is evaluated _truthy_ the Match Expression evaluates to NIL.
+
+There are two type of test cases: Node and Equality. If the test case is a Node value, the test is done by executing the Node passing the subject as argument.
+Otherwise the test is done by verifying the equality between the subject and the test case.
+
+For example, a script to test if `num` is even or odd:
+```
+num ?=
+  &a%2==0 -> "even"
+  &a%2==1 -> "odd"
+```
+
 ### Optional
 
 The Optional is denoted by the interrogation mark `?` followed by a single Expression.
@@ -376,7 +422,7 @@ In this script, all the two children Expressions will be evaluated.
 
 The Optional is also used to not overwrite the result of a Sequencer evaluation, for example:
 
-`(12; ?var=15; ?c=a+b)` The result of this Sequencer is `12`, the result of the second and third sub expressions are ignored.
+`(12; ?var=15; ?c=a+b)` The result of this Sequencer is `12`, the second and third sub expressions are evaluated and their results ignored.
 
 ### Inverter
 
