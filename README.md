@@ -614,3 +614,17 @@ Explanation:
 The main Selector will evaluate if the value passed `a` is less than `2`, if it is then it's evaluated to `1` and it's done.
 
 Otherwise, it multiplies the value of `a` to the result of `factorial` when called with `a-1`.
+
+For a Factorial algorithm that doesn't use recursion we can have:
+
+```
+factorial = &[
+  1|a<2
+  (1..a)>*
+]
+```
+
+This solution creates a range of number from `1` to `a` (the argument passed) and reduce the list by multiplying the numbers.
+
+
+
