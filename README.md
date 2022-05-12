@@ -3,7 +3,7 @@ My Esolang called Behaviour
 
 Available to play with at [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
-You can also download the [Environment](https://github.com/FabricioLince/BehaviourEsolang/blob/65cfd6869c74086082c89a2acf44871abfa5bbf3/env.exe) to run scripts on your machine.
+You can also download the [Environment](https://github.com/FabricioLince/BehaviourEsolang/blob/main/env.exe) to run scripts on your machine.
 
 [Ver esta documentação em pt-br 🇧🇷](https://github.com/FabricioLince/BehaviourEsolang/blob/main/README_ptbr.md#behaviouresolang)
 
