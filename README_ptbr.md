@@ -3,6 +3,8 @@ Minha Esolang chamada Behaviour
 
 Disponível para experimentar no [Replit](https://replit.com/@fabriciorodrigues/bhv)
 
+Também pode fazer download do [Ambiente de Execução](https://github.com/FabricioLince/BehaviourEsolang/blob/main/env.exe) para rodar scripts na sua máquina.
+
 ## Sumário
 - [Introdução](#introdução)
 - [Tipos](#tipos)
