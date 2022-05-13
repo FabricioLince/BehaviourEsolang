@@ -243,7 +243,7 @@ class Variable {
             }
             if (index >= 0 && index < int(list.size())) {
               Variable r = list;
-              r.list.erase(list.begin()+index);
+              r.list.erase(r.list.begin()+index);
               return r;
             }
             return *this;

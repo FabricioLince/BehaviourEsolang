@@ -104,7 +104,7 @@ Variable parseInt(Datatable* data) {
       return std::stoi(arg.string);
     }
     catch (std::invalid_argument& a) {
-      return Variable::error("Could parse arg");
+      return Variable::error("Could not parse arg");
     }
   }
   return nil;
