@@ -1,5 +1,14 @@
 
+double = &a*2
 
-n = (1..4)
-@n
-@n-0
+list = (1..5)
+
+@list
+@double*list
+@list*double
+@""
+@("a".."z")
+@("Z".."A")
+@("a".."Z")
+
+

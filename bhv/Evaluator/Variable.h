@@ -378,7 +378,10 @@ class Variable {
               if (index >= 0 && index < int(string.size())) {
                 return std::string(1, string.at(index));
               }
-              return error("Out of range");
+              return error(
+                std::string("Out of range(index=") + std::to_string(index) +
+                 " size=" + std::to_string(string.size()) + ")"
+              );
             }
             case STRING: {
               int index = string.find(other.string);
@@ -399,7 +402,10 @@ class Variable {
             if (index >= 0 && index < int(list.size())) {
               return list.at(index);
             }
-            return error("Out of range");
+            return error(
+                std::string("Out of range(index=") + std::to_string(index) +
+                 " size=" + std::to_string(list.size()) + ")"
+            );
           }
           break;
         }

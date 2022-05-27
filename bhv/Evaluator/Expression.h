@@ -55,7 +55,7 @@ Variable Evaluator::addition(Tree* tree, Datatable* data) {
     for (Node* op : tree->subTree(1)->children) {
       
       if (value.type == Variable::NIL) {
-        return value;
+        break;
       }
       
       Tree* top = op->asTree();
@@ -70,6 +70,9 @@ Variable Evaluator::addition(Tree* tree, Datatable* data) {
       }
     }
   }
+  if (value.isError()) {
+    value.string += tree->pos;
+  }
   return value;
 }
 
@@ -79,7 +82,7 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
     for (Node* op : tree->subTree(1)->children) {
       
       if (value.type == Variable::NIL)
-        return value;
+        break;
       
       Tree* top = op->asTree();
       const std::string& symbol = top->getToken(0)->string;
@@ -111,6 +114,14 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
           (other.type == Variable::NODE
           || other.type == Variable::CFUNC)) {
           value = applyTreeOnString(value, other, data);
+        }
+        else if ((value.type == Variable::NODE || value.type == Variable::CFUNC) &&
+                (other.type == Variable::LIST)) {
+          value = applyTreeOnList(other, value, data);
+        }
+        else if ((value.type == Variable::NODE || value.type == Variable::CFUNC) &&
+                (other.type == Variable::STRING)) {
+          value = applyTreeOnString(other, value, data);
         }
         else {
           value = value * other;
@@ -217,11 +228,14 @@ Variable Evaluator::multiplication(Tree* tree, Datatable* data) {
       }
     }
   }
+  if (value.isError()) {
+    value.string += tree->pos;
+  }
   return value;
 }
 
 Variable Evaluator::doCompare(Tree* tree, Datatable* data) {
-  Variable value = evaluate(tree->children.at(0), data);
+  const Variable& value = evaluate(tree->children.at(0), data);
   Tree* comp = tree->subTree("comp");
   if (comp) {
     const std::string& symbol = comp->getToken("comparation")->string;
@@ -279,6 +293,27 @@ Variable Evaluator::doCompare(Tree* tree, Datatable* data) {
         }
         return l;
       }
+      if (value.type == Variable::STRING && other.type == Variable::STRING) {
+        if (value.string.size() != 1 || other.string.size() != 1) {
+          return Variable::error(
+            std::string("Range operator needs two string of length 1") + tree->pos
+          );
+        }
+        Variable::VarList l;
+        int start = static_cast<int>(value.string[0]);
+        int end = static_cast<int>(other.string[0]);
+        if (start < end) {
+          for (int i = start; i <= end; ++i) {
+            l.push_back(std::string(1, static_cast<char>(i)));
+          }
+        }
+        else {
+          for (int i = start; i >= end; --i) {
+            l.push_back(std::string(1, static_cast<char>(i)));
+          }
+        }
+        return l;
+      }
       else {
         return Variable::errorInvalidOp("..", value, other);
       }
@@ -314,6 +349,10 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
       if (symbol == ">+") {
         Variable sum = value.list.at(0);
         for (unsigned int i = 1; i < value.list.size(); ++i) {
+          if (sum.isError()) {
+            sum.string += tree->pos;
+            break;
+          }
           sum = sum + value.list.at(i);
         }
         return sum;
@@ -322,6 +361,10 @@ Variable Evaluator::comparation(Tree* tree, Datatable* data) {
       if (symbol == ">*") {
         Variable sum = value.list.at(0);
         for (unsigned int i = 1; i < value.list.size(); ++i) {
+          if (sum.isError()) {
+            sum.string += tree->pos;
+            break;
+          }
           sum = sum * value.list.at(i);
         }
         return sum;
