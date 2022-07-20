@@ -39,6 +39,7 @@ class Evaluator {
   Variable list(Tree* tree, Datatable* data);
   Variable string(Node* node, Datatable* data);
   Variable tuple(Tree* tree, Datatable* data);
+  Variable var_acc(Tree* tree, Datatable* data);
   
   Variable execute(Tree* tree, Datatable* data);
   Variable getTree(Tree* tree, Datatable* data);
@@ -92,6 +93,7 @@ class Evaluator {
       evaluatorsNode[hasher("word")] = &Evaluator::var;
       evaluatorsTree[hasher("list")] = &Evaluator::list;
       evaluatorsTree[hasher("tuple")] = &Evaluator::tuple;
+      evaluatorsTree[hasher("var_acc")] = &Evaluator::var_acc;
       
       evaluatorsTree[hasher("execute")] = &Evaluator::execute;
       evaluatorsTree[hasher("getTree")] = &Evaluator::getTree;

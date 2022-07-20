@@ -29,7 +29,6 @@ class RegexRule {
       }
       regexString = regexString.substr(0, regexString.length()-1);
       regexString += ")";
-      
       this->regex = std::regex(regexString);
     }
     RegexRule(std::string name, std::vector<std::string> symbols) {
@@ -125,6 +124,7 @@ class Tokenizer {
         RegexRule("gettree", "&"),
         RegexRule("length", "#"),
         RegexRule("semicolon", ";"),
+        RegexRule("index", "."),
         RegexRule("invalid", std::regex("^."))
       };
     }

@@ -92,7 +92,8 @@ _ .. _ = _ --> just returns lhs
   compop :: ['>=' '>' '<=' '<' '==' '~=' '..']
   addition :: multiplication *(['+' '-'] multiplication)
   multiplication :: value *(['*' '/' '%' '^'] value)
-  value :: [signedvalue list integer string cmd name]
+  value :: [signedvalue list integer string cmd var_acc]
+  var_acc :: name *('.' [name int sequence select])
   signedvalue :: ['-' '~' '#'] value
   list :: '{' *expr '}'
   
@@ -104,7 +105,7 @@ _ .. _ = _ --> just returns lhs
   execexpr :: '!' expr ?args
   args :: ':' expr *(',' expr)
   sequence :: '(' *expr ')'
-  sequence :: '[' *expr ']'
+  select :: '[' *expr ']'
   optional :: '?' expr
   gettree :: '&' ?'&' expr
   repeat :: '\' expr

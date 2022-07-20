@@ -19,5 +19,6 @@ class Evaluator;
 #include "Evaluator/Execute.h"
 #include "Evaluator/Tuple.h"
 #include "Evaluator/Match.h"
+#include "Evaluator/VarAccess.h"
 
 #endif

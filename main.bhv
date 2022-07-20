@@ -1,14 +1,13 @@
 
-double = &a*2
 
-list = (1..5)
+user = ${
+  name = "Lince"
+  year = 1995
+  tostring = &&name+" is "+(2022-year)+" years old"
+}
 
-@list
-@double*list
-@list*double
-@""
-@("a".."z")
-@("Z".."A")
-@("a".."Z")
-
+@user.name
+@user.year
+@user.tostring
+@!user.tostring
 

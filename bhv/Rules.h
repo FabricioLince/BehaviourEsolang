@@ -100,7 +100,6 @@ void Bhv::constructRules() {
   value->rules.push_back(GetToken("decimal"));
   value->rules.push_back(GetToken("integer"));
   value->rules.push_back(GetToken("string"));
-  value->rules.push_back(GetToken("word"));
   
   Rule print = Sequence("print", {
     Discard(GetToken("print")),
@@ -196,6 +195,22 @@ void Bhv::constructRules() {
     expression
   });
   cmd->rules.push_back(repeat);
+  
+  Rule var_acc = Sequence("var_acc", {
+    GetToken("word"),
+    Multiple("indices", 
+      Sequence("index", {
+        Discard(GetToken("index")),
+        Select({
+          GetToken("word"),
+          GetToken("integer"),
+          bhvselect,
+          sequence
+        })
+      })
+    )
+  });
+  value->rules.push_back(var_acc);
 
   main = Sequence("main", {
     Multiple("exprs", expression)
@@ -203,10 +218,10 @@ void Bhv::constructRules() {
 
   collectRules(main);
   
-  //std::cout << "value rules:" << "\n";
-  for (unsigned int i = 0; i < value->rules.size(); ++i) {
-    //std::cout << value->rules.at(i)->name << "\n";
-  }
+  // std::cout << "value rules:" << "\n";
+  // for (unsigned int i = 0; i < value->rules.size(); ++i) {
+    // std::cout << value->rules.at(i)->name << "\n";
+  // }
   
 }
 

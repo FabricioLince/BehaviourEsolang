@@ -22,11 +22,11 @@ class Bhv {
       
       if (node) {
         //std::cout <<node << std::endl;
-        node->asTree()->removeEmpty({"ops", "comp", "cond", "cases", "postop"});
+        node->asTree()->removeEmpty({"ops", "comp", "cond", "cases", "postop", "indices"});
         node->asTree()->subsOnlyChild({
           "expression", "comparation", "addition", "multiplication", 
           "comp", "parentheses", "arg", "sequence", "ifcond", "cond",
-          "match"});
+          "match", "var_acc", "index"});
         //std::cout <<node << std::endl;
       }
       return node;
